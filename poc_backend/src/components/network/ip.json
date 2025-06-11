@@ -1,0 +1,35 @@
+{
+  "collectionName": "components_network_ips",
+  "info": {
+    "displayName": "IP",
+    "icon": "paperPlane"
+  },
+  "options": {},
+  "attributes": {
+    "fisrtNumber": {
+      "type": "integer",
+      "default": 0,
+      "min": 0,
+      "max": 255
+    },
+    "secondeNumber": {
+      "type": "integer",
+      "default": 0,
+      "min": 0,
+      "max": 255
+    },
+    "thirdNumber": {
+      "type": "integer",
+      "default": 0,
+      "min": 0,
+      "max": 255
+    },
+    "fourthNumber": {
+      "type": "integer",
+      "default": 0,
+      "min": 0,
+      "max": 255
+    }
+  },
+  "config": {}
+}

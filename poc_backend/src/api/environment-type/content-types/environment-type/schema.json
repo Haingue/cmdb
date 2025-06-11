@@ -1,0 +1,74 @@
+{
+  "kind": "collectionType",
+  "collectionName": "environment_types",
+  "info": {
+    "singularName": "environment-type",
+    "pluralName": "environment-types",
+    "displayName": "Environment"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "project": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::project.project",
+      "inversedBy": "environments"
+    },
+    "type": {
+      "type": "enumeration",
+      "enum": [
+        "DEV",
+        "TEST",
+        "ACC",
+        "PRE_PROD",
+        "PROD"
+      ]
+    },
+    "location": {
+      "type": "string"
+    },
+    "envStatus": {
+      "type": "enumeration",
+      "enum": [
+        "REQUESTED",
+        "IN_PROGRESS",
+        "READY",
+        "DEPLOYED",
+        "STOPPED",
+        "DECOMMISSIONED"
+      ]
+    },
+    "activeDirectoryDomainName": {
+      "type": "enumeration",
+      "enum": [
+        "COMMON",
+        "MANUFACTURING"
+      ]
+    },
+    "networkArea": {
+      "type": "enumeration",
+      "enum": [
+        "IT",
+        "IT-DMZ",
+        "DMZ",
+        "OT-DMZ",
+        "OT"
+      ]
+    },
+    "jiraTracker": {
+      "type": "string"
+    },
+    "components": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::component.component",
+      "mappedBy": "environment"
+    }
+  }
+}

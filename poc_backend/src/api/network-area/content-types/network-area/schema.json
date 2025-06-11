@@ -1,0 +1,18 @@
+{
+  "kind": "collectionType",
+  "collectionName": "network_areas",
+  "info": {
+    "singularName": "network-area",
+    "pluralName": "network-areas",
+    "displayName": "NetworkArea"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    }
+  }
+}

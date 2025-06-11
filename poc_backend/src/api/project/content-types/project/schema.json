@@ -1,0 +1,46 @@
+{
+  "kind": "collectionType",
+  "collectionName": "projects",
+  "info": {
+    "singularName": "project",
+    "pluralName": "projects",
+    "displayName": "Project"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "shortName": {
+      "type": "string"
+    },
+    "fullName": {
+      "type": "string"
+    },
+    "business_service": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::business-service.business-service",
+      "inversedBy": "projects"
+    },
+    "Description": {
+      "type": "text"
+    },
+    "environments": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::environment-type.environment-type",
+      "mappedBy": "project"
+    },
+    "maintainers": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::user-group.user-group"
+    },
+    "owners": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::user-group.user-group"
+    }
+  }
+}

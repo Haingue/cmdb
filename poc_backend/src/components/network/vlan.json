@@ -1,0 +1,23 @@
+{
+  "collectionName": "components_network_vlans",
+  "info": {
+    "displayName": "Vlan",
+    "icon": "grid"
+  },
+  "options": {},
+  "attributes": {
+    "label": {
+      "type": "string"
+    },
+    "number": {
+      "type": "integer"
+    },
+    "networkArea": {
+      "type": "enumeration",
+      "enum": [
+        "IT"
+      ]
+    }
+  },
+  "config": {}
+}
