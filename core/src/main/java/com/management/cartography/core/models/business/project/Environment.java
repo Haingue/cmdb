@@ -20,38 +20,31 @@ public class Environment extends Entity {
 
     private Set<Component> components;
 
-    private ActiveDirectoryDomainName domain;
-    private NetworkArea networkArea;
-
     private String jiraTracker;
     private EnvironmentStatus status;
 
-    public static Environment create (String location, EnvironmentType type, ActiveDirectoryDomainName domain, NetworkArea networkArea, String jiraTracker) {
-        return new Environment(location, type, domain, networkArea, jiraTracker);
+    public static Environment create (String location, EnvironmentType type, String jiraTracker) {
+        return new Environment(location, type, jiraTracker);
     }
 
-    public static Environment load (Entity entity, String location, EnvironmentType type, ActiveDirectoryDomainName domain, NetworkArea networkArea, String jiraTracker) {
-        Environment environment = new Environment(location, type, domain, networkArea, jiraTracker);
+    public static Environment load (Entity entity, String location, EnvironmentType type, String jiraTracker) {
+        Environment environment = new Environment(location, type, jiraTracker);
         environment.reloadEntity(entity);
         return environment;
     }
 
-    protected Environment(String location, EnvironmentType type, ActiveDirectoryDomainName domain, NetworkArea networkArea, String jiraTracker) {
+    protected Environment(String location, EnvironmentType type, String jiraTracker) {
         this.location = location;
         this.type = type;
         this.components = new HashSet<Component>();
-        this.domain = domain;
-        this.networkArea = networkArea;
         this.jiraTracker = jiraTracker;
         this.status = EnvironmentStatus.REQUESTED;
     }
 
-    protected Environment(String location, EnvironmentType type, Set<Component> components, ActiveDirectoryDomainName domain, NetworkArea networkArea, String jiraTracker, EnvironmentStatus status) {
+    protected Environment(String location, EnvironmentType type, Set<Component> components, String jiraTracker, EnvironmentStatus status) {
         this.location = location;
         this.type = type;
         this.components = components;
-        this.domain = domain;
-        this.networkArea = networkArea;
         this.jiraTracker = jiraTracker;
         this.status = status;
     }
@@ -72,13 +65,6 @@ public class Environment extends Entity {
         return components.add(component);
     }
 
-    public ActiveDirectoryDomainName getDomain() {
-        return domain;
-    }
-
-    public NetworkArea getNetworkArea() {
-        return networkArea;
-    }
 
     public String getJiraTracker() {
         return jiraTracker;
@@ -96,12 +82,12 @@ public class Environment extends Entity {
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof Environment that)) return false;
-        return Objects.equals(location, that.location) && type == that.type && domain == that.domain;
+        return Objects.equals(location, that.location) && type == that.type;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(location, type, domain);
+        return Objects.hash(location, type);
     }
 
 }

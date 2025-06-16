@@ -35,11 +35,11 @@ public class SimpleModelTest {
 
     public SimpleModelTest() throws UnknownHostException {
         project = Project.create("Project Number 1", "Project1", "Description of Project1", new BusinessService("Business 1", "B1"), new UserGroup("P1_Maintainers", "", Set.of()), new UserGroup("P1_Owners", "", Set.of()));
-        env1 = Environment.create("Environment 1", EnvironmentType.TEST, ActiveDirectoryDomainName.COMMON, NetworkArea.DMZ, "key-001");
+        env1 = Environment.create("Environment 1", EnvironmentType.TEST, "key-001");
         project.addEnvironment(env1);
 
-        sensorHost = new Hardware(UUID.randomUUID(), "Sensor", "Sensor desc", new Version(3, 8, 5), null, flask, "sensor", "sensor.com", "00:00:00:00", InetAddress.getByName("0.0.0.0"), "10", DayOfWeek.SATURDAY, "France");
-        backendHost = new Hardware(UUID.randomUUID(), "BackendServer", "BackendServer desc", new Version(18, 0, 5), null, linux, "backend", "backend.com", "00:00:00:00", InetAddress.getByName("0.0.0.0"), "10", DayOfWeek.SATURDAY, "France");
+        sensorHost = new Hardware(UUID.randomUUID(), "Sensor", "Sensor desc", new Version(3, 8, 5), null, flask, "sensor", "sensor.com", "00:00:00:00", InetAddress.getByName("0.0.0.0"), "10", DayOfWeek.SATURDAY, "France", ActiveDirectoryDomainName.COMMON, NetworkArea.DMZ);
+        backendHost = new Hardware(UUID.randomUUID(), "BackendServer", "BackendServer desc", new Version(18, 0, 5), null, linux, "backend", "backend.com", "00:00:00:00", InetAddress.getByName("0.0.0.0"), "10", DayOfWeek.SATURDAY, "France", ActiveDirectoryDomainName.COMMON, NetworkArea.DMZ);
         backendSoftware = new Software(UUID.randomUUID(), "BackendSoftware", "BackendSoftware desc", Version.fromString("1.0.0"), null, springBoot, backendHost);
 
         env1.addComponents(sensorHost);
