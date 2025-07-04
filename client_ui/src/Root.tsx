@@ -4,16 +4,19 @@ import NotFound from "./pages/NotFound"
 import Map from "./pages/map/Map"
 import SideBar from "./components/navigation/SideBar"
 import NavBar from "./components/navigation/NavBar"
+import useSideBar from "./hooks/useSideBar"
 
 const Root = () => {
+  const [isVisible, toggleSideBarVisibility] = useSideBar()
+
   return (
     <>
         <header>
-            <NavBar />
+            <NavBar toggleSideBarVisibility={toggleSideBarVisibility} />
         </header>
-        <div className="flex pt-16 overflow-hidden bg-gray-50 dark:bg-gray-900">
-            <div className="relative w-full h-full overflow-y-auto bg-gray-50 lg:ml-64 ml-4 dark:bg-gray-900 dark:text-white">
-                <SideBar backdrop />
+        <div className="flex pt-16 overflow-hidden">
+            <div className="relative w-full h-full overflow-y-auto lg:ml-64 ml-4">
+                <SideBar backdrop isVisible={isVisible} toggleSideBarVisibility={toggleSideBarVisibility} />
                 <main>
                     <Routes>
                         <Route path="/" Component={Dashboard} />

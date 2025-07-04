@@ -1,4 +1,4 @@
-import { type ReactNode } from 'react'
+import { type EventHandler, type MouseEvent, type ReactNode } from 'react'
 import { Link } from 'react-router'
 import useSideBar from '../../hooks/useSideBar'
 
@@ -15,16 +15,14 @@ const NavButton = ({path, label, onClick, children}:{path:string, label:string, 
 
 const BackDrop = ({isVisible, onClick}:{isVisible:boolean, onClick:React.ReactEventHandler}) => {
   return (
-    <div onClick={onClick} className={`${isVisible || 'hidden'} fixed inset-0 z-10 bg-gray-900/50 dark:bg-gray-900/90`}></div>
+    <div onClick={onClick} className={`${isVisible ? 'fixed' : 'hidden'} fixed inset-0 z-10 bg-gray-900/50 dark:bg-gray-900/90`}></div>
   )
 }
 
-const SideBar = ({ backdrop } : { backdrop?:boolean }) => {
-  const [isVisible, toggleSideBarVisibility] = useSideBar()
-  
+const SideBar = ({ backdrop, isVisible, toggleSideBarVisibility } : { backdrop?:boolean, isVisible:boolean, toggleSideBarVisibility:EventHandler<MouseEvent> }) => {  
   return (
     <>
-        <aside id="sidebar" className={`${isVisible || 'hidden'} fixed ease-out delay-150 duration-300 top-0 left-0 z-20 flex flex-col flex-shrink-0 w-64 h-full pt-16 font-normal lg:flex transition-width`} aria-label="Sidebar">
+        <aside id="sidebar" className={`fixed ease-out delay-150 duration-300 top-0 ${isVisible ? 'left-0' : '-left-full'} lg:left-0 z-20 flex flex-col flex-shrink-0 w-64 h-full pt-16 font-normal lg:flex transition-width`} aria-label="Sidebar">
             <div className="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
                 <ul className="space-y-2 font-medium">
                     <NavButton path='/' label='Dashboard' onClick={toggleSideBarVisibility}>
@@ -35,8 +33,8 @@ const SideBar = ({ backdrop } : { backdrop?:boolean }) => {
                     </NavButton>
                     <NavButton path='/map' label='Map' onClick={toggleSideBarVisibility}>
                         <svg className="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                            <path stroke="currentColor" strokeLinecap="round" stroke-linejoin="round" stroke-width="2" d="M12 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/>
-                            <path stroke="currentColor" strokeLinecap="round" stroke-linejoin="round" stroke-width="2" d="M17.8 13.938h-.011a7 7 0 1 0-11.464.144h-.016l.14.171c.1.127.2.251.3.371L12 21l5.13-6.248c.194-.209.374-.429.54-.659l.13-.155Z"/>
+                            <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/>
+                            <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.8 13.938h-.011a7 7 0 1 0-11.464.144h-.016l.14.171c.1.127.2.251.3.371L12 21l5.13-6.248c.194-.209.374-.429.54-.659l.13-.155Z"/>
                         </svg>
                     </NavButton>
                 </ul>
