@@ -1,9 +1,14 @@
+import PageTitle from '../../components/PageTitle'
 import './Dashboard.css'
 
 function Dashboard() {
+  const title = 'dashboard'
   return (
     <>
-      <h1>Dashboard</h1>
+      <PageTitle title={title} />
+      <div>
+        
+      </div>
     </>
   )
 }

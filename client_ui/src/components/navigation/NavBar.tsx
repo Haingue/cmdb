@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, type EventHandler, type MouseEvent } from "react";
 import { Link } from "react-router";
 
-const NavBar = ({toggleSideBarVisibility}) => {
+const NavBar = ({toggleSideBarVisibility} : { toggleSideBarVisibility:EventHandler<MouseEvent> }) => {
 
   const [dark, setDark] = useState(localStorage.darkTheme || true);
 
