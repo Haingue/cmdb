@@ -1,4 +1,4 @@
-# Business
+# Cartography core: Business
 
 ## Use case diagram
 
