@@ -1,10 +1,7 @@
 package com.management.cmdb.inventory.service.entity;
 
 import com.management.cmdb.inventory.service.entity.meta.Auditable;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
 import java.util.ArrayList;
@@ -17,7 +14,10 @@ public class ItemEntity extends Auditable {
     private String name;
     private String description;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @ManyToOne(cascade = CascadeType.ALL)
+    private ItemTypeEntity type;
+
+    @OneToMany(cascade = CascadeType.ALL)
     private List<LinkEntity> links = new ArrayList<>();
 
     public String getName() {
@@ -34,6 +34,14 @@ public class ItemEntity extends Auditable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public ItemTypeEntity getType() {
+        return type;
+    }
+
+    public void setType(ItemTypeEntity type) {
+        this.type = type;
     }
 
     public List<LinkEntity> getLinks() {

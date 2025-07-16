@@ -10,7 +10,17 @@ import jakarta.validation.constraints.NotBlank;
 public class ItemTypeEntity extends Auditable {
 
     @NotBlank
+    private String label;
+    @NotBlank
     private String description;
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
 
     public String getDescription() {
         return description;

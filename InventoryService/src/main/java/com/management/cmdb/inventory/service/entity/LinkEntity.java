@@ -10,9 +10,9 @@ import jakarta.persistence.Table;
 public class LinkEntity extends Auditable {
     @OneToOne
     private LinkTypeEntity linkType;
-    @OneToOne
+    @OneToOne(orphanRemoval = true)
     private ItemEntity to;
-    @OneToOne
+    @OneToOne(orphanRemoval = true)
     private ItemEntity from;
     private String  description;
 
