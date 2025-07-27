@@ -5,7 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "link_type")
+@Table(name = "link_types")
 public class LinkTypeEntity extends Auditable {
     private String label;
 

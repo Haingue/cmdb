@@ -6,7 +6,7 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "link")
+@Table(name = "links")
 public class LinkEntity extends Auditable {
     @OneToOne
     private LinkTypeEntity linkType;

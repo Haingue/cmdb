@@ -10,6 +10,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.UUID;
 
 @EntityListeners(AuditingEntityListener.class)
@@ -64,5 +65,16 @@ public class Auditable {
 
     public void setLastModifiedDate(LocalDateTime lastModifiedDate) {
         this.lastModifiedDate = lastModifiedDate;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Auditable auditable)) return false;
+        return Objects.equals(uuid, auditable.uuid);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(uuid);
     }
 }
