@@ -14,6 +14,12 @@ class InventoryServiceApplicationTests {
 	}
 
 	@Test
+	void verifiesModularStructure() {
+		ApplicationModules modules = ApplicationModules.of(InventoryServiceApplication.class);
+		modules.verify();
+	}
+
+	@Test
 	void createModuleDocumentation() {
 		ApplicationModules modules = ApplicationModules.of(InventoryServiceApplication.class);
 		new Documenter(modules)

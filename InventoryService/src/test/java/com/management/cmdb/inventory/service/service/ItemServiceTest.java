@@ -45,7 +45,7 @@ class ItemServiceTest {
     void createItem() {
         ItemEntity newItem = ItemExample.JETTY01.toEntity();
         newItem.setName("New Jetty");
-        ItemDto savedItem = this.itemService.createItem(ItemMapper.toDto(newItem), this.userDetail);
+        ItemDto savedItem = this.itemService.createItem(ItemMapper.INSTANCE.toDto(newItem), this.userDetail);
         Assertions.assertNotNull(savedItem);
         Assertions.assertNotNull(savedItem.uuid());
         Assertions.assertNotNull(savedItem.createdDate());
@@ -57,7 +57,7 @@ class ItemServiceTest {
     @Test
     void updateItem() {
         this.itemExample.setName("UpdatedItem");
-        ItemDto savedItem = this.itemService.updateItem(ItemMapper.toDto(this.itemExample), this.userDetail);
+        ItemDto savedItem = this.itemService.updateItem(ItemMapper.INSTANCE.toDto(this.itemExample), this.userDetail);
         Assertions.assertNotNull(savedItem);
         Assertions.assertNotNull(savedItem.uuid());
         Assertions.assertNotNull(savedItem.lastModifiedDate());

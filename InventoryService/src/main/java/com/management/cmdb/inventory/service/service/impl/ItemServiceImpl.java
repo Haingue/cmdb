@@ -16,6 +16,7 @@ import com.management.cmdb.inventory.service.repository.ItemTypeRepository;
 import com.management.cmdb.inventory.service.service.ItemService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -39,7 +40,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDto createItem(ItemDto newItemDto, UserDetail userDetail) {
+    public ItemDto createItem(ItemDto newItemDto, UserDetail author) {
         // TODO check user details
 
         if (newItemDto == null || newItemDto.name() == null || newItemDto.description() == null) {
@@ -52,16 +53,21 @@ public class ItemServiceImpl implements ItemService {
         ItemTypeEntity itemTypeEntity = this.itemTypeRepository.findFirstByLabel(newItemDto.type().label())
                 .orElseThrow(ItemTypeNotExist::new);
 
-        ItemEntity itemEntity = ItemMapper.toEntity(newItemDto);
+        ItemEntity itemEntity = ItemMapper.INSTANCE.toEntity(newItemDto);
         itemEntity.setUuid(UUID.randomUUID());
         itemEntity.setType(itemTypeEntity);
-        itemEntity = this.itemRepository.save(itemEntity);
 
-        ItemDto resultItem = ItemMapper.toDto(itemEntity);
+        itemEntity.getAttributes().forEach(attribute -> {
+            attribute.setUuid(UUID.randomUUID());
+            attribute.setCreatedBy(author.uuid());
+        });
+
+        itemEntity = this.itemRepository.save(itemEntity);
+        ItemDto resultItem = ItemMapper.INSTANCE.toDto(itemEntity);
         // Send event
         applicationEventPublisher.publishEvent(
                 new NotificationDto(
-                        new AuthorDto(userDetail.email()),
+                        new AuthorDto(author.email()),
                         NotificationDto.NotificationType.NEW_ITEM,
                         "Create new item",
                         resultItem.uuid()
@@ -80,7 +86,7 @@ public class ItemServiceImpl implements ItemService {
         // TODO: existingItem.addToLinks(itemDto.toLinks());
         // TODO: existingItem.addFromLinks(itemDto.fromLinks());
         existingItem = this.itemRepository.save(existingItem);
-        return ItemMapper.toDto(existingItem);
+        return ItemMapper.INSTANCE.toDto(existingItem);
     }
 
     @Override
@@ -93,7 +99,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDto findItemById(UUID uuid, UserDetail userDetail) {
         return this.itemRepository.findById(uuid)
-                .map(ItemMapper::toDto)
+                .map(ItemMapper.INSTANCE::toDto)
                 .orElseThrow(ItemTypeNotExist::new);
     }
 
@@ -104,6 +110,6 @@ public class ItemServiceImpl implements ItemService {
                 itemName,
                 itemTypeLabel,
                 PageRequest.of(page, pageSize));
-        return ItemMapper.toPaginatedDto(result);
+        return ItemMapper.INSTANCE.toPaginatedDto(result);
     }
 }

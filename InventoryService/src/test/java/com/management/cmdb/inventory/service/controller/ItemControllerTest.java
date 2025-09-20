@@ -31,7 +31,7 @@ class ItemControllerTest {
     void postItem() {
         ItemEntity originalItem = ItemExample.JETTY01.toEntity();
         originalItem.setName("New jetty server");
-        ItemDto newItem = ItemMapper.toDto(originalItem);
+        ItemDto newItem = ItemMapper.INSTANCE.toDto(originalItem);
         Mono<ItemDto> dto = Mono.just(newItem);
         ItemDto itemDto = webTestClient.post()
                 .uri("/item")
@@ -56,7 +56,7 @@ class ItemControllerTest {
     void putItem() {
         ItemEntity existingItem = itemRepository.save(ItemExample.JETTY01.toEntity());
         existingItem.setDescription("New description");
-        Mono<ItemDto> dto = Mono.just(ItemMapper.toDto(existingItem));
+        Mono<ItemDto> dto = Mono.just(ItemMapper.INSTANCE.toDto(existingItem));
 
         webTestClient.put()
                 .uri("/item")

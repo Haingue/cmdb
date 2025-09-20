@@ -9,7 +9,7 @@ public class LinkMapper {
         return new LinkDto(
                 LinkTypeMapper.toDto(linkEntity.getLinkType()),
                 linkEntity.getFrom().getUuid(),
-                ItemMapper.toDto(linkEntity.getTo()),
+                ItemMapper.INSTANCE.toDto(linkEntity.getTo()),
                 linkEntity.getDescription()
         );
     }

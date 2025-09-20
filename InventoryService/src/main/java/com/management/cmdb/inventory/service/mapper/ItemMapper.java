@@ -4,13 +4,23 @@ import com.management.cmdb.inventory.service.dto.ItemDto;
 import com.management.cmdb.inventory.service.dto.ItemTypeDto;
 import com.management.cmdb.inventory.service.dto.wrapper.PaginatedResponseDto;
 import com.management.cmdb.inventory.service.entity.ItemEntity;
+import org.mapstruct.Mapper;
+import org.mapstruct.factory.Mappers;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ItemMapper {
+@Mapper
+public interface ItemMapper {
 
+    ItemMapper INSTANCE = Mappers.getMapper(ItemMapper.class);
+
+    ItemDto toDto(ItemEntity entity);
+    ItemEntity toEntity(ItemDto dto);
+    PaginatedResponseDto<ItemDto> toPaginatedDto(Page<ItemEntity> page);
+
+    /*
     public static ItemDto toDto(ItemEntity entity) {
         ItemTypeDto itemTypeDto = null;
         if (entity.getType() != null) {
@@ -52,6 +62,6 @@ public class ItemMapper {
 
     public static PaginatedResponseDto<ItemDto> toPaginatedDto(Page<ItemEntity> page) {
         return PaginatedResponseDto.<ItemDto, ItemEntity>toPaginatedDto(page, ItemMapper::toDto);
-    }
+    }*/
 
 }

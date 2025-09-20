@@ -27,11 +27,14 @@ public enum ItemExample {
                 description,
                 ItemTypeMapper.INSTANCE.toDto(type.itemType),
                 attributes.entrySet().stream().map(entry ->
-                        new AttributeDto(entry.getKey(), entry.getValue(),
-                            LocalDateTime.of(2025, 1, 1, 0, 0),
-                            UserDetail.SYSTEM.uuid(),
-                            UserDetail.SYSTEM.uuid(),
-                            LocalDateTime.of(2025, 1, 1, 0, 0)))
+                        new AttributeDto(
+                                UUID.randomUUID(),
+                                entry.getKey(),
+                                entry.getValue(),
+                                LocalDateTime.of(2025, 1, 1, 0, 0),
+                                UserDetail.SYSTEM.uuid(),
+                                UserDetail.SYSTEM.uuid(),
+                                LocalDateTime.of(2025, 1, 1, 0, 0)))
                         .collect(Collectors.toSet()),
                 fromLinks,
                 toLinks,
@@ -47,6 +50,6 @@ public enum ItemExample {
     }
 
     public ItemEntity toEntity() {
-        return ItemMapper.toEntity(itemDto);
+        return ItemMapper.INSTANCE.toEntity(itemDto);
     }
 }

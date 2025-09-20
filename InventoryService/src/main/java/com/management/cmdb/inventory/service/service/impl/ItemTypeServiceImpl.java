@@ -30,16 +30,13 @@ public class ItemTypeServiceImpl implements ItemTypeService {
 
         if (ObjectUtils.isEmpty(itemTypeDto.label()) || ObjectUtils.isEmpty(itemTypeDto.description())) throw new ItemTypeNotExist();
 
-        LocalDateTime creationDatetime = LocalDateTime.now();
         ItemTypeEntity newEntity = ItemTypeMapper.INSTANCE.toEntity(itemTypeDto);
         newEntity.setUuid(UUID.randomUUID());
         newEntity.setCreatedBy(author.uuid());
-        newEntity.setCreatedDate(creationDatetime);
 
         newEntity.getAttributes().forEach(attribute -> {
             attribute.setUuid(UUID.randomUUID());
             attribute.setCreatedBy(author.uuid());
-            attribute.setCreatedDate(creationDatetime);
         });
 
         newEntity = itemTypeRepository.save(newEntity);
