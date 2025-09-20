@@ -1,0 +1,19 @@
+package com.management.cmdb.inventory.service.dto;
+
+import java.time.LocalDateTime;
+import java.util.Set;
+import java.util.UUID;
+
+public record AttributeTypeDto(
+    String label,
+    String description,
+    String shortDescription,
+    String placeholder,
+    String regex,
+    Set<String>possibleValues,
+
+    LocalDateTime createdDate,
+    UUID createdBy,
+    UUID lastModifiedBy,
+    LocalDateTime lastModifiedDate
+) {}

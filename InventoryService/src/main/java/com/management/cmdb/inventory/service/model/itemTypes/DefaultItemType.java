@@ -2,7 +2,9 @@ package com.management.cmdb.inventory.service.model.itemTypes;
 
 import com.management.cmdb.inventory.service.entity.AttributeTypeEntity;
 import com.management.cmdb.inventory.service.entity.ItemTypeEntity;
+import com.management.cmdb.inventory.service.model.UserDetail;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
 
@@ -12,9 +14,12 @@ public enum DefaultItemType {
 
     public final ItemTypeEntity itemType;
 
-    private DefaultItemType() {
+    DefaultItemType() {
         ItemTypeEntity itemTypeEntity = new ItemTypeEntity();
         itemTypeEntity.setUuid(UUID.randomUUID());
+        itemTypeEntity.setCreatedBy(UserDetail.SYSTEM.uuid());
+        itemTypeEntity.setCreatedDate(LocalDateTime.now());
+
         switch (this.name()) {
             case "BUSINESS_SERVICE":
                 itemTypeEntity.setLabel("Business service");

@@ -1,19 +1,18 @@
 package com.management.cmdb.inventory.service.service;
 
-import com.management.cmdb.inventory.service.entity.ItemEntity;
+import com.management.cmdb.inventory.service.dto.ItemDto;
+import com.management.cmdb.inventory.service.dto.wrapper.PaginatedResponseDto;
 import com.management.cmdb.inventory.service.model.UserDetail;
 
 import java.util.UUID;
-import java.util.stream.Stream;
 
 public interface ItemService {
 
-    ItemEntity createItem (ItemEntity newItem, UserDetail userDetail);
-    ItemEntity updateItem (ItemEntity item, UserDetail userDetail);
-    void deleteItem (ItemEntity item, UserDetail userDetail);
+    ItemDto createItem (ItemDto newItem, UserDetail userDetail);
+    ItemDto updateItem (ItemDto item, UserDetail userDetail);
+    void deleteItem (UUID itemId, UserDetail userDetail);
 
-    ItemEntity findItemById (UUID uuid, UserDetail userDetail);
-    Stream<ItemEntity> findItemByType (String itemTypeLabel, UserDetail userDetail);
-    Stream<ItemEntity> findItemByNameLike (String itemName, UserDetail userDetail);
+    ItemDto findItemById (UUID uuid, UserDetail userDetail);
+    PaginatedResponseDto<ItemDto> searchItemByNameOrType(String itemName, String itemTypeLabel, int page, int pageSize, UserDetail userDetail);
 
 }

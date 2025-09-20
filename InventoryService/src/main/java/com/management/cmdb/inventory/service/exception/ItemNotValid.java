@@ -1,12 +1,12 @@
 package com.management.cmdb.inventory.service.exception;
 
-public class ItemInvalid extends RuntimeException {
+public class ItemNotValid extends RuntimeException {
 
-    public ItemInvalid() {
+    public ItemNotValid() {
         super("Item is invalid");
     }
 
-    public ItemInvalid(String message) {
+    public ItemNotValid(String message) {
         super(message);
     }
 }

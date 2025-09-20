@@ -15,8 +15,11 @@ public class ItemTypeEntity extends Auditable {
     private String label;
     @NotBlank
     private String description;
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private Set<AttributeTypeEntity> attributes = new HashSet<AttributeTypeEntity>();
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    private final Set<AttributeTypeEntity> attributes = new HashSet<>();
+    @OneToMany
+    private final Set<ItemEntity> items = new HashSet<>();
 
     public String getLabel() {
         return label;
@@ -42,7 +45,15 @@ public class ItemTypeEntity extends Auditable {
         return this.attributes.add(attributeTypeEntity);
     }
 
-    public void setAttributes(Set<AttributeTypeEntity> attributes) {
-        this.attributes = attributes;
+    public Set<ItemEntity> getItems() {
+        return items;
+    }
+
+    @Override
+    public String toString() {
+        return "ItemTypeEntity{" +
+                "label='" + label + '\'' +
+                ", description='" + description + '\'' +
+                '}';
     }
 }

@@ -4,9 +4,7 @@ import com.management.cmdb.inventory.service.entity.meta.Auditable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -20,11 +18,13 @@ public class ItemEntity extends Auditable {
     @JoinColumn
     private ItemTypeEntity type;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<LinkEntity> links = new ArrayList<>();
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    private final Set<AttributeEntity> attributes = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.ALL)
-    private Set<AttributeEntity> attributes = new HashSet<>();
+    @ManyToMany(fetch = FetchType.EAGER)
+    private final Set<LinkEntity> fromLinks = new HashSet<>();
+    @ManyToMany(fetch = FetchType.EAGER)
+    private final Set<LinkEntity> toLinks = new HashSet<>();
 
     public String getName() {
         return name;
@@ -50,19 +50,24 @@ public class ItemEntity extends Auditable {
         this.type = type;
     }
 
+    public Set<LinkEntity> getToLinks() {
+        return toLinks;
+    }
+
+    public void addToLinks(Set<LinkEntity> toLinks) {
+        this.toLinks.addAll(toLinks);
+    }
+
+    public Set<LinkEntity> getFromLinks() {
+        return fromLinks;
+    }
+
+    public void addFromLinks(Set<LinkEntity> fromLinks) {
+        this.fromLinks.addAll(fromLinks);
+    }
+
     public Set<AttributeEntity> getAttributes() {
         return attributes;
     }
 
-    public void setAttributes(Set<AttributeEntity> attributes) {
-        this.attributes = attributes;
-    }
-
-    public List<LinkEntity> getLinks() {
-        return links;
-    }
-
-    public void setLinks(List<LinkEntity> links) {
-        this.links = links;
-    }
 }

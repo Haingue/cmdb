@@ -11,9 +11,9 @@ public class LinkEntity extends Auditable {
     @OneToOne
     private LinkTypeEntity linkType;
     @OneToOne(orphanRemoval = true)
-    private ItemEntity to;
-    @OneToOne(orphanRemoval = true)
     private ItemEntity from;
+    @OneToOne(orphanRemoval = true)
+    private ItemEntity to;
     private String  description;
 
     public LinkTypeEntity getLinkType() {

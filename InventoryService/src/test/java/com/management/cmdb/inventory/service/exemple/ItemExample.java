@@ -1,52 +1,52 @@
 package com.management.cmdb.inventory.service.exemple;
 
-import com.management.cmdb.inventory.service.entity.ItemEntity;
-import com.management.cmdb.inventory.service.entity.ItemTypeEntity;
-import com.management.cmdb.inventory.service.entity.LinkEntity;
+import com.management.cmdb.inventory.service.dto.AttributeDto;
+import com.management.cmdb.inventory.service.dto.ItemDto;
+import com.management.cmdb.inventory.service.dto.LinkDto;
+import com.management.cmdb.inventory.service.entity.*;
+import com.management.cmdb.inventory.service.mapper.AttributeMapper;
+import com.management.cmdb.inventory.service.mapper.ItemMapper;
+import com.management.cmdb.inventory.service.mapper.ItemTypeMapper;
+import com.management.cmdb.inventory.service.model.UserDetail;
+import com.management.cmdb.inventory.service.model.itemTypes.DefaultItemType;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public enum ItemExample {
 
-    JETTY01("JETTY 01", "First Jetty server", ItemTypeExample.SERVER);
+    JETTY01("JETTY 01", "First Jetty server", DefaultItemType.HOST, Map.of("hostname", "MYSERVERJETTY01"), Set.of(), Set.of());
 
-    private final String name;
-    private final String description;
-    private final ItemTypeEntity type;
-    private final List<LinkEntity> links;
-    public final UUID uuid;
-    private final LocalDateTime createdDate;
-    private final UUID createdBy;
-    private final UUID lastModifiedBy;
-    private final LocalDateTime lastModifiedDate;
+    public final ItemDto itemDto;
 
-    ItemExample(String name, String description, ItemTypeExample type) {
-        this.name = name;
-        this.description = description;
-        this.type = type.toEntity();
-        this.links = new ArrayList<>();
+    ItemExample(String name, String description, DefaultItemType type, Map<String, String> attributes, Set<LinkDto> fromLinks, Set<LinkDto> toLinks) {
+        this.itemDto = new ItemDto(
+                UUID.randomUUID(),
+                name,
+                description,
+                ItemTypeMapper.INSTANCE.toDto(type.itemType),
+                attributes.entrySet().stream().map(entry ->
+                        new AttributeDto(entry.getKey(), entry.getValue(),
+                            LocalDateTime.of(2025, 1, 1, 0, 0),
+                            UserDetail.SYSTEM.uuid(),
+                            UserDetail.SYSTEM.uuid(),
+                            LocalDateTime.of(2025, 1, 1, 0, 0)))
+                        .collect(Collectors.toSet()),
+                fromLinks,
+                toLinks,
+                LocalDateTime.of(2025, 1, 1, 0, 0),
+                UserDetail.SYSTEM.uuid(),
+                UserDetail.SYSTEM.uuid(),
+                LocalDateTime.of(2025, 1, 1, 0, 0)
+        );
+    }
 
-        this.uuid = new UUID(20, 0);
-        this.createdDate = LocalDateTime.of(2025, 1, 1, 0, 0);
-        this.createdBy = new UUID(0, 0);
-        this.lastModifiedDate = LocalDateTime.of(2025, 2, 1, 0, 0);
-        this.lastModifiedBy = new UUID(0, 0);
+    public ItemDto toDto () {
+        return itemDto;
     }
 
     public ItemEntity toEntity() {
-        ItemEntity itemEntity = new ItemEntity();
-        itemEntity.setName(name);
-        itemEntity.setDescription(description);
-        itemEntity.setType(type);
-        itemEntity.setLinks(links);
-        itemEntity.setUuid(uuid);
-        itemEntity.setCreatedDate(createdDate);
-        itemEntity.setCreatedBy(createdBy);
-        itemEntity.setLastModifiedDate(lastModifiedDate);
-        itemEntity.setLastModifiedBy(lastModifiedBy);
-        return itemEntity;
+        return ItemMapper.toEntity(itemDto);
     }
 }
