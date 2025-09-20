@@ -1,0 +1,14 @@
+{
+  "servers": {
+    "item-mcp-server": {
+      "url": "http://localhost:8080/mcp/sse",
+      "headers": {
+        "Authorization": "Basic test",
+        "Accept": "text/event-stream",
+        "MCP-Version": "2024-11-05"
+      },
+      "type": "http"
+    }
+  },
+  "inputs": []
+}

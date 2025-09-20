@@ -39,7 +39,7 @@ public class ExceptionAdvice {
             HttpServerErrorException.class,
             Exception.class,
     })
-    public ResponseEntity<Object> handleGlobalException(RuntimeException ex, WebRequest request) {
+    public ResponseEntity<ProblemDetail> handleGlobalException(RuntimeException ex, WebRequest request) {
         return ResponseEntity.internalServerError().body(
                 ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage())
         );
