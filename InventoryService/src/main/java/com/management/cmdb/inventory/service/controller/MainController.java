@@ -1,21 +1,23 @@
 package com.management.cmdb.inventory.service.controller;
 
 import jakarta.annotation.Resource;
-import org.springdoc.core.properties.SpringDocConfigProperties;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springdoc.core.properties.SwaggerUiConfigProperties;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.reactive.result.view.RedirectView;
+
+import java.io.IOException;
 
 @Controller
 @EnableJpaAuditing
 public class MainController {
 
     @Resource
-    private SpringDocConfigProperties springDocConfigProperties;
+    private SwaggerUiConfigProperties swaggerUiConfigProperties;
 
     @GetMapping
-    public RedirectView loadMainPage() {
-        return new RedirectView(springDocConfigProperties.getApiDocs().getPath());
+    public void loadMainPage(HttpServletResponse response) throws IOException {
+        response.sendRedirect(swaggerUiConfigProperties.getPath());
     }
 }

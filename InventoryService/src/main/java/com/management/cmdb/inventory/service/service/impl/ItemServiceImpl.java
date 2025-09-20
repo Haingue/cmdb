@@ -1,21 +1,24 @@
 package com.management.cmdb.inventory.service.service.impl;
 
+import com.management.cmdb.inventory.service.dto.ItemDto;
+import com.management.cmdb.inventory.service.dto.wrapper.PaginatedResponseDto;
 import com.management.cmdb.inventory.service.entity.ItemEntity;
 import com.management.cmdb.inventory.service.entity.ItemTypeEntity;
 import com.management.cmdb.inventory.service.exception.ItemExist;
 import com.management.cmdb.inventory.service.exception.ItemInvalid;
 import com.management.cmdb.inventory.service.exception.ItemTypeNotExist;
+import com.management.cmdb.inventory.service.mapper.ItemMapper;
 import com.management.cmdb.inventory.service.model.UserDetail;
 import com.management.cmdb.inventory.service.repository.ItemRepository;
 import com.management.cmdb.inventory.service.repository.ItemTypeRepository;
 import com.management.cmdb.inventory.service.service.ItemService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Stream;
 
 @Service
 public class ItemServiceImpl implements ItemService {
@@ -31,58 +34,59 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemEntity createItem(ItemEntity newItem, UserDetail userDetail) {
+    public ItemDto createItem(ItemDto newItemDto, UserDetail userDetail) {
         // TODO check user details
 
-        if (newItem == null || newItem.getName() == null || newItem.getDescription() == null) {
+        if (newItemDto == null || newItemDto.name() == null || newItemDto.description() == null) {
             throw new ItemInvalid();
         }
-        if (this.itemRepository.existsByNameAndType(newItem.getName(), newItem.getType())) {
+        if (this.itemRepository.existsByNameAndTypeLabel(newItemDto.name(), newItemDto.type().label())) {
             throw new ItemExist();
         }
 
-        ItemTypeEntity itemTypeEntity = this.itemTypeRepository.findFirstByLabel(newItem.getType().getLabel())
+        ItemTypeEntity itemTypeEntity = this.itemTypeRepository.findFirstByLabel(newItemDto.type().label())
                 .orElseThrow(ItemTypeNotExist::new);
 
-        ItemEntity itemEntity = new ItemEntity();
+        ItemEntity itemEntity = ItemMapper.toEntity(newItemDto);
         itemEntity.setUuid(UUID.randomUUID());
-        itemEntity.setName(newItem.getName());
-        itemEntity.setDescription(newItem.getDescription());
         itemEntity.setType(itemTypeEntity);
-        itemEntity.setLinks(newItem.getLinks()); // TODO check and persist links
-        return this.itemRepository.save(itemEntity);
+        itemEntity = this.itemRepository.save(itemEntity);
+        return ItemMapper.toDto(itemEntity);
     }
 
     @Override
-    public ItemEntity updateItem(ItemEntity item, UserDetail userDetail) {
-        ItemEntity existingItem = this.itemRepository.findById(item.getUuid())
+    public ItemDto updateItem(ItemDto itemDto, UserDetail userDetail) {
+        ItemEntity existingItem = this.itemRepository.findById(itemDto.uuid())
                 .orElseThrow(ItemTypeNotExist::new);
-        existingItem.setName(item.getName());
-        existingItem.setDescription(item.getDescription());
-        existingItem.setLinks(item.getLinks());
-        return this.itemRepository.save(existingItem);
+        existingItem.setName(itemDto.name());
+        existingItem.setDescription(itemDto.description());
+        // TODO: existingItem.addToLinks(itemDto.toLinks());
+        // TODO: existingItem.addFromLinks(itemDto.fromLinks());
+        existingItem = this.itemRepository.save(existingItem);
+        return ItemMapper.toDto(existingItem);
     }
 
     @Override
-    public void deleteItem(ItemEntity item, UserDetail userDetail) {
-        ItemEntity existingItem = this.itemRepository.findById(item.getUuid())
+    public void deleteItem(UUID itemId, UserDetail userDetail) {
+        ItemEntity existingItem = this.itemRepository.findById(itemId)
                 .orElseThrow(ItemTypeNotExist::new);
         this.itemRepository.delete(existingItem);
     }
 
     @Override
-    public ItemEntity findItemById(UUID uuid, UserDetail userDetail) {
+    public ItemDto findItemById(UUID uuid, UserDetail userDetail) {
         return this.itemRepository.findById(uuid)
+                .map(ItemMapper::toDto)
                 .orElseThrow(ItemTypeNotExist::new);
     }
 
     @Override
-    public Stream<ItemEntity> findItemByType(String itemTypeLabel, UserDetail userDetail) {
-        return Stream.empty();
-    }
-
-    @Override
-    public Stream<ItemEntity> findItemByNameLike(String itemName, UserDetail userDetail) {
-        return Stream.empty();
+    public PaginatedResponseDto<ItemDto> searchItemByNameOrType(String itemName, String itemTypeLabel, int page, int pageSize, UserDetail userDetail) {
+        // TODO check user details
+        Page<ItemEntity> result = this.itemRepository.searchAllByNameContainingIgnoreCaseOrTypeLabel(
+                itemName,
+                itemTypeLabel,
+                PageRequest.of(page, pageSize));
+        return ItemMapper.toPaginatedDto(result);
     }
 }

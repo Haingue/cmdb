@@ -77,4 +77,15 @@ public class Auditable {
     public int hashCode() {
         return Objects.hashCode(uuid);
     }
+
+    @Override
+    public String toString() {
+        return "Auditable{" +
+                "uuid=" + uuid +
+                ", createdDate=" + createdDate +
+                ", createdBy=" + createdBy +
+                ", lastModifiedBy=" + lastModifiedBy +
+                ", lastModifiedDate=" + lastModifiedDate +
+                '}';
+    }
 }
