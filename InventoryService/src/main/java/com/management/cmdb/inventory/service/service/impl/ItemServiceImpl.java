@@ -1,11 +1,13 @@
 package com.management.cmdb.inventory.service.service.impl;
 
+import com.management.cmdb.inventory.service.dto.AuthorDto;
 import com.management.cmdb.inventory.service.dto.ItemDto;
+import com.management.cmdb.inventory.service.dto.NotificationDto;
 import com.management.cmdb.inventory.service.dto.wrapper.PaginatedResponseDto;
 import com.management.cmdb.inventory.service.entity.ItemEntity;
 import com.management.cmdb.inventory.service.entity.ItemTypeEntity;
 import com.management.cmdb.inventory.service.exception.ItemExist;
-import com.management.cmdb.inventory.service.exception.ItemInvalid;
+import com.management.cmdb.inventory.service.exception.ItemNotValid;
 import com.management.cmdb.inventory.service.exception.ItemTypeNotExist;
 import com.management.cmdb.inventory.service.mapper.ItemMapper;
 import com.management.cmdb.inventory.service.model.UserDetail;
@@ -14,6 +16,7 @@ import com.management.cmdb.inventory.service.repository.ItemTypeRepository;
 import com.management.cmdb.inventory.service.service.ItemService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -25,10 +28,12 @@ public class ItemServiceImpl implements ItemService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ItemServiceImpl.class);
 
+    private final ApplicationEventPublisher applicationEventPublisher;
     private final ItemRepository itemRepository;
     private final ItemTypeRepository itemTypeRepository;
 
-    public ItemServiceImpl(ItemRepository itemRepository, ItemTypeRepository itemTypeRepository) {
+    public ItemServiceImpl(ApplicationEventPublisher applicationEventPublisher, ItemRepository itemRepository, ItemTypeRepository itemTypeRepository) {
+        this.applicationEventPublisher = applicationEventPublisher;
         this.itemRepository = itemRepository;
         this.itemTypeRepository = itemTypeRepository;
     }
@@ -38,7 +43,7 @@ public class ItemServiceImpl implements ItemService {
         // TODO check user details
 
         if (newItemDto == null || newItemDto.name() == null || newItemDto.description() == null) {
-            throw new ItemInvalid();
+            throw new ItemNotValid();
         }
         if (this.itemRepository.existsByNameAndTypeLabel(newItemDto.name(), newItemDto.type().label())) {
             throw new ItemExist();
@@ -51,7 +56,19 @@ public class ItemServiceImpl implements ItemService {
         itemEntity.setUuid(UUID.randomUUID());
         itemEntity.setType(itemTypeEntity);
         itemEntity = this.itemRepository.save(itemEntity);
-        return ItemMapper.toDto(itemEntity);
+
+        ItemDto resultItem = ItemMapper.toDto(itemEntity);
+        // Send event
+        applicationEventPublisher.publishEvent(
+                new NotificationDto(
+                        new AuthorDto(userDetail.email()),
+                        NotificationDto.NotificationType.NEW_ITEM,
+                        "Create new item",
+                        resultItem.uuid()
+                )
+        );
+
+        return resultItem;
     }
 
     @Override

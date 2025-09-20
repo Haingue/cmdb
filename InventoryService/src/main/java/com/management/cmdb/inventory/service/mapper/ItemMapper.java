@@ -51,17 +51,7 @@ public class ItemMapper {
     }
 
     public static PaginatedResponseDto<ItemDto> toPaginatedDto(Page<ItemEntity> page) {
-        List<ItemDto> content = page.getContent().stream()
-                .map(ItemMapper::toDto)
-                .toList();
-        return new PaginatedResponseDto<ItemDto>(
-                content,
-                page.getNumber(),
-                page.getSize(),
-                page.getTotalElements(),
-                page.getTotalPages(),
-                page.isLast()
-        );
+        return PaginatedResponseDto.<ItemDto, ItemEntity>toPaginatedDto(page, ItemMapper::toDto);
     }
 
 }
