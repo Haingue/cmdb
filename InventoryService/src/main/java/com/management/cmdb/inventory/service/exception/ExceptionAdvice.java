@@ -9,9 +9,22 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.context.request.WebRequest;
 
+import java.time.Instant;
+import java.util.Map;
+import java.util.UUID;
+
 // Used to change exception result, return a standardized ProblemDetail (RFC 7807 standard)
 @RestControllerAdvice
 public class ExceptionAdvice {
+
+    private static ProblemDetail generateProblemDetail(HttpStatus httpStatus, RuntimeException ex) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(httpStatus, ex.getMessage());
+        problemDetail.setProperties(Map.of(
+                "timestamp", Instant.now().toString(),
+                "uuid", UUID.randomUUID().toString()
+        ));
+        return problemDetail;
+    }
 
     /** Catch business exception from client **/
     @ExceptionHandler({
@@ -19,9 +32,7 @@ public class ExceptionAdvice {
             HttpClientErrorException.class,
     })
     public ResponseEntity<Object> handleClientException(RuntimeException ex, WebRequest request) {
-        return ResponseEntity.badRequest().body(
-                ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage())
-        );
+        return ResponseEntity.badRequest().body(generateProblemDetail(HttpStatus.BAD_REQUEST, ex));
     }
 
     /** Catch security exception **/
@@ -30,8 +41,7 @@ public class ExceptionAdvice {
     })
     public ResponseEntity<Object> handleSecurityException(RuntimeException ex, WebRequest request) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, ex.getMessage())
-        );
+                .body(generateProblemDetail(HttpStatus.UNAUTHORIZED, ex));
     }
 
     /** Catch all unmanaged exception from server **/
@@ -40,9 +50,8 @@ public class ExceptionAdvice {
             Exception.class,
     })
     public ResponseEntity<ProblemDetail> handleGlobalException(RuntimeException ex, WebRequest request) {
-        return ResponseEntity.internalServerError().body(
-                ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage())
-        );
+        return ResponseEntity.internalServerError()
+                .body(generateProblemDetail(HttpStatus.INTERNAL_SERVER_ERROR, ex));
     }
 
 }

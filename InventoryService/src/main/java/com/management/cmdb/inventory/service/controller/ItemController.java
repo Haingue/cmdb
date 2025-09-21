@@ -38,7 +38,7 @@ public class ItemController {
             @RequestParam(name = "page", defaultValue = "0", required = false) int page,
             @RequestParam(name = "pageSize", defaultValue = "10", required = false) int pageSize
             ) {
-        LOGGER.info("Get items [itemName={}, itemType={}]", itemName, itemType);
+        LOGGER.info("Get items [itemName={}, attributeType={}]", itemName, itemType);
         return ResponseEntity.ok(itemService.searchItemByNameOrType(itemName, itemType, page, pageSize, UserDetail.UNKNOWN));
     }
 

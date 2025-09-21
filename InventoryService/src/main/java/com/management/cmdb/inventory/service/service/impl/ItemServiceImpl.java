@@ -4,6 +4,8 @@ import com.management.cmdb.inventory.service.dto.AuthorDto;
 import com.management.cmdb.inventory.service.dto.ItemDto;
 import com.management.cmdb.inventory.service.dto.NotificationDto;
 import com.management.cmdb.inventory.service.dto.wrapper.PaginatedResponseDto;
+import com.management.cmdb.inventory.service.entity.AttributeEntity;
+import com.management.cmdb.inventory.service.entity.AttributeTypeEntity;
 import com.management.cmdb.inventory.service.entity.ItemEntity;
 import com.management.cmdb.inventory.service.entity.ItemTypeEntity;
 import com.management.cmdb.inventory.service.exception.ItemExist;
@@ -60,10 +62,16 @@ public class ItemServiceImpl implements ItemService {
         itemEntity.setUuid(UUID.randomUUID());
         itemEntity.setType(itemTypeEntity);
 
-        itemEntity.getAttributes().forEach(attribute -> {
+        for (AttributeEntity attribute : itemEntity.getAttributes()) {
             attribute.setUuid(UUID.randomUUID());
+            attribute.setItem(itemEntity);
             attribute.setCreatedBy(author.uuid());
-        });
+
+            AttributeTypeEntity attributeType = itemTypeEntity.getAttributes().stream()
+                    .filter(attributeTypeRef -> attributeTypeRef.getLabel().equals(attribute.getAttributeType().getLabel()))
+                    .findFirst().orElseThrow(ItemNotValid::new);
+            attribute.setAttributeType(attributeType);
+        }
 
         itemEntity = this.itemRepository.save(itemEntity);
         ItemDto resultItem = ItemMapper.INSTANCE.toDto(itemEntity);
@@ -109,7 +117,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    @Tool(description = "Tool to retrieve all item wich contained this item name, if you want all items put '' and the result is paginated so the page number start at 0")
+    @Tool(description = "Tool to retrieve all item wich contained this item label, if you want all items put '' and the result is paginated so the page number start at 0")
     public PaginatedResponseDto<ItemDto> searchItemByNameOrType(String itemName, String itemTypeLabel, int page, int pageSize, UserDetail userDetail) {
         // TODO check user details
         if (ObjectUtils.isEmpty(itemName)) itemName = "";
@@ -117,6 +125,6 @@ public class ItemServiceImpl implements ItemService {
                 itemName,
                 itemTypeLabel,
                 PageRequest.of(page, pageSize));
-        return ItemMapper.INSTANCE.toPaginatedDto(result);
+        return PaginatedResponseDto.<ItemDto, ItemEntity>toPaginatedDto(result, ItemMapper.INSTANCE::toDto);
     }
 }

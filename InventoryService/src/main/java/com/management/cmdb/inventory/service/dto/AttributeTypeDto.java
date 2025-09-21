@@ -5,6 +5,7 @@ import java.util.Set;
 import java.util.UUID;
 
 public record AttributeTypeDto(
+    UUID uuid,
     String label,
     String description,
     String shortDescription,

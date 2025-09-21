@@ -5,7 +5,8 @@ import java.util.UUID;
 
 public record AttributeDto(
     UUID uuid,
-    String name,
+    String label,
+    UUID attributeTypeId,
     String value,
 
     LocalDateTime createdDate,

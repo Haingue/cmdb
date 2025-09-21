@@ -57,8 +57,8 @@ public class ItemTypeServiceImpl implements ItemTypeService {
     @Override
     @Tool(description = "Search all all item type which contains the label, the result will be paginated so the page number start at 0")
     public PaginatedResponseDto<ItemTypeDto> search(String label, int page, int size) {
-        return ItemTypeMapper.INSTANCE.toDto(
-                itemTypeRepository.searchAllByLabelContainingIgnoreCase(label, PageRequest.of(page, size))
-        );
+        return PaginatedResponseDto.<ItemTypeDto, ItemTypeEntity>toPaginatedDto(
+                itemTypeRepository.searchAllByLabelContainingIgnoreCase(label, PageRequest.of(page, size)),
+                ItemTypeMapper.INSTANCE::toDto);
     }
 }

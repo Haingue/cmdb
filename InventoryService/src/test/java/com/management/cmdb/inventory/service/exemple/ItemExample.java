@@ -30,6 +30,11 @@ public enum ItemExample {
                         new AttributeDto(
                                 UUID.randomUUID(),
                                 entry.getKey(),
+                                type.itemType.getAttributes().stream()
+                                        .filter(attributeType -> attributeType.getLabel().equals(entry.getKey()))
+                                        .findFirst()
+                                        .get()
+                                        .getUuid(),
                                 entry.getValue(),
                                 LocalDateTime.of(2025, 1, 1, 0, 0),
                                 UserDetail.SYSTEM.uuid(),

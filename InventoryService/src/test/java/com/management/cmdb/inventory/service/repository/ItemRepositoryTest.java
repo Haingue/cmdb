@@ -32,7 +32,7 @@ class ItemRepositoryTest {
         item = repository.save(item);
         assertNotNull(item);
         assertNotNull(item.getUuid(), "Item uuid is null");
-        assertEquals("test", item.getName(), "the name is wrong");
+        assertEquals("test", item.getName(), "the label is wrong");
         assertNotNull(item.getCreatedDate(), "The creation date is null");
         assertNotNull(item.getCreatedBy(), "The creator is null");
     }
