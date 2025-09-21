@@ -86,7 +86,7 @@ public enum DefaultItemType {
                 itemTypeEntity.addAttribute(new AttributeTypeEntity("vlan"));
                 break;
             default:
-                throw new RuntimeException("Invalid item name");
+                throw new RuntimeException("Invalid item label");
         }
         this.itemType = itemTypeEntity;
     }

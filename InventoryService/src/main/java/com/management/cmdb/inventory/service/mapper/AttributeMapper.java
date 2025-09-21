@@ -3,14 +3,24 @@ package com.management.cmdb.inventory.service.mapper;
 import com.management.cmdb.inventory.service.dto.AttributeDto;
 import com.management.cmdb.inventory.service.entity.AttributeEntity;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
-@Mapper
+@Mapper(uses = ItemTypeMapper.class)
 public interface AttributeMapper {
 
     AttributeMapper INSTANCE = Mappers.getMapper(AttributeMapper.class);
 
-    AttributeEntity toEntity (AttributeDto dto);
+    @Mapping(target = "uuid", source = "uuid")
+    @Mapping(target = "attributeTypeId", source = "attributeType.uuid")
+    @Mapping(target = "label", source = "attributeType.label")
+    @Mapping(target = "value", source = "valueStr")
     AttributeDto toDto (AttributeEntity entity);
+
+    @Mapping(target = "uuid", source = "uuid")
+    @Mapping(target = "attributeType.uuid", source = "attributeTypeId")
+    @Mapping(target = "attributeType.label", source = "label")
+    @Mapping(target = "valueStr", source = "value")
+    AttributeEntity toEntity (AttributeDto dto);
 
 }

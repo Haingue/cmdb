@@ -28,4 +28,19 @@ public class AttributeEntity extends Auditable {
         this.attributeType = type;
     }
 
+    public ItemEntity getItem() {
+        return item;
+    }
+
+    public void setItem(ItemEntity item) {
+        this.item = item;
+    }
+
+    public String getValueStr() {
+        return valueStr;
+    }
+
+    public void setValueStr(String valueStr) {
+        this.valueStr = valueStr;
+    }
 }

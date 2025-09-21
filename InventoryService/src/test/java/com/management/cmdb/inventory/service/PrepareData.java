@@ -35,7 +35,8 @@ public class PrepareData implements ApplicationRunner {
         LOGGER.info("App version: {}", env.getProperty("spring.application.version"));
         LOGGER.info("Application started");
 
-        Arrays.stream(ItemExample.values()).map(ItemExample::toEntity)
+        Arrays.stream(ItemExample.values())
+                .map(ItemExample::toEntity)
                 .forEach(itemRepository::save);
     }
 }

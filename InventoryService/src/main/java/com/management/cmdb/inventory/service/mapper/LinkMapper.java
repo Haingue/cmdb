@@ -2,16 +2,14 @@ package com.management.cmdb.inventory.service.mapper;
 
 import com.management.cmdb.inventory.service.dto.LinkDto;
 import com.management.cmdb.inventory.service.entity.LinkEntity;
+import org.mapstruct.Mapper;
+import org.mapstruct.factory.Mappers;
 
-public class LinkMapper {
+@Mapper(uses = LinkTypeMapper.class)
+public interface LinkMapper {
 
-    public static LinkDto toDto(LinkEntity linkEntity) {
-        return new LinkDto(
-                LinkTypeMapper.toDto(linkEntity.getLinkType()),
-                linkEntity.getFrom().getUuid(),
-                ItemMapper.toDto(linkEntity.getTo()),
-                linkEntity.getDescription()
-        );
-    }
+    LinkMapper INSTANCE = Mappers.getMapper(LinkMapper.class);
 
+    LinkDto toDto(LinkEntity linkEntity);
+    LinkEntity toEntity(LinkDto linkDto);
 }

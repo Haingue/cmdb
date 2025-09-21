@@ -4,7 +4,9 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 public record AttributeDto(
-    String name,
+    UUID uuid,
+    String label,
+    UUID attributeTypeId,
     String value,
 
     LocalDateTime createdDate,

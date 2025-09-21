@@ -30,10 +30,7 @@ public class NotificationController {
         LOGGER.info("Subscribing to global notifications");
         return Flux.create(sink -> {
             sink.next(ServerSentEvent.<NotificationDto>builder().event("item").build());
-            Disposable subscription = notificationService.itemNotificationSink.asFlux()
-                    .doOnNext(notificationDto -> {
-                        LOGGER.debug("Received notificationDto: {}", notificationDto);
-                    })
+            Disposable subscription = notificationService.getItemNotificationSink().asFlux()
                     .subscribe(sink::next);
             sink.onCancel(subscription);
         });
