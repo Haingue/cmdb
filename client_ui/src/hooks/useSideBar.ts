@@ -18,8 +18,6 @@ export default function useSideBar(): useSideBarReturn {
   const toggleSideBarVisibility: EventHandler<MouseEvent> = () => {
     if (width < 1024) {
       dispatch(toggleSidebar())
-    } else {
-      dispatch(expandSidebar())
     }
   }
 
