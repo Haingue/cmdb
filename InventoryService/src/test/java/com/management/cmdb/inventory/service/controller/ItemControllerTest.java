@@ -1,6 +1,7 @@
 package com.management.cmdb.inventory.service.controller;
 
 import com.management.cmdb.inventory.service.dto.ItemDto;
+import com.management.cmdb.inventory.service.entity.AttributeEntity;
 import com.management.cmdb.inventory.service.entity.ItemEntity;
 import com.management.cmdb.inventory.service.exemple.ItemExample;
 import com.management.cmdb.inventory.service.mapper.ItemMapper;
@@ -49,6 +50,10 @@ class ItemControllerTest {
         Assertions.assertTrue(example.isPresent());
         Assertions.assertEquals(newItem.name(), example.get().getName());
         Assertions.assertEquals(newItem.description(), example.get().getDescription());
+        Optional<AttributeEntity> firstAttribute = example.get().getAttributes().stream().findFirst();
+        Assertions.assertNotNull(firstAttribute);
+        Assertions.assertTrue(firstAttribute.isPresent());
+        Assertions.assertNotNull(firstAttribute.get().getValueStr());
     }
 
     @Test
