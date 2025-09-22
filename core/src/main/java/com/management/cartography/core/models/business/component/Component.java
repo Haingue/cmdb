@@ -1,8 +1,6 @@
 package com.management.cartography.core.models.business.component;
 
-import com.management.cartography.core.models.business.constants.ActiveDirectoryDomainName;
 import com.management.cartography.core.models.business.constants.ComponentType;
-import com.management.cartography.core.models.business.constants.NetworkArea;
 import com.management.cartography.core.models.business.technology.Technology;
 import com.management.cartography.core.models.business.technology.Version;
 

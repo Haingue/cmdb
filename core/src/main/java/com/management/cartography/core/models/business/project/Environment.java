@@ -1,16 +1,13 @@
 package com.management.cartography.core.models.business.project;
 
 import com.management.cartography.core.models.business.component.Component;
-import com.management.cartography.core.models.business.constants.ActiveDirectoryDomainName;
 import com.management.cartography.core.models.business.constants.EnvironmentStatus;
 import com.management.cartography.core.models.business.constants.EnvironmentType;
-import com.management.cartography.core.models.business.constants.NetworkArea;
 import com.management.cartography.core.models.technical.Entity;
 
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class Environment extends Entity {
