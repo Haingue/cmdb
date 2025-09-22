@@ -1,4 +1,4 @@
-package com.management.cartography.core.ports.inputs;
+package com.management.cartography.core.ports.inputs.search;
 
 import com.management.cartography.core.models.business.component.Component;
 import com.management.cartography.core.models.business.constants.TechnologyType;
@@ -16,14 +16,14 @@ public interface EntitySearch {
 
     Project findOneProjectByShortName(String shortName);
 
-    Set<Environment> findEnvironmentByProjectShortName(String projectShortName);
+    Set<Environment> searchEnvironmentByProjectShortName(String projectShortName);
     Environment findOneEnvironment(UUID id);
 
-    Set<Component> findComponentByProjectShortName(String projectShortName);
+    Set<Component> searchComponentByProjectShortName(String projectShortName);
     Component findOneComponent(UUID uuid);
 
     Technology findOneTechnology(String name);
-    Set<Technology> findTechnologyByType(TechnologyType type);
-    Set<Technology> findTechnologyByProgrammingLanguage(String language);
+    Set<Technology> searchTechnologyByType(TechnologyType type);
+    Set<Technology> searchTechnologyByProgrammingLanguage(String language);
 
 }
