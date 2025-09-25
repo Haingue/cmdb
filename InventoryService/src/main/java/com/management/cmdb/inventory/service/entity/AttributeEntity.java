@@ -43,4 +43,15 @@ public class AttributeEntity extends Auditable {
     public void setValueStr(String valueStr) {
         this.valueStr = valueStr;
     }
+
+    @Override
+    public String toString() {
+        return "AttributeEntity{" +
+                "item=" + item.getName() +
+                ", attributeType=" + attributeType.getLabel() +
+                ", valueStr='" + valueStr + '\'' +
+                ", createdDate=" + createdDate +
+                ", createdBy=" + createdBy +
+                '}';
+    }
 }

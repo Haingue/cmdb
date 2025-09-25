@@ -8,6 +8,7 @@ import com.management.cartography.core.models.business.technology.Version;
 
 import java.net.InetAddress;
 import java.time.DayOfWeek;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -27,7 +28,7 @@ public class Host extends Component {
 
     private Set<Host> communicatesWith;
 
-    public Host(UUID uuid, String name, String description, ComponentType type, Version version, String certificate, Technology operatingSystem, String hostname, String dns, String macAddress, InetAddress ipAddress, String vlan, DayOfWeek patchingDay, ActiveDirectoryDomainName domain, NetworkArea networkArea, Set<Host> communicatesWith) {
+    public Host(UUID uuid, String name, String description, ComponentType type, Version version, String certificate, Technology operatingSystem, String hostname, String dns, String macAddress, InetAddress ipAddress, String vlan, DayOfWeek patchingDay, ActiveDirectoryDomainName domain, NetworkArea networkArea) {
         super(uuid, name, description, type, version, certificate, operatingSystem);
         this.hostname = hostname;
         this.dns = dns;
@@ -37,7 +38,7 @@ public class Host extends Component {
         this.ipAddress = ipAddress;
         this.vlan = vlan;
         this.patchingDay = patchingDay;
-        this.communicatesWith = communicatesWith;
+        this.communicatesWith = new HashSet<>();
     }
 
     public String getHostname() {

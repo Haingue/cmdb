@@ -75,4 +75,18 @@ public class AttributeTypeEntity extends Auditable {
     public void setPossibleValues(Set<String> possibleValues) {
         this.possibleValues = possibleValues;
     }
+
+    @Override
+    public String toString() {
+        return "AttributeTypeEntity{" +
+                "uuid='" + getUuid() + '\'' +
+                ", label='" + label + '\'' +
+                ", description='" + description + '\'' +
+                ", shortDescription='" + shortDescription + '\'' +
+                ", placeholder='" + placeholder + '\'' +
+                ", regex='" + regex + '\'' +
+                ", createdDate=" + createdDate +
+                ", createdBy=" + createdBy +
+                '}';
+    }
 }

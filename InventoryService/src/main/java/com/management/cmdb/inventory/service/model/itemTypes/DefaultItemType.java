@@ -10,7 +10,8 @@ import java.util.UUID;
 
 public enum DefaultItemType {
 
-    BUSINESS_SERVICE(), PROJECT(), ENVIRONMENT(), MAINTAINER(), COMPONENT(), HOST();
+    //BUSINESS_SERVICE(), PROJECT(), ENVIRONMENT(), MAINTAINER(), COMPONENT(),
+    HOST();
 
     public final ItemTypeEntity itemType;
 

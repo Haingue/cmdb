@@ -34,7 +34,7 @@ public class SimpleModelTest {
 
 
     public SimpleModelTest() throws UnknownHostException {
-        project = Project.create("Project Number 1", "Project1", "Description of Project1", new BusinessService("Business 1", "B1"), new UserGroup("P1_Maintainers", "", Set.of()), new UserGroup("P1_Owners", "", Set.of()));
+        project = Project.create("Project Number 1", "Project1", "Description of Project1", new BusinessService("Business 1", "B1"), new UserGroup("P1_Maintainers", "", null, null, Set.of()), new UserGroup("P1_Owners", "", null, null, Set.of()));
         env1 = Environment.create("Environment 1", EnvironmentType.TEST, "key-001");
         project.addEnvironment(env1);
 

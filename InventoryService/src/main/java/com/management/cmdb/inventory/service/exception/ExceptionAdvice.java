@@ -1,5 +1,7 @@
 package com.management.cmdb.inventory.service.exception;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
@@ -17,12 +19,15 @@ import java.util.UUID;
 @RestControllerAdvice
 public class ExceptionAdvice {
 
-    private static ProblemDetail generateProblemDetail(HttpStatus httpStatus, RuntimeException ex) {
+    private static final Logger lOGGER = LoggerFactory.getLogger(ExceptionAdvice.class);
+
+    private static ProblemDetail generateProblemDetail(HttpStatus httpStatus, Exception ex) {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(httpStatus, ex.getMessage());
         problemDetail.setProperties(Map.of(
                 "timestamp", Instant.now().toString(),
                 "uuid", UUID.randomUUID().toString()
         ));
+        lOGGER.error("Exception caught: {}", problemDetail);
         return problemDetail;
     }
 
@@ -31,7 +36,7 @@ public class ExceptionAdvice {
             BadRequestException.class,
             HttpClientErrorException.class,
     })
-    public ResponseEntity<Object> handleClientException(RuntimeException ex, WebRequest request) {
+    public ResponseEntity<ProblemDetail> handleClientException(RuntimeException ex) {
         return ResponseEntity.badRequest().body(generateProblemDetail(HttpStatus.BAD_REQUEST, ex));
     }
 
@@ -39,7 +44,7 @@ public class ExceptionAdvice {
     @ExceptionHandler({
             HttpClientErrorException.Unauthorized.class,
     })
-    public ResponseEntity<Object> handleSecurityException(RuntimeException ex, WebRequest request) {
+    public ResponseEntity<ProblemDetail> handleSecurityException(RuntimeException ex) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(generateProblemDetail(HttpStatus.UNAUTHORIZED, ex));
     }
@@ -49,7 +54,7 @@ public class ExceptionAdvice {
             HttpServerErrorException.class,
             Exception.class,
     })
-    public ResponseEntity<ProblemDetail> handleGlobalException(RuntimeException ex, WebRequest request) {
+    public ResponseEntity<ProblemDetail> handleGlobalException(Exception ex) {
         return ResponseEntity.internalServerError()
                 .body(generateProblemDetail(HttpStatus.INTERNAL_SERVER_ERROR, ex));
     }
