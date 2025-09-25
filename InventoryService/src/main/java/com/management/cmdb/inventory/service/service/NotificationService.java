@@ -1,13 +1,10 @@
 package com.management.cmdb.inventory.service.service;
 
-import com.management.cmdb.inventory.service.dto.ItemDto;
 import com.management.cmdb.inventory.service.dto.NotificationDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;
 import org.springframework.http.codec.ServerSentEvent;
-import org.springframework.modulith.events.ApplicationModuleListener;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Sinks;
 

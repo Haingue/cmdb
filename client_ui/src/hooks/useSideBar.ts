@@ -1,27 +1,30 @@
-import { useState, type EventHandler, type MouseEvent } from "react";
-import useWindowDimensions from "./useWindowDimensions";
+import { type EventHandler, type MouseEvent } from 'react'
+import useWindowDimensions from './useWindowDimensions'
+import { useDispatch, useSelector } from 'react-redux'
+import { collapseSidebar, expandSidebar, toggleSidebar } from '../store/ux.slice'
 
-export default function useSideBar() : [sideBarVisibility:boolean, toggleSideBarVisibility:EventHandler<MouseEvent>, showSideBar: EventHandler<MouseEvent>, hideSideBar: EventHandler<MouseEvent>] {
-  const { width } = useWindowDimensions();
-  const [sideBarVisibility, setSideBarVisibility] = useState<boolean>(false)
+type useSideBarReturn = {
+  sidebarCollapsed: boolean
+  toggleSideBarVisibility: EventHandler<MouseEvent>
+  collapseSidebar: EventHandler<MouseEvent>
+  expandSidebar: EventHandler<MouseEvent>
+}
+
+export default function useSideBar(): useSideBarReturn {
+  const dispatch = useDispatch()
+  const sidebarCollapsed = useSelector((state) => state.ux.sidebarCollapsed)
+  const { width } = useWindowDimensions()
 
   const toggleSideBarVisibility: EventHandler<MouseEvent> = () => {
-    console.debug('Toggle sidebar')
     if (width < 1024) {
-      setSideBarVisibility(!sideBarVisibility)
-    } else {
-      setSideBarVisibility(false)
+      dispatch(toggleSidebar())
     }
   }
 
-  const hideSideBar: EventHandler<MouseEvent> = () => {
-    console.debug('Close sidebar')
-    setSideBarVisibility(false)
+  return {
+    sidebarCollapsed,
+    toggleSideBarVisibility,
+    collapseSidebar: () => dispatch(collapseSidebar()),
+    expandSidebar: () => dispatch(expandSidebar()),
   }
-  const showSideBar: EventHandler<MouseEvent> = () => {
-    console.debug('Open sidebar')
-    setSideBarVisibility(true)
-  }
-
-  return [sideBarVisibility, toggleSideBarVisibility, showSideBar, hideSideBar];
 }

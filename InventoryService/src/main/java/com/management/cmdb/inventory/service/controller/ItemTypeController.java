@@ -2,7 +2,6 @@ package com.management.cmdb.inventory.service.controller;
 
 import com.management.cmdb.inventory.service.dto.ItemTypeDto;
 import com.management.cmdb.inventory.service.dto.wrapper.PaginatedResponseDto;
-import com.management.cmdb.inventory.service.mapper.ItemTypeMapper;
 import com.management.cmdb.inventory.service.model.UserDetail;
 import com.management.cmdb.inventory.service.service.ItemTypeService;
 import org.slf4j.Logger;

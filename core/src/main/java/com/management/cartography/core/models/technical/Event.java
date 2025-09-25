@@ -1,7 +1,5 @@
 package com.management.cartography.core.models.technical;
 
-import com.management.cartography.core.models.business.identity.User;
-
 import java.time.Instant;
 import java.util.Objects;
 
