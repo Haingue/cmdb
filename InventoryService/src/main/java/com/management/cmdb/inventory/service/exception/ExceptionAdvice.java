@@ -9,13 +9,12 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
-import org.springframework.web.context.request.WebRequest;
 
 import java.time.Instant;
 import java.util.Map;
 import java.util.UUID;
 
-// Used to change exception result, return a standardized ProblemDetail (RFC 7807 standard)
+// Used toItemId change exception result, return a standardized ProblemDetail (RFC 7807 standard)
 @RestControllerAdvice
 public class ExceptionAdvice {
 

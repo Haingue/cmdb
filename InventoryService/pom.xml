@@ -3,8 +3,8 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.management.cmdb.inventory</groupId>
-    <artifactId>service</artifactId>
+	<groupId>com.management.cmdb.services</groupId>
+    <artifactId>inventory</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>InventoryService</name>
     <description>Web API to manage inventory</description>
@@ -17,6 +17,7 @@
 	<developers>
 		<developer>
             <id>FabienH</id>
+            <name>Fabien Haingue</name>
         </developer>
 	</developers>
 

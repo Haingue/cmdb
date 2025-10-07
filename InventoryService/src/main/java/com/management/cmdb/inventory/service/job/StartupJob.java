@@ -2,7 +2,6 @@ package com.management.cmdb.inventory.service.job;
 
 import com.management.cartography.core.models.business.project.BusinessService;
 import com.management.cartography.core.models.business.project.Project;
-import com.management.cmdb.inventory.service.entity.AttributeEntity;
 import com.management.cmdb.inventory.service.entity.AttributeTypeEntity;
 import com.management.cmdb.inventory.service.entity.ItemTypeEntity;
 import com.management.cmdb.inventory.service.model.UserDetail;
@@ -18,10 +17,11 @@ import org.springframework.stereotype.Component;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Method;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Component
 public class StartupJob implements CommandLineRunner {

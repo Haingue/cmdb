@@ -5,7 +5,7 @@ import java.util.UUID;
 public record LinkDto(
         LinkTypeDto linkType,
         UUID fromItemId,
-        ItemDto to,
+        ItemDto toItemId,
         String  description
 ) {
 }

@@ -25,7 +25,7 @@ public class MainConfiguration {
         return () -> Optional.of(new UUID(0,0));
     }
 
-    /** Use to setup MCP Server tools (AI agent) **/
+    /** Use toItemId setup MCP Server tools (AI agent) **/
     @Bean
     List<ToolCallback> findTools(ItemTypeService itemTypeService, ItemService itemService) {
         return List.of(ToolCallbacks.from(itemTypeService, itemService));

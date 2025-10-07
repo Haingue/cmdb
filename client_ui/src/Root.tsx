@@ -4,6 +4,7 @@ import NotFound from './pages/NotFound'
 import Map from './pages/map/Map'
 import SideBar from './components/navigation/SideBar'
 import NavBar from './components/navigation/NavBar'
+import InventoryService from './pages/InventoryService'
 
 const Root = () => {
   return (
@@ -18,6 +19,7 @@ const Root = () => {
             <Routes>
               <Route path="/" Component={Dashboard} />
               <Route path="/map" Component={Map} />
+              <Route path="/inventory-service" Component={InventoryService} />
               <Route path="*" Component={NotFound} />
             </Routes>
           </main>

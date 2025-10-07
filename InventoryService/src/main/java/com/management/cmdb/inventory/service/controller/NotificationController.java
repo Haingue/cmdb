@@ -26,7 +26,7 @@ public class NotificationController {
 
     @GetMapping(path = "/notification/subscribe", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<ServerSentEvent<NotificationDto>> subscribeToNotifications() {
-        LOGGER.info("Subscribing to global notifications");
+        LOGGER.info("Subscribing toItemId global notifications");
         return Flux.create(sink -> {
             sink.next(ServerSentEvent.<NotificationDto>builder().event("item").build());
             Disposable subscription = notificationService.getItemNotificationSink().asFlux()
@@ -37,7 +37,7 @@ public class NotificationController {
 
     @GetMapping(path = "/notification/item/subscribe", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<ServerSentEvent<ItemDto>> subscribeToItemEvent() {
-        LOGGER.info("Subscribing to item notifications");
+        LOGGER.info("Subscribing toItemId item notifications");
         return Flux.create(sink -> {
             sink.next(ServerSentEvent.<ItemDto>builder().event("item").build());
             Disposable subscription = notificationService.itemNotificationSink.asFlux()
