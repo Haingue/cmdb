@@ -17,10 +17,7 @@ import org.springframework.stereotype.Component;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -57,6 +54,7 @@ public class StartupJob implements CommandLineRunner {
                 com.management.cartography.core.models.business.component.Host.class,
                 com.management.cartography.core.models.business.component.VirtualMachine.class
         );
+        List<ItemTypeEntity> modelEntities = new ArrayList<>();
         for (Class coreModel : coreModels) {
             ItemTypeEntity itemTypeEntity = new ItemTypeEntity();
             itemTypeEntity.setUuid(UUID.randomUUID());
@@ -88,9 +86,9 @@ public class StartupJob implements CommandLineRunner {
 
                 itemTypeEntity.getAttributes().add(attributeType);
             }
-
-            this.itemTypeRepository.save(itemTypeEntity);
+            modelEntities.add(itemTypeEntity);
         }
+        this.itemTypeRepository.saveAll(modelEntities);
     }
 
     public Set<Class> findAllClassesUsingClassLoader(String packageName) {
