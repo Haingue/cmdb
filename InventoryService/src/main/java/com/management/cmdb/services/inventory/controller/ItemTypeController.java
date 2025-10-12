@@ -26,16 +26,18 @@ public class ItemTypeController {
 
     @GetMapping("/{itemTypeId}")
     public ResponseEntity<ItemTypeDto> getOne(@PathVariable UUID itemTypeId) {
+        LOGGER.debug("Getting item type with id {}", itemTypeId);
         return ResponseEntity.ok(itemTypeService.findById(itemTypeId));
     }
 
     @GetMapping
-    public ResponseEntity<PaginatedResponseDto<ItemTypeDto>> getAllItemTypes(
+    public ResponseEntity<PaginatedResponseDto<ItemTypeDto>> getSearchAllItemTypes(
             @RequestParam(name = "label", required = false) String label,
-            @RequestParam(name = "page", required = false, defaultValue = "0") int page,
+            @RequestParam(name = "pageNumber", required = false, defaultValue = "0") int pageNumber,
             @RequestParam(name = "pageSize", required = false, defaultValue = "10") int pageSize
     ) {
-        return ResponseEntity.ok(itemTypeService.search(label, page, pageSize));
+        LOGGER.debug("Search for ItemTypes with label '{}' [pageNumber={}, pageSize {}]", label, pageNumber, pageSize);
+        return ResponseEntity.ok(itemTypeService.search(label, pageNumber, pageSize));
     }
 
     @PostMapping

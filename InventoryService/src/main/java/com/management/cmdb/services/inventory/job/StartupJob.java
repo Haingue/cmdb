@@ -1,7 +1,7 @@
 package com.management.cmdb.services.inventory.job;
 
-import com.management.cartography.core.models.business.project.BusinessService;
-import com.management.cartography.core.models.business.project.Project;
+import com.management.cmdb.core.models.business.project.BusinessService;
+import com.management.cmdb.core.models.business.project.Project;
 import com.management.cmdb.services.inventory.entity.AttributeTypeEntity;
 import com.management.cmdb.services.inventory.entity.ItemTypeEntity;
 import com.management.cmdb.services.inventory.model.UserDetail;
@@ -42,17 +42,17 @@ public class StartupJob implements CommandLineRunner {
             }
         }
 
-        // String packageName = "com.management.cartography.core.models.business";
+        // String packageName = "com.management.cmdb.core.models.business";
         // Set<Class> coreModels = findAllClassesUsingClassLoader(packageName);
         Set<Class> coreModels = Set.of(
                 BusinessService.class,
                 Project.class,
-                com.management.cartography.core.models.business.project.Environment.class,
-                com.management.cartography.core.models.business.component.Component.class,
-                com.management.cartography.core.models.business.component.Software.class,
-                com.management.cartography.core.models.business.component.Hardware.class,
-                com.management.cartography.core.models.business.component.Host.class,
-                com.management.cartography.core.models.business.component.VirtualMachine.class
+                com.management.cmdb.core.models.business.project.Environment.class,
+                com.management.cmdb.core.models.business.component.Component.class,
+                com.management.cmdb.core.models.business.component.Software.class,
+                com.management.cmdb.core.models.business.component.Hardware.class,
+                com.management.cmdb.core.models.business.component.Host.class,
+                com.management.cmdb.core.models.business.component.VirtualMachine.class
         );
         List<ItemTypeEntity> modelEntities = new ArrayList<>();
         for (Class coreModel : coreModels) {

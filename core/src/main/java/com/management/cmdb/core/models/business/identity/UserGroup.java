@@ -1,4 +1,4 @@
-package com.management.cartography.core.models.business.identity;
+package com.management.cmdb.core.models.business.identity;
 
 import java.util.Set;
 

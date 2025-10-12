@@ -1,4 +1,4 @@
-package com.management.cartography.core.models.business.project;
+package com.management.cmdb.core.models.business.project;
 
 public record BusinessService (
         String name,

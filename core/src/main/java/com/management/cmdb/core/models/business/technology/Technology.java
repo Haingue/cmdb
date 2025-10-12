@@ -1,6 +1,6 @@
-package com.management.cartography.core.models.business.technology;
+package com.management.cmdb.core.models.business.technology;
 
-import com.management.cartography.core.models.business.constants.TechnologyType;
+import com.management.cmdb.core.models.business.constants.TechnologyType;
 
 import java.util.Optional;
 

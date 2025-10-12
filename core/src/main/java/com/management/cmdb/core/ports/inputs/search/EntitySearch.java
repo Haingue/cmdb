@@ -1,11 +1,11 @@
-package com.management.cartography.core.ports.inputs.search;
+package com.management.cmdb.core.ports.inputs.search;
 
-import com.management.cartography.core.models.business.component.Component;
-import com.management.cartography.core.models.business.constants.TechnologyType;
-import com.management.cartography.core.models.business.project.BusinessService;
-import com.management.cartography.core.models.business.project.Environment;
-import com.management.cartography.core.models.business.project.Project;
-import com.management.cartography.core.models.business.technology.Technology;
+import com.management.cmdb.core.models.business.component.Component;
+import com.management.cmdb.core.models.business.constants.TechnologyType;
+import com.management.cmdb.core.models.business.project.BusinessService;
+import com.management.cmdb.core.models.business.project.Environment;
+import com.management.cmdb.core.models.business.project.Project;
+import com.management.cmdb.core.models.business.technology.Technology;
 
 import java.util.Set;
 import java.util.UUID;

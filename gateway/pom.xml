@@ -29,6 +29,8 @@
 	</developers>
 
 	<properties>
+		<com.management.cmdb.core.version>0.0.1-SNAPSHOT</com.management.cmdb.core.version>
+
 		<java.version>21</java.version>
 		<spring-cloud.version>2025.0.0</spring-cloud.version>
 		<spring-modulith.version>1.4.1</spring-modulith.version>
@@ -57,12 +59,20 @@
 	</dependencyManagement>
 
 	<dependencies>
+		<!-- Core dependencies -->
 		<dependency>
 			<groupId>com.management.cmdb</groupId>
-			<artifactId></artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<artifactId>core</artifactId>
+			<version>${com.management.cmdb.core.version}</version>
 		</dependency>
-		<!-- Core dependencies -->
+
+		<!-- Clean Architecture dependencies -->
+		<dependency>
+			<groupId>org.springframework.modulith</groupId>
+			<artifactId>spring-modulith-starter-core</artifactId>
+		</dependency>
+
+		<!-- Web dependencies -->
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-gateway-server-webflux</artifactId>
@@ -87,12 +97,6 @@
 			<groupId>org.springframework.ai</groupId>
 			<artifactId>spring-ai-starter-mcp-server-webflux</artifactId>
 			<version>1.0.0</version>
-		</dependency>
-
-		<!-- Clean Architecture dependencies -->
-		<dependency>
-			<groupId>org.springframework.modulith</groupId>
-			<artifactId>spring-modulith-starter-core</artifactId>
 		</dependency>
 
         <!-- Observability dependencies -->
@@ -125,8 +129,8 @@
 			<artifactId>micrometer-tracing-bridge-brave</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>io.zipkin.reporter2</groupId>
-			<artifactId>zipkin-reporter-brave</artifactId>
+			<groupId>io.opentelemetry</groupId>
+			<artifactId>opentelemetry-exporter-otlp</artifactId>
 		</dependency>
 
 		<!-- Documentation dependencies -->

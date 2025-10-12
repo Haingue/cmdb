@@ -1,4 +1,4 @@
-package com.management.cartography.core;
+package com.management.cmdb.core;
 
 /**
  * Hello world!

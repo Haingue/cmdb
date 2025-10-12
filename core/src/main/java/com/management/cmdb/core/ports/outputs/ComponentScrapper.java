@@ -1,6 +1,6 @@
-package com.management.cartography.core.ports.outputs;
+package com.management.cmdb.core.ports.outputs;
 
-import com.management.cartography.core.models.business.component.Component;
+import com.management.cmdb.core.models.business.component.Component;
 
 public interface ComponentScrapper {
 

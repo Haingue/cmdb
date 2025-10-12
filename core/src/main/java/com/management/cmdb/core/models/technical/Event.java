@@ -1,4 +1,4 @@
-package com.management.cartography.core.models.technical;
+package com.management.cmdb.core.models.technical;
 
 import java.time.Instant;
 import java.util.Objects;

@@ -1,6 +1,6 @@
-package com.management.cartography.core.models.technical;
+package com.management.cmdb.core.models.technical;
 
-import com.management.cartography.core.models.business.identity.User;
+import com.management.cmdb.core.models.business.identity.User;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

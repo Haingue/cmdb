@@ -1,6 +1,6 @@
-package com.management.cartography.core.ports.inputs;
+package com.management.cmdb.core.ports.inputs;
 
-import com.management.cartography.core.models.business.project.Environment;
+import com.management.cmdb.core.models.business.project.Environment;
 
 import java.util.UUID;
 

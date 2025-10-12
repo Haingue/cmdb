@@ -1,4 +1,4 @@
-package com.management.cartography.core.models.business.constants;
+package com.management.cmdb.core.models.business.constants;
 
 public enum ComponentType {
 

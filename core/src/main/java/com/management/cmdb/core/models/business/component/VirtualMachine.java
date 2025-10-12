@@ -1,10 +1,10 @@
-package com.management.cartography.core.models.business.component;
+package com.management.cmdb.core.models.business.component;
 
-import com.management.cartography.core.models.business.constants.ActiveDirectoryDomainName;
-import com.management.cartography.core.models.business.constants.ComponentType;
-import com.management.cartography.core.models.business.constants.NetworkArea;
-import com.management.cartography.core.models.business.technology.Technology;
-import com.management.cartography.core.models.business.technology.Version;
+import com.management.cmdb.core.models.business.constants.ActiveDirectoryDomainName;
+import com.management.cmdb.core.models.business.constants.ComponentType;
+import com.management.cmdb.core.models.business.constants.NetworkArea;
+import com.management.cmdb.core.models.business.technology.Technology;
+import com.management.cmdb.core.models.business.technology.Version;
 
 import java.net.InetAddress;
 import java.time.DayOfWeek;

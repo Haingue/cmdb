@@ -1,9 +1,9 @@
-package com.management.cartography.core.models.business.project;
+package com.management.cmdb.core.models.business.project;
 
-import com.management.cartography.core.models.business.component.Component;
-import com.management.cartography.core.models.business.constants.EnvironmentStatus;
-import com.management.cartography.core.models.business.constants.EnvironmentType;
-import com.management.cartography.core.models.technical.Entity;
+import com.management.cmdb.core.models.business.component.Component;
+import com.management.cmdb.core.models.business.constants.EnvironmentStatus;
+import com.management.cmdb.core.models.business.constants.EnvironmentType;
+import com.management.cmdb.core.models.technical.Entity;
 
 import java.util.HashSet;
 import java.util.Objects;

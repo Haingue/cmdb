@@ -1,17 +1,19 @@
-package com.management.cartography.core.models;
+package com.management.cmdb.core.models;
 
-import com.management.cartography.core.models.business.component.Component;
-import com.management.cartography.core.models.business.component.Hardware;
-import com.management.cartography.core.models.business.component.Host;
-import com.management.cartography.core.models.business.component.Software;
-import com.management.cartography.core.models.business.constants.*;
-import com.management.cartography.core.models.business.identity.UserGroup;
-import com.management.cartography.core.models.business.project.BusinessService;
-import com.management.cartography.core.models.business.project.Environment;
-import com.management.cartography.core.models.business.project.Project;
-import com.management.cartography.core.models.business.technology.Technology;
-import com.management.cartography.core.models.business.technology.Version;
-import com.management.cartography.core.models.technical.Entity;
+import com.management.cmdb.core.models.business.component.Component;
+import com.management.cmdb.core.models.business.component.Hardware;
+import com.management.cmdb.core.models.business.component.Host;
+import com.management.cmdb.core.models.business.component.Software;
+import com.management.cmdb.core.models.business.constants.ActiveDirectoryDomainName;
+import com.management.cmdb.core.models.business.constants.EnvironmentType;
+import com.management.cmdb.core.models.business.constants.NetworkArea;
+import com.management.cmdb.core.models.business.constants.TechnologyType;
+import com.management.cmdb.core.models.business.identity.UserGroup;
+import com.management.cmdb.core.models.business.project.BusinessService;
+import com.management.cmdb.core.models.business.project.Environment;
+import com.management.cmdb.core.models.business.project.Project;
+import com.management.cmdb.core.models.business.technology.Technology;
+import com.management.cmdb.core.models.business.technology.Version;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 

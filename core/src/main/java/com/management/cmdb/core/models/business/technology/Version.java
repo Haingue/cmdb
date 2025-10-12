@@ -1,4 +1,4 @@
-package com.management.cartography.core.models.business.technology;
+package com.management.cmdb.core.models.business.technology;
 
 import java.util.Objects;
 

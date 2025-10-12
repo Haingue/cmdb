@@ -1,6 +1,6 @@
-package com.management.cartography.core.ports.inputs;
+package com.management.cmdb.core.ports.inputs;
 
-import com.management.cartography.core.models.business.technology.Technology;
+import com.management.cmdb.core.models.business.technology.Technology;
 
 public interface TechnologyInputPort {
 
