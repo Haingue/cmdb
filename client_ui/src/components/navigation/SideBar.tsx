@@ -114,7 +114,7 @@ const SideBar = ({ backdrop }: { backdrop?: boolean }) => {
           </ul>
         </div>
       </aside>
-      {backdrop && <BackDrop isVisible={!sidebarCollapsed} onClick={toggleSideBarVisibility} />}
+      {backdrop && sidebarCollapsed && <BackDrop isVisible={!sidebarCollapsed} onClick={toggleSideBarVisibility} />}
     </>
   )
 }
