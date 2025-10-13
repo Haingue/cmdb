@@ -1,61 +1,77 @@
-export interface StrapiResponse {
-    data: StrapiResult[];
-    meta: Meta;
+export type UUID = string;
+export type DateTime = string;
+
+export type AttributeDto = {
+  uuid: UUID;
+  label: string;
+  attributeTypeId: UUID;
+  value: string;
+  createdDate: DateTime;
+  createdBy: UUID;
+  lastModifiedBy: UUID;
+  lastModifiedDate: DateTime;
 }
 
-export interface Meta {
-    pagination: Pagination;
+export type AttributeTypeDto = {
+  uuid: UUID;
+  label: string;
+  description: string;
+  shortDescription: string;
+  placeholder: string;
+  regex: string;
+  possibleValues: string[];
+  createdDate: DateTime;
+  createdBy: UUID;
+  lastModifiedBy: UUID;
+  lastModifiedDate: DateTime;
 }
 
-export interface Pagination {
-    page:      number;
-    pageSize:  number;
-    pageCount: number;
-    total:     number;
+export type ItemTypeDto = {
+  uuid: UUID;
+  label: string;
+  description: string;
+  attributes: AttributeTypeDto[];
+  createdDate: DateTime;
+  createdBy: UUID;
+  lastModifiedBy: UUID;
+  lastModifiedDate: DateTime;
 }
 
-export interface StrapiResult {
-    id:               number;
-    documentId:       string;
-    kind:           string;
-    collectionName: string;
-    info:           Info;
-    options:        Options;
-    pluginOptions:  PluginOptions;
-    attributes:     Project;
+export type LinkTypeDto = {
+  label: string;
 }
 
-export interface Project {
-    shortName:        Description;
-    fullName:         Description;
-    business_service: BusinessService;
-    Description:      Description;
-    environments:     BusinessService;
-    maintainers:      BusinessService;
-    owners:           BusinessService;
+export type LinkDto = {
+  linkType: LinkTypeDto;
+  fromItemId: UUID;
+  toItemId: ItemDto;
+  description: string;
 }
 
-export interface Description {
-    type: string;
+export type ItemDto = {
+  uuid: UUID;
+  name: string;
+  description: string;
+  type: ItemTypeDto;
+  attributes: AttributeDto[];
+  fromLinks: LinkDto[];
+  toLinks: LinkDto[];
+  createdDate: DateTime;
+  createdBy: UUID;
+  lastModifiedBy: UUID;
+  lastModifiedDate: DateTime;
 }
 
-export interface BusinessService {
-    type:        string;
-    relation:    string;
-    target:      string;
-    inversedBy?: string;
-    mappedBy?:   string;
+export type PaginatedResponseDto<T> = {
+  content: T[];
+  pageNumber: number;
+  pageSize: number;
+  totalElements: number;
+  totalPages: number;
+  last: boolean;
+  empty: boolean;
 }
 
-export interface Info {
-    singularName: string;
-    pluralName:   string;
-    displayName:  string;
-}
-
-export interface Options {
-    draftAndPublish: boolean;
-}
-
-export interface PluginOptions {
+export type ServerSentEventNotificationDto = {
+  [key: string]: any;
 }
