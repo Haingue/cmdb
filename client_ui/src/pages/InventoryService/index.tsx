@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react"
-import InventoryServiceSync, { type ItemTypeDto } from "./InventoryServiceSync"
+import type { ItemTypeDto, PaginatedResponseDto } from "../../service/inventory/type"
+import { searchItemTypes } from "../../service/inventory/InventorySync"
 
-const ItemTypeSection = ({itemTypes} : {itemTypes: ItemTypeDto[]}) => {
-  const ItemTypeElement = (itemType: any) => {
+const ItemTypeSection = ({itemTypesPage} : {itemTypesPage: PaginatedResponseDto<ItemTypeDto>}) => {
+  const ItemTypeElement = ({label, description}: ItemTypeDto) => {
     return (
       <>
-        <h3 className="text-xl font-semibold">{itemType.name}</h3>
-        <p className="text-gray-600">{itemType.description}</p>
+        <div className="badge badge-lg border p-4 bg-gray-100 shadow-md rounded-2xl">
+          <h3 className="text-xl font-semibold">{label}</h3>
+          <p className="text-gray-600">{description}</p>
+        </div>
       </>
     )
   }
@@ -15,8 +18,8 @@ const ItemTypeSection = ({itemTypes} : {itemTypes: ItemTypeDto[]}) => {
     <>
       <h2 className="text-2xl font-semibold mt-4">Item types</h2>
       <div className="flex flex-wrap gap-4 mt-2">
-        {itemTypes.map((itemType) => (
-          <ItemTypeElement key={itemType.id} {...itemType} />
+        {itemTypesPage?.content.map((itemType, key) => (
+          <ItemTypeElement key={`${key}-${itemType.uuid}`} {...itemType} />
         ))}
       </div>
     </>
@@ -24,18 +27,18 @@ const ItemTypeSection = ({itemTypes} : {itemTypes: ItemTypeDto[]}) => {
 }
 
 const InventoryService = () => {
-  const [itemTypes, setItemTypes] = useState<ItemTypeDto[]>([])
+  const [itemTypesPage, setItemTypesPage] = useState<PaginatedResponseDto<ItemTypeDto>>(undefined!)
 
   useEffect(() => {
-    InventoryServiceSync.fetchItemTypes()
-      .then((data) => setItemTypes(data))
+    searchItemTypes()
+      .then((PaginatedResponseDto) => setItemTypesPage(PaginatedResponseDto))
   }, [])
 
   return (
     <>
       <h1 className="text-3xl font-bold underline">Inventory Service Page</h1>
       <section>
-        <ItemTypeSection itemTypes={itemTypes} />
+        <ItemTypeSection itemTypesPage={itemTypesPage} />
       </section>
     </>
   )

@@ -24,16 +24,21 @@ spring:
         globalcors:
           cors-configurations:
             '[/**]':
-              allowedOrigins: "localhost"
+              allowedOrigins: "http://localhost:5173"
               allowedMethods:
                 - GET
+                - POST
+                - PUT
+                - DELETE
+                - OPTIONS
+              allowedHeaders: "*"
         webflux:
           routes:
             - id: inventory_service
               uri: ${com.management.cmdb.services.inventory.url}
               predicates:
               - Path=/api/inventory/**
-              - Method=GET,POST,PUT,DELETE
+              - Method=GET,POST,PUT,DELETE,OPTIONS
               filters:
                 - RewritePath=/api/inventory/?(?<segment>.*), /$\{segment}
                 - LocalResponseCache=30m,500MB
