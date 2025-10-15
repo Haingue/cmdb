@@ -9,6 +9,6 @@ public interface BusinessServiceInputPort {
     void archive (String name);
     void delete (String name);
 
-    BusinessService findOneByName (BusinessService businessService);
+    BusinessService findOneByName (String name);
 
 }

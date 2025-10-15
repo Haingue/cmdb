@@ -15,10 +15,6 @@ public class Entity {
     private LocalDateTime creationDatetime;
     private LocalDateTime deletionDatetime;
 
-    public static Entity create () {
-        return new Entity();
-    }
-
     protected Entity() {
         this.uuid = UUID.randomUUID();
         this.version = 1L;
