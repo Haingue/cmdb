@@ -5,6 +5,7 @@ import Map from './pages/map/Map'
 import SideBar from './components/navigation/SideBar'
 import NavBar from './components/navigation/NavBar'
 import InventoryService from './pages/InventoryService'
+import About from './pages/About'
 
 const Root = () => {
   return (
@@ -20,6 +21,7 @@ const Root = () => {
               <Route path="/" Component={Dashboard} />
               <Route path="/map" Component={Map} />
               <Route path="/inventory-service" Component={InventoryService} />
+              <Route path="/about" Component={About} />
               <Route path="*" Component={NotFound} />
             </Routes>
           </main>

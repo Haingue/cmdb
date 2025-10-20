@@ -27,14 +27,14 @@ export type AttributeTypeDto = {
 }
 
 export type ItemTypeDto = {
-  uuid: UUID;
+  uuid?: UUID;
   label: string;
   description: string;
   attributes: AttributeTypeDto[];
-  createdDate: DateTime;
-  createdBy: UUID;
-  lastModifiedBy: UUID;
-  lastModifiedDate: DateTime;
+  createdDate?: DateTime;
+  createdBy?: UUID;
+  lastModifiedBy?: UUID;
+  lastModifiedDate?: DateTime;
 }
 
 export type LinkTypeDto = {
