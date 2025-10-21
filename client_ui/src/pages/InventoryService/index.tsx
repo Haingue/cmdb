@@ -4,6 +4,7 @@ import ItemTypeForm from "./ItemTypeForm"
 import ItemForm from "./ItemForm"
 import { loadItemTypes, type ItemTypeState } from "../../store/itemType.slice"
 import { useDispatch, useSelector } from "react-redux"
+import PageTitle from "../../components/PageTitle"
 
 const ItemTypeSection = ({itemTypesPage} : {itemTypesPage: PaginatedResponseDto<ItemTypeDto>}) => {
   if (!itemTypesPage || itemTypesPage.totalElements === 0) {
@@ -50,13 +51,9 @@ const InventoryService = () => {
 
   return (
     <>
-      <h1 className="text-3xl font-bold underline">Inventory Service Page</h1>
+      <PageTitle title="Inventory Service" />
       <section>
         <ItemTypeSection itemTypesPage={itemTypes!} />
-      </section>
-      <hr className="my-2 border-gray-500"/>
-      <section>
-        <ItemTypeForm />
       </section>
       <hr className="my-2 border-gray-500"/>
       <section>

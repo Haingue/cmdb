@@ -37,6 +37,18 @@ export async function getItemById(itemId: UUID): Promise<ItemDto> {
   return response.json();
 }
 
+export async function createNewItem(item: ItemDto): Promise<ItemDto> {
+  const response = await fetch(`${URL}/item`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(item),
+  });
+  if (!response.ok) throw new Error("Failed to create item");
+  return response.json();
+}
+
 /** ItemType  **/
 export async function searchItemTypes(
   label?: string,

@@ -1,5 +1,6 @@
 import React from 'react'
 import type { ItemTypeDto } from '../../service/inventory/types'
+import PageTitle from '../../components/PageTitle'
 
 const ItemTypeForm = () => {
   const [itemType, setItemType] = React.useState<ItemTypeDto>({
@@ -17,6 +18,7 @@ const ItemTypeForm = () => {
 
   return (
     <>
+      <PageTitle title="Create new Item Type" />
       <form className="space-y-4">
         <label className="block">
           <span className="text-gray-700">Label</span>

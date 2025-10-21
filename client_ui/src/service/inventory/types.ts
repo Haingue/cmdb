@@ -2,14 +2,14 @@ export type UUID = string;
 export type DateTime = string;
 
 export type AttributeDto = {
-  uuid: UUID;
+  uuid?: UUID;
   label: string;
   attributeTypeId: UUID;
-  value: string;
-  createdDate: DateTime;
-  createdBy: UUID;
-  lastModifiedBy: UUID;
-  lastModifiedDate: DateTime;
+  value: string | number | boolean | undefined;
+  createdDate?: DateTime;
+  createdBy?: UUID;
+  lastModifiedBy?: UUID;
+  lastModifiedDate?: DateTime;
 }
 
 export type AttributeTypeDto = {
@@ -49,17 +49,17 @@ export type LinkDto = {
 }
 
 export type ItemDto = {
-  uuid: UUID;
-  name: string;
-  description: string;
-  type: ItemTypeDto;
-  attributes: AttributeDto[];
-  fromLinks: LinkDto[];
-  toLinks: LinkDto[];
-  createdDate: DateTime;
-  createdBy: UUID;
-  lastModifiedBy: UUID;
-  lastModifiedDate: DateTime;
+  uuid?: UUID;
+  name?: string;
+  description?: string;
+  type?: ItemTypeDto;
+  attributes?: AttributeDto[];
+  fromLinks?: LinkDto[];
+  toLinks?: LinkDto[];
+  createdDate?: DateTime;
+  createdBy?: UUID;
+  lastModifiedBy?: UUID;
+  lastModifiedDate?: DateTime;
 }
 
 export type PaginatedResponseDto<T> = {

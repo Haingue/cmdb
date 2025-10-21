@@ -30,7 +30,7 @@ const initialState = {
   itemTypes: {} as PaginatedResponseDto<ItemTypeDto>,
   isLoading: true,
   error: undefined as string | undefined,
-  lastFetched: null,
+  lastFetched: null as number | null,
 }
 export const itemTypeSlice = createSlice({
   name: 'itemType',

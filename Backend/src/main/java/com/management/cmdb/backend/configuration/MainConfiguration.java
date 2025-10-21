@@ -10,6 +10,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.CorsWebFilter;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 
+import java.time.Duration;
 import java.util.Arrays;
 
 @Configuration
@@ -20,18 +21,22 @@ public class MainConfiguration {
     public HttpMessageConverters customConverters() {
         return new HttpMessageConverters(new MappingJackson2HttpMessageConverter());
     }
-//
-//    @Bean
-//    CorsWebFilter corsWebFilter() {
-//        CorsConfiguration corsConfig = new CorsConfiguration();
-//        corsConfig.setAllowedOrigins(Arrays.asList("http://localhost:[*]"));
-//        corsConfig.addAllowedMethod("GET");
-//        corsConfig.addAllowedHeader("*");
-//
-//        UrlBasedCorsConfigurationSource source =
-//                new UrlBasedCorsConfigurationSource();
-//        source.registerCorsConfiguration("/**", corsConfig);
-//
-//        return new CorsWebFilter(source);
-//    }
+
+    @Bean
+    CorsWebFilter corsWebFilter() {
+        CorsConfiguration corsConfig = new CorsConfiguration();
+        corsConfig.setAllowedOrigins(Arrays.asList("http://localhost:5173"));
+        corsConfig.addAllowedMethod("GET");
+        corsConfig.addAllowedMethod("POST");
+        corsConfig.addAllowedHeader("*");
+
+        corsConfig.setAllowCredentials(true);
+        corsConfig.setMaxAge(Duration.ofMinutes(60));
+
+        UrlBasedCorsConfigurationSource source =
+                new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", corsConfig);
+
+        return new CorsWebFilter(source);
+    }
 }
