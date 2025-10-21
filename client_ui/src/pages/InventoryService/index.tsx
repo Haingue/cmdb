@@ -1,10 +1,10 @@
 import { useEffect } from "react"
-import type { ItemTypeDto, PaginatedResponseDto } from "../../service/inventory/types"
-import ItemTypeForm from "./ItemTypeForm"
-import ItemForm from "./ItemForm"
-import { loadItemTypes, type ItemTypeState } from "../../store/itemType.slice"
 import { useDispatch, useSelector } from "react-redux"
 import PageTitle from "../../components/PageTitle"
+import type { ItemTypeDto, PaginatedResponseDto } from "../../service/inventory/types"
+import { loadItemTypes, type ItemTypeState } from "../../store/itemType.slice"
+import ItemForm from "./ItemForm"
+import type { AppDispatch } from "../../store"
 
 const ItemTypeSection = ({itemTypesPage} : {itemTypesPage: PaginatedResponseDto<ItemTypeDto>}) => {
   if (!itemTypesPage || itemTypesPage.totalElements === 0) {
@@ -34,7 +34,7 @@ const ItemTypeSection = ({itemTypesPage} : {itemTypesPage: PaginatedResponseDto<
 }
 
 const InventoryService = () => {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch<AppDispatch>()
   const {itemTypes, isLoading, error} = useSelector<ItemTypeState>((state) => state.itemTypes) as ItemTypeState
 
   useEffect(() => {

@@ -1,9 +1,9 @@
-import React, { use, useEffect } from 'react'
-import type { ItemDto } from '../../service/inventory/types'
+import React from 'react'
+import { useSelector } from 'react-redux'
 import PageTitle from '../../components/PageTitle'
-import { useDispatch, useSelector } from 'react-redux'
-import { loadItemTypes, type ItemTypeState } from '../../store/itemType.slice'
 import { createNewItem } from '../../service/inventory/InventorySync'
+import type { ItemDto } from '../../service/inventory/types'
+import { type ItemTypeState } from '../../store/itemType.slice'
 
 const ItemInputForm = ({propertyName, label, type, value, updateItemField}: {propertyName: string, label: string, type: string, value?: string, updateItemField: (field: keyof ItemDto | string, value: string) => void}) => {
   return (
@@ -21,7 +21,6 @@ const ItemInputForm = ({propertyName, label, type, value, updateItemField}: {pro
 }
 
 const ItemForm = () => {
-  const dispatch = useDispatch()
   const {itemTypes, isLoading, error} = useSelector<ItemTypeState>((state) => state.itemTypes) as ItemTypeState
   const [item, setItem] = React.useState<ItemDto>({})
 

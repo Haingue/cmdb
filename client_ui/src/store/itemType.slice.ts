@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import type { ItemTypeDto, PaginatedResponseDto } from '../service/inventory/types'
 import { searchItemTypes } from '../service/inventory/InventorySync'
 
-export const loadItemTypes = createAsyncThunk('itemType/search', async (_, { getState, rejectWithValue }) => {
+export const loadItemTypes = createAsyncThunk<{cached: boolean, data: PaginatedResponseDto<ItemTypeDto>}, void>('itemType/search', async (_, { getState, rejectWithValue }) => {
   const {itemTypes} = getState() as {itemTypes: ItemTypeState}
   if (itemTypes.lastFetched) {
       const now = Date.now();

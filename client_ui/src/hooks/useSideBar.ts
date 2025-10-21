@@ -1,7 +1,8 @@
 import { type EventHandler, type MouseEvent } from 'react'
-import useWindowDimensions from './useWindowDimensions'
 import { useDispatch, useSelector } from 'react-redux'
-import { collapseSidebar, expandSidebar, toggleSidebar } from '../store/ux.slice'
+import type { AppDispatch, RootState } from '../store'
+import { collapseSidebar, expandSidebar, toggleSidebar, type UxStateType } from '../store/ux.slice'
+import useWindowDimensions from './useWindowDimensions'
 
 type useSideBarReturn = {
   sidebarCollapsed: boolean
@@ -11,8 +12,8 @@ type useSideBarReturn = {
 }
 
 export default function useSideBar(): useSideBarReturn {
-  const dispatch = useDispatch()
-  const sidebarCollapsed = useSelector((state) => state.ux.sidebarCollapsed)
+  const dispatch = useDispatch<AppDispatch>()
+  const { sidebarCollapsed } = useSelector<RootState>((state) => state.ux.sidebarCollapsed) as UxStateType
   const { width } = useWindowDimensions()
 
   const toggleSideBarVisibility: EventHandler<MouseEvent> = () => {

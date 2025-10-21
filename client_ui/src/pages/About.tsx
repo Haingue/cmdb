@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import PageTitle from '../components/PageTitle'
-import InventoryService from '../service/inventory/InventorySync'
 import BackendService from '../service/backend/BackendSync'
+import InventoryService from '../service/inventory/InventorySync'
 
 type ServerInfo = {
   name: string

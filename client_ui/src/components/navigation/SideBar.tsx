@@ -1,6 +1,6 @@
-import { type MouseEvent, type ReactNode } from 'react'
-import { Link } from 'react-router'
-import useSideBar from '../../hooks/useSideBar'
+import { type ReactNode } from 'react';
+import { Link } from 'react-router';
+import useSideBar from '../../hooks/useSideBar';
 
 const NavButton = ({ path, label, onClick, children }: { path: string; label: string; onClick?: React.ReactEventHandler; children: ReactNode }) => {
   return (
