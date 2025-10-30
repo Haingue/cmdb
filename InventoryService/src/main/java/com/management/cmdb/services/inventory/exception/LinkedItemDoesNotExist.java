@@ -1,6 +1,5 @@
 package com.management.cmdb.services.inventory.exception;
 
-import com.management.cmdb.services.inventory.dto.LinkDto;
 import com.management.cmdb.services.inventory.entity.LinkEntity;
 
 public class LinkedItemDoesNotExist extends RuntimeException {

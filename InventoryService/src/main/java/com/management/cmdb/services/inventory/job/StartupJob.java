@@ -7,7 +7,6 @@ import com.management.cmdb.services.inventory.entity.ItemTypeEntity;
 import com.management.cmdb.services.inventory.mapper.ItemTypeMapper;
 import com.management.cmdb.services.inventory.model.UserDetail;
 import com.management.cmdb.services.inventory.service.ItemTypeService;
-import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -34,14 +33,7 @@ public class StartupJob implements CommandLineRunner {
         this.itemTypeService = itemTypeService;
     }
 
-    @PostConstruct
-    private void init() throws NoSuchFieldException, NoSuchMethodException {
-        /*for (DefaultItemType defaultItemType : DefaultItemType.values()) {
-            if (this.itemTypeService.findByLabel(defaultItemType.itemType.getLabel()).isEmpty()) {
-                this.itemTypeService.create(ItemTypeMapper.INSTANCE.toDto(defaultItemType.itemType), UserDetail.SYSTEM);
-            }
-        }*/
-
+    private void createItemType() throws NoSuchFieldException, NoSuchMethodException {
         // String packageName = "com.management.cmdb.core.models.business";
         // Set<Class> coreModels = findAllClassesUsingClassLoader(packageName);
         Set<Class> coreModels = Set.of(
@@ -89,8 +81,10 @@ public class StartupJob implements CommandLineRunner {
             modelEntities.add(itemTypeEntity);
         }
 
-        modelEntities.stream().map(ItemTypeMapper.INSTANCE::toDto)
-                .map(itemTypeDto -> itemTypeService.create(itemTypeDto, UserDetail.SYSTEM));
+        for (ItemTypeEntity itemTypeEntity : modelEntities) {
+            itemTypeService.create(ItemTypeMapper.INSTANCE.toDto(itemTypeEntity), UserDetail.SYSTEM);
+        }
+        LOGGER.info("Item types created: {}", modelEntities.size());
     }
 
     public Set<Class> findAllClassesUsingClassLoader(String packageName) {
@@ -115,6 +109,7 @@ public class StartupJob implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
+        createItemType();
         LOGGER.info("Starting up application");
         LOGGER.info("Profiles: {}", Arrays.toString(env.getActiveProfiles()));
         LOGGER.info("App version: {}", env.getProperty("spring.application.version"));
