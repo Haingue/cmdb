@@ -7,9 +7,9 @@ import com.management.cmdb.services.inventory.entity.ItemTypeEntity;
 import com.management.cmdb.services.inventory.exemple.ItemExample;
 import com.management.cmdb.services.inventory.mapper.ItemMapper;
 import com.management.cmdb.services.inventory.model.UserDetail;
-import com.management.cmdb.services.inventory.model.itemTypes.DefaultItemType;
+import com.management.cmdb.services.inventory.exemple.ItemTypeExample;
 import com.management.cmdb.services.inventory.repository.ItemRepository;
-import com.management.cmdb.services.inventory.repository.ItemTypeRepository;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,11 +32,11 @@ class ItemServiceTest {
     private final UserDetail userDetail;
 
     @Autowired
-    public ItemServiceTest(ItemTypeRepository itemTypeRepository, ItemRepository itemRepository, ItemService itemService) {
+    public ItemServiceTest(ItemRepository itemRepository, ItemService itemService) {
         this.itemRepository = itemRepository;
         this.itemService = itemService;
 
-        this.itemTypeExample = DefaultItemType.HOST.itemType;
+        this.itemTypeExample = ItemTypeExample.HOST.itemType;
         this.itemExample = itemRepository.save(ItemExample.JETTY01.toEntity());
         this.userDetail = new UserDetail(new UUID(0, 0), "test","test@test.com");
     }
@@ -108,6 +108,7 @@ class ItemServiceTest {
     }
 
     @Test
+    @Transactional
     void deleteItem() {
         this.itemService.deleteItem(this.itemExample.getUuid(), userDetail);
 

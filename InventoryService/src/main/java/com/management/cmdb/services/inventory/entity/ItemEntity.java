@@ -21,10 +21,10 @@ public class ItemEntity extends Auditable {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private final Set<AttributeEntity> attributes = new HashSet<>();
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    private final Set<LinkEntity> fromLinks = new HashSet<>();
-    @ManyToMany(fetch = FetchType.EAGER)
-    private final Set<LinkEntity> toLinks = new HashSet<>();
+    @OneToMany(mappedBy = "sourceItem", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    private final Set<LinkEntity> outgoingLinks = new HashSet<>();
+    @OneToMany(mappedBy = "targetItem", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    private final Set<LinkEntity> incomingLinks = new HashSet<>();
 
     public String getName() {
         return name;
@@ -50,20 +50,20 @@ public class ItemEntity extends Auditable {
         this.type = type;
     }
 
-    public Set<LinkEntity> getToLinks() {
-        return toLinks;
+    public Set<LinkEntity> getOutgoingLinks() {
+        return outgoingLinks;
     }
 
     public void addToLinks(Set<LinkEntity> toLinks) {
-        this.toLinks.addAll(toLinks);
+        this.outgoingLinks.addAll(toLinks);
     }
 
-    public Set<LinkEntity> getFromLinks() {
-        return fromLinks;
+    public Set<LinkEntity> getIncomingLinks() {
+        return incomingLinks;
     }
 
     public void addFromLinks(Set<LinkEntity> fromLinks) {
-        this.fromLinks.addAll(fromLinks);
+        this.incomingLinks.addAll(fromLinks);
     }
 
     public Set<AttributeEntity> getAttributes() {

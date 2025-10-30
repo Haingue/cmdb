@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -27,7 +28,8 @@ public class ItemTypeController {
     @GetMapping("/{itemTypeId}")
     public ResponseEntity<ItemTypeDto> getOne(@PathVariable UUID itemTypeId) {
         LOGGER.debug("Getting item type with id {}", itemTypeId);
-        return ResponseEntity.ok(itemTypeService.findById(itemTypeId));
+        Optional<ItemTypeDto> result = itemTypeService.findById(itemTypeId);
+        return result.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping

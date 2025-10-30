@@ -4,9 +4,9 @@ import com.management.cmdb.core.models.business.project.BusinessService;
 import com.management.cmdb.core.models.business.project.Project;
 import com.management.cmdb.services.inventory.entity.AttributeTypeEntity;
 import com.management.cmdb.services.inventory.entity.ItemTypeEntity;
+import com.management.cmdb.services.inventory.mapper.ItemTypeMapper;
 import com.management.cmdb.services.inventory.model.UserDetail;
-import com.management.cmdb.services.inventory.model.itemTypes.DefaultItemType;
-import com.management.cmdb.services.inventory.repository.ItemTypeRepository;
+import com.management.cmdb.services.inventory.service.ItemTypeService;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,20 +27,20 @@ public class StartupJob implements CommandLineRunner {
 
     private final Environment env;
 
-    private final ItemTypeRepository itemTypeRepository;
+    private final ItemTypeService itemTypeService;
 
-    public StartupJob(Environment env, ItemTypeRepository itemTypeRepository) {
+    public StartupJob(Environment env, ItemTypeService itemTypeService) {
         this.env = env;
-        this.itemTypeRepository = itemTypeRepository;
+        this.itemTypeService = itemTypeService;
     }
 
     @PostConstruct
     private void init() throws NoSuchFieldException, NoSuchMethodException {
-        for (DefaultItemType defaultItemType : DefaultItemType.values()) {
-            if (this.itemTypeRepository.findFirstByLabel(defaultItemType.itemType.getLabel()).isEmpty()) {
-                this.itemTypeRepository.save(defaultItemType.itemType);
+        /*for (DefaultItemType defaultItemType : DefaultItemType.values()) {
+            if (this.itemTypeService.findByLabel(defaultItemType.itemType.getLabel()).isEmpty()) {
+                this.itemTypeService.create(ItemTypeMapper.INSTANCE.toDto(defaultItemType.itemType), UserDetail.SYSTEM);
             }
-        }
+        }*/
 
         // String packageName = "com.management.cmdb.core.models.business";
         // Set<Class> coreModels = findAllClassesUsingClassLoader(packageName);
@@ -88,7 +88,9 @@ public class StartupJob implements CommandLineRunner {
             }
             modelEntities.add(itemTypeEntity);
         }
-        this.itemTypeRepository.saveAll(modelEntities);
+
+        modelEntities.stream().map(ItemTypeMapper.INSTANCE::toDto)
+                .map(itemTypeDto -> itemTypeService.create(itemTypeDto, UserDetail.SYSTEM));
     }
 
     public Set<Class> findAllClassesUsingClassLoader(String packageName) {
