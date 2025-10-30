@@ -14,7 +14,7 @@ import java.time.Instant;
 import java.util.Map;
 import java.util.UUID;
 
-// Used toItemId change exception result, return a standardized ProblemDetail (RFC 7807 standard)
+// Used targetItemId change exception result, return a standardized ProblemDetail (RFC 7807 standard)
 @RestControllerAdvice
 public class ExceptionAdvice {
 

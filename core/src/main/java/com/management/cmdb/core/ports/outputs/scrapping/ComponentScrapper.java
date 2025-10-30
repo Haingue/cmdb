@@ -1,4 +1,4 @@
-package com.management.cmdb.core.ports.outputs;
+package com.management.cmdb.core.ports.outputs.scrapping;
 
 import com.management.cmdb.core.models.business.component.Component;
 

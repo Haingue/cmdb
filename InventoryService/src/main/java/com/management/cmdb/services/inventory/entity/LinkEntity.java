@@ -1,19 +1,19 @@
 package com.management.cmdb.services.inventory.entity;
 
 import com.management.cmdb.services.inventory.entity.meta.Auditable;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "links")
 public class LinkEntity extends Auditable {
     @OneToOne
     private LinkTypeEntity linkType;
-    @OneToOne(orphanRemoval = true)
-    private ItemEntity from;
-    @OneToOne(orphanRemoval = true)
-    private ItemEntity to;
+    @ManyToOne
+    @JoinColumn(name = "source_item_uuid")
+    private ItemEntity sourceItem;
+    @ManyToOne
+    @JoinColumn(name = "target_item_uuid")
+    private ItemEntity targetItem;
     private String  description;
 
     public LinkTypeEntity getLinkType() {
@@ -24,20 +24,20 @@ public class LinkEntity extends Auditable {
         this.linkType = linkType;
     }
 
-    public ItemEntity getTo() {
-        return to;
+    public ItemEntity getSourceItem() {
+        return sourceItem;
     }
 
-    public void setTo(ItemEntity sourceItem) {
-        this.to = sourceItem;
+    public void setSourceItem(ItemEntity sourceItem) {
+        this.sourceItem = sourceItem;
     }
 
-    public ItemEntity getFrom() {
-        return from;
+    public ItemEntity getTargetItem() {
+        return targetItem;
     }
 
-    public void setFrom(ItemEntity destinationItem) {
-        this.from = destinationItem;
+    public void setTargetItem(ItemEntity destinationItem) {
+        this.targetItem = destinationItem;
     }
 
     public String getDescription() {

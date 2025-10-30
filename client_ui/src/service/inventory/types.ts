@@ -2,14 +2,14 @@ export type UUID = string;
 export type DateTime = string;
 
 export type AttributeDto = {
-  uuid: UUID;
+  uuid?: UUID;
   label: string;
   attributeTypeId: UUID;
-  value: string;
-  createdDate: DateTime;
-  createdBy: UUID;
-  lastModifiedBy: UUID;
-  lastModifiedDate: DateTime;
+  value: string | number | boolean | undefined;
+  createdDate?: DateTime;
+  createdBy?: UUID;
+  lastModifiedBy?: UUID;
+  lastModifiedDate?: DateTime;
 }
 
 export type AttributeTypeDto = {
@@ -27,14 +27,14 @@ export type AttributeTypeDto = {
 }
 
 export type ItemTypeDto = {
-  uuid: UUID;
+  uuid?: UUID;
   label: string;
   description: string;
   attributes: AttributeTypeDto[];
-  createdDate: DateTime;
-  createdBy: UUID;
-  lastModifiedBy: UUID;
-  lastModifiedDate: DateTime;
+  createdDate?: DateTime;
+  createdBy?: UUID;
+  lastModifiedBy?: UUID;
+  lastModifiedDate?: DateTime;
 }
 
 export type LinkTypeDto = {
@@ -43,23 +43,23 @@ export type LinkTypeDto = {
 
 export type LinkDto = {
   linkType: LinkTypeDto;
-  fromItemId: UUID;
-  toItemId: ItemDto;
+  sourceItemId: UUID;
+  targetItemId: ItemDto;
   description: string;
 }
 
 export type ItemDto = {
-  uuid: UUID;
-  name: string;
-  description: string;
-  type: ItemTypeDto;
-  attributes: AttributeDto[];
-  fromLinks: LinkDto[];
-  toLinks: LinkDto[];
-  createdDate: DateTime;
-  createdBy: UUID;
-  lastModifiedBy: UUID;
-  lastModifiedDate: DateTime;
+  uuid?: UUID;
+  name?: string;
+  description?: string;
+  type?: ItemTypeDto;
+  attributes?: AttributeDto[];
+  outgoingLinks?: LinkDto[];
+  incomingLinks?: LinkDto[];
+  createdDate?: DateTime;
+  createdBy?: UUID;
+  lastModifiedBy?: UUID;
+  lastModifiedDate?: DateTime;
 }
 
 export type PaginatedResponseDto<T> = {

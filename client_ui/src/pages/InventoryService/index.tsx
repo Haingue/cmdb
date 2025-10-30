@@ -1,8 +1,15 @@
-import { useEffect, useState } from "react"
-import type { ItemTypeDto, PaginatedResponseDto } from "../../service/inventory/type"
-import { searchItemTypes } from "../../service/inventory/InventorySync"
+import { useEffect } from "react"
+import { useDispatch, useSelector } from "react-redux"
+import PageTitle from "../../components/PageTitle"
+import type { ItemTypeDto, PaginatedResponseDto } from "../../service/inventory/types"
+import { loadItemTypes, type ItemTypeState } from "../../store/itemType.slice"
+import ItemForm from "./ItemForm"
+import type { AppDispatch } from "../../store"
 
 const ItemTypeSection = ({itemTypesPage} : {itemTypesPage: PaginatedResponseDto<ItemTypeDto>}) => {
+  if (!itemTypesPage || itemTypesPage.totalElements === 0) {
+    return <div>No item types available.</div>
+  }
   const ItemTypeElement = ({label, description}: ItemTypeDto) => {
     return (
       <>
@@ -27,18 +34,30 @@ const ItemTypeSection = ({itemTypesPage} : {itemTypesPage: PaginatedResponseDto<
 }
 
 const InventoryService = () => {
-  const [itemTypesPage, setItemTypesPage] = useState<PaginatedResponseDto<ItemTypeDto>>(undefined!)
+  const dispatch = useDispatch<AppDispatch>()
+  const {itemTypes, isLoading, error} = useSelector<ItemTypeState>((state) => state.itemTypes) as ItemTypeState
 
   useEffect(() => {
-    searchItemTypes()
-      .then((PaginatedResponseDto) => setItemTypesPage(PaginatedResponseDto))
-  }, [])
+    dispatch(loadItemTypes())
+  }, [dispatch])
+
+  if (error) {
+    return <div className="text-red-500">Error: {error}</div>
+  }
+
+  if (isLoading) {
+    return <div>Loading item types...</div>
+  }
 
   return (
     <>
-      <h1 className="text-3xl font-bold underline">Inventory Service Page</h1>
+      <PageTitle title="Inventory Service" />
       <section>
-        <ItemTypeSection itemTypesPage={itemTypesPage} />
+        <ItemTypeSection itemTypesPage={itemTypes!} />
+      </section>
+      <hr className="my-2 border-gray-500"/>
+      <section>
+        <ItemForm />
       </section>
     </>
   )

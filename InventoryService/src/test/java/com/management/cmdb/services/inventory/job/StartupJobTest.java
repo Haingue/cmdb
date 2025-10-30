@@ -1,7 +1,7 @@
 package com.management.cmdb.services.inventory.job;
 
 import com.management.cmdb.services.inventory.entity.ItemTypeEntity;
-import com.management.cmdb.services.inventory.model.itemTypes.DefaultItemType;
+import com.management.cmdb.services.inventory.exemple.ItemTypeExample;
 import com.management.cmdb.services.inventory.repository.ItemTypeRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -25,12 +25,12 @@ class StartupJobTest {
 
     @Test
     void shouldHaveDefaultItemType() {
-        for (DefaultItemType defaultItemType : DefaultItemType.values()) {
-            Optional<ItemTypeEntity> savedItemType = this.itemTypeRepository.findFirstByLabel(defaultItemType.itemType.getLabel());
+        for (ItemTypeExample itemTypeExample : ItemTypeExample.values()) {
+            Optional<ItemTypeEntity> savedItemType = this.itemTypeRepository.findFirstByLabel(itemTypeExample.itemType.getLabel());
             Assertions.assertTrue(savedItemType.isPresent());
-            Assertions.assertEquals(defaultItemType.itemType.getLabel(), savedItemType.get().getLabel());
-            Assertions.assertEquals(defaultItemType.itemType.getDescription(), savedItemType.get().getDescription());
-            Assertions.assertEquals(defaultItemType.itemType.getAttributes().size(), savedItemType.get().getAttributes().size());
+            Assertions.assertEquals(itemTypeExample.itemType.getLabel(), savedItemType.get().getLabel());
+            Assertions.assertEquals(itemTypeExample.itemType.getDescription(), savedItemType.get().getDescription());
+            Assertions.assertEquals(itemTypeExample.itemType.getAttributes().size(), savedItemType.get().getAttributes().size());
         }
     }
 

@@ -7,6 +7,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 
+import java.util.Objects;
+
 @Entity
 @Table(name = "attributes")
 public class AttributeEntity extends Auditable {
@@ -45,10 +47,22 @@ public class AttributeEntity extends Auditable {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof AttributeEntity that)) return false;
+        if (!super.equals(o)) return false;
+        return Objects.equals(item, that.item) && Objects.equals(attributeType, that.attributeType) && Objects.equals(valueStr, that.valueStr);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), item, attributeType, valueStr);
+    }
+
+    @Override
     public String toString() {
         return "AttributeEntity{" +
-                "item=" + item.getName() +
-                ", attributeType=" + attributeType.getLabel() +
+                "item=" + (item != null ? item.getName() : null) +
+                ", attributeType=" + (attributeType != null ? attributeType.getLabel() : null) +
                 ", valueStr='" + valueStr + '\'' +
                 ", createdDate=" + createdDate +
                 ", createdBy=" + createdBy +

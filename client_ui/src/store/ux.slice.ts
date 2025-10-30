@@ -1,6 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit'
 
-const initialState = {
+export type UxStateType = {
+  sidebarCollapsed: boolean,
+}
+const initialState: UxStateType = {
   sidebarCollapsed: false,
 }
 export const uxSlice = createSlice({

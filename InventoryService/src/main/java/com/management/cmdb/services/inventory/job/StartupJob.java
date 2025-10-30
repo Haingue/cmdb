@@ -4,10 +4,9 @@ import com.management.cmdb.core.models.business.project.BusinessService;
 import com.management.cmdb.core.models.business.project.Project;
 import com.management.cmdb.services.inventory.entity.AttributeTypeEntity;
 import com.management.cmdb.services.inventory.entity.ItemTypeEntity;
+import com.management.cmdb.services.inventory.mapper.ItemTypeMapper;
 import com.management.cmdb.services.inventory.model.UserDetail;
-import com.management.cmdb.services.inventory.model.itemTypes.DefaultItemType;
-import com.management.cmdb.services.inventory.repository.ItemTypeRepository;
-import jakarta.annotation.PostConstruct;
+import com.management.cmdb.services.inventory.service.ItemTypeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -27,21 +26,14 @@ public class StartupJob implements CommandLineRunner {
 
     private final Environment env;
 
-    private final ItemTypeRepository itemTypeRepository;
+    private final ItemTypeService itemTypeService;
 
-    public StartupJob(Environment env, ItemTypeRepository itemTypeRepository) {
+    public StartupJob(Environment env, ItemTypeService itemTypeService) {
         this.env = env;
-        this.itemTypeRepository = itemTypeRepository;
+        this.itemTypeService = itemTypeService;
     }
 
-    @PostConstruct
-    private void init() throws NoSuchFieldException, NoSuchMethodException {
-        for (DefaultItemType defaultItemType : DefaultItemType.values()) {
-            if (this.itemTypeRepository.findFirstByLabel(defaultItemType.itemType.getLabel()).isEmpty()) {
-                this.itemTypeRepository.save(defaultItemType.itemType);
-            }
-        }
-
+    private void createItemType() throws NoSuchFieldException, NoSuchMethodException {
         // String packageName = "com.management.cmdb.core.models.business";
         // Set<Class> coreModels = findAllClassesUsingClassLoader(packageName);
         Set<Class> coreModels = Set.of(
@@ -88,7 +80,11 @@ public class StartupJob implements CommandLineRunner {
             }
             modelEntities.add(itemTypeEntity);
         }
-        this.itemTypeRepository.saveAll(modelEntities);
+
+        for (ItemTypeEntity itemTypeEntity : modelEntities) {
+            itemTypeService.create(ItemTypeMapper.INSTANCE.toDto(itemTypeEntity), UserDetail.SYSTEM);
+        }
+        LOGGER.info("Item types created: {}", modelEntities.size());
     }
 
     public Set<Class> findAllClassesUsingClassLoader(String packageName) {
@@ -113,6 +109,7 @@ public class StartupJob implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
+        createItemType();
         LOGGER.info("Starting up application");
         LOGGER.info("Profiles: {}", Arrays.toString(env.getActiveProfiles()));
         LOGGER.info("App version: {}", env.getProperty("spring.application.version"));

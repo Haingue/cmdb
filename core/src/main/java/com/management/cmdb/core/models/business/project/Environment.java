@@ -3,7 +3,9 @@ package com.management.cmdb.core.models.business.project;
 import com.management.cmdb.core.models.business.component.Component;
 import com.management.cmdb.core.models.business.constants.EnvironmentStatus;
 import com.management.cmdb.core.models.business.constants.EnvironmentType;
+import com.management.cmdb.core.models.exceptions.InvalidObjectException;
 import com.management.cmdb.core.models.technical.Entity;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashSet;
 import java.util.Objects;
@@ -31,6 +33,7 @@ public class Environment extends Entity {
     }
 
     protected Environment(String location, EnvironmentType type, String jiraTracker) {
+        super();
         this.location = location;
         this.type = type;
         this.components = new HashSet<Component>();
@@ -39,6 +42,7 @@ public class Environment extends Entity {
     }
 
     protected Environment(String location, EnvironmentType type, Set<Component> components, String jiraTracker, EnvironmentStatus status) {
+        super();
         this.location = location;
         this.type = type;
         this.components = components;
@@ -50,8 +54,16 @@ public class Environment extends Entity {
         return location;
     }
 
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
     public EnvironmentType getType() {
         return type;
+    }
+
+    public void setType(EnvironmentType type) {
+        this.type = type;
     }
 
     public Set<Component> getComponents() {
@@ -62,13 +74,20 @@ public class Environment extends Entity {
         return components.add(component);
     }
 
-
     public String getJiraTracker() {
         return jiraTracker;
     }
 
+    public void setJiraTracker(String jiraTracker) {
+        this.jiraTracker = jiraTracker;
+    }
+
     public EnvironmentStatus getStatus() {
         return status;
+    }
+
+    public void setStatus(EnvironmentStatus status) {
+        this.status = status;
     }
 
     public Set<Component> getOutDatedComponents() {
@@ -87,4 +106,10 @@ public class Environment extends Entity {
         return Objects.hash(location, type);
     }
 
+    public boolean isValid () {
+        if (StringUtils.isBlank(location)) throw new InvalidObjectException("location cannot be blank", this);
+        if (type == null) throw new InvalidObjectException("type cannot be null", this);
+        if (status == null) throw new InvalidObjectException("status cannot be null", this);
+        return true;
+    }
 }
