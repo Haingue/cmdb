@@ -43,8 +43,8 @@ export type LinkTypeDto = {
 
 export type LinkDto = {
   linkType: LinkTypeDto;
-  fromItemId: UUID;
-  toItemId: ItemDto;
+  sourceItemId: UUID;
+  targetItemId: ItemDto;
   description: string;
 }
 
@@ -54,8 +54,8 @@ export type ItemDto = {
   description?: string;
   type?: ItemTypeDto;
   attributes?: AttributeDto[];
-  fromLinks?: LinkDto[];
-  toLinks?: LinkDto[];
+  outgoingLinks?: LinkDto[];
+  incomingLinks?: LinkDto[];
   createdDate?: DateTime;
   createdBy?: UUID;
   lastModifiedBy?: UUID;
