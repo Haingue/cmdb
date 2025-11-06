@@ -1,6 +1,6 @@
 import React from 'react'
-import type { ItemTypeDto } from '../../service/inventory/types'
-import PageTitle from '../../components/PageTitle'
+import type { ItemTypeDto } from '../../../service/inventory/types'
+import PageTitle from '../../../components/PageTitle'
 
 const ItemTypeForm = () => {
   const [itemType, setItemType] = React.useState<ItemTypeDto>({

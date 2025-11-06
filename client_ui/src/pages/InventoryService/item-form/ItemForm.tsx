@@ -1,9 +1,9 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
-import PageTitle from '../../components/PageTitle'
-import { createNewItem } from '../../service/inventory/InventorySync'
-import type { ItemDto } from '../../service/inventory/types'
-import { type ItemTypeState } from '../../store/itemType.slice'
+import PageTitle from '../../../components/PageTitle'
+import { createNewItem } from '../../../service/inventory/InventorySync'
+import type { ItemDto } from '../../../service/inventory/types'
+import { type ItemTypeState } from '../../../store/itemType.slice'
 
 const ItemInputForm = ({propertyName, label, type, value, updateItemField}: {propertyName: string, label: string, type: string, value?: string, updateItemField: (field: keyof ItemDto | string, value: string) => void}) => {
   return (
