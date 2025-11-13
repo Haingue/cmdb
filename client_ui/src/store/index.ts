@@ -1,12 +1,14 @@
 import { configureStore } from '@reduxjs/toolkit'
 import uxReducer from './ux.slice.ts'
 import itemTypeReducer from './itemType.slice.ts'
+import linkTypeReducer from './linkType.slice.ts'
 import itemReducer from './item.slice.ts'
 
 const store = configureStore({
   reducer: {
     ux: uxReducer,
     itemTypes: itemTypeReducer,
+    linkTypes: linkTypeReducer,
     items: itemReducer,
   },
 })

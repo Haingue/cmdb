@@ -9,7 +9,7 @@ import java.util.UUID;
 
 public interface LinkTypeService {
 
-    LinkTypeDto create(LinkTypeDto linkTypeDto, UserDetail creator);
+    LinkTypeDto create(LinkTypeDto linkTypeDto, UserDetail author);
 
     Optional<LinkTypeDto> findById(UUID uuid);
     Optional<LinkTypeDto> findByLabel(String label);
