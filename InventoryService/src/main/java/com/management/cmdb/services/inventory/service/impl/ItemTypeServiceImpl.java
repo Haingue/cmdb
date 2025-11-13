@@ -1,6 +1,8 @@
 package com.management.cmdb.services.inventory.service.impl;
 
+import com.management.cmdb.services.inventory.dto.AuthorDto;
 import com.management.cmdb.services.inventory.dto.ItemTypeDto;
+import com.management.cmdb.services.inventory.dto.NotificationDto;
 import com.management.cmdb.services.inventory.dto.wrapper.PaginatedResponseDto;
 import com.management.cmdb.services.inventory.entity.ItemTypeEntity;
 import com.management.cmdb.services.inventory.exception.ItemTypeNotExist;
@@ -9,6 +11,7 @@ import com.management.cmdb.services.inventory.model.UserDetail;
 import com.management.cmdb.services.inventory.repository.ItemTypeRepository;
 import com.management.cmdb.services.inventory.service.ItemTypeService;
 import org.springframework.ai.tool.annotation.Tool;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
@@ -19,9 +22,11 @@ import java.util.UUID;
 @Service
 public class ItemTypeServiceImpl implements ItemTypeService {
 
+    private final ApplicationEventPublisher applicationEventPublisher;
     private final ItemTypeRepository itemTypeRepository;
 
-    public ItemTypeServiceImpl(ItemTypeRepository itemTypeRepository) {
+    public ItemTypeServiceImpl(ApplicationEventPublisher applicationEventPublisher, ItemTypeRepository itemTypeRepository) {
+        this.applicationEventPublisher = applicationEventPublisher;
         this.itemTypeRepository = itemTypeRepository;
     }
 
@@ -42,6 +47,15 @@ public class ItemTypeServiceImpl implements ItemTypeService {
         });
 
         newEntity = itemTypeRepository.save(newEntity);
+
+        applicationEventPublisher.publishEvent(
+                new NotificationDto(
+                        new AuthorDto(author.email()),
+                        NotificationDto.NotificationType.NEW_ITEM_TYPE,
+                        "Create new link type",
+                        newEntity.getUuid()
+                )
+        );
         return ItemTypeMapper.INSTANCE.toDto(newEntity);
     }
 

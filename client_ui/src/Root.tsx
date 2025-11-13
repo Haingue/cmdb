@@ -7,6 +7,12 @@ import SideBar from './components/navigation/SideBar'
 import NavBar from './components/navigation/NavBar'
 import InventoryService from './pages/InventoryService'
 import About from './pages/About'
+import ItemTypeExplorer from './pages/InventoryService/item-type'
+import ItemTypeForm from './pages/InventoryService/item-type-form'
+import LinkTypeExplorer from './pages/InventoryService/link-type'
+import LinkTypeForm from './pages/InventoryService/link-type-form'
+import ItemExplorer from './pages/InventoryService/items'
+import ItemFormPage from './pages/InventoryService/item-form'
 
 const Root = () => {
   return (
@@ -23,6 +29,12 @@ const Root = () => {
               <Route path="/map" Component={Map} />
               <Route path="/map-items" Component={MapItems} />
               <Route path="/inventory-service" Component={InventoryService} />
+              <Route path="/inventory-service/item-types" Component={ItemTypeExplorer} />
+              <Route path="/inventory-service/item-type-form" Component={ItemTypeForm} />
+              <Route path="/inventory-service/link-types" Component={LinkTypeExplorer} />
+              <Route path="/inventory-service/link-type-form" Component={LinkTypeForm} />
+              <Route path="/inventory-service/items" Component={ItemExplorer} />
+              <Route path="/inventory-service/item-form" Component={ItemFormPage} />
               <Route path="/about" Component={About} />
               <Route path="*" Component={NotFound} />
             </Routes>

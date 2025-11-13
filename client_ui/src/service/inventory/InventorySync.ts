@@ -1,4 +1,4 @@
-import type { InventoryServiceServerInfo, ItemDto, ItemTypeDto, PaginatedResponseDto, ServerSentEventNotificationDto, UUID } from "./types"
+import type { InventoryServiceServerInfo, ItemDto, ItemTypeDto, LinkTypeDto, PaginatedResponseDto, ServerSentEventNotificationDto, UUID } from "./types"
 
 const URL = 'http://localhost:8090/api/inventory'
 
@@ -67,6 +67,41 @@ export async function getItemTypeById(itemTypeId: UUID): Promise<ItemTypeDto> {
   return response.json();
 }
 
+/** LinkType  **/
+export async function searchLinkTypes(
+  label?: string,
+  pageNumber: number = 0,
+  pageSize: number = 10
+): Promise<PaginatedResponseDto<LinkTypeDto>> {
+  const queryParams = new URLSearchParams();
+  if (label) queryParams.append("label", label);
+  queryParams.append("pageNumber", pageNumber.toString());
+  queryParams.append("pageSize", pageSize.toString());
+
+  const response = await fetch(`${URL}/link-type?${queryParams.toString()}`);
+  if (!response.ok) throw new Error("Failed to fetch link types");
+  return response.json();
+}
+
+export async function getLinkTypeById(linkTypeId: UUID): Promise<LinkTypeDto> {
+  const response = await fetch(`${URL}/link-type/${linkTypeId}`);
+  if (!response.ok) throw new Error("Failed to fetch link type");
+  return response.json();
+}
+
+export async function createNewLinkType(link: LinkTypeDto): Promise<LinkTypeDto> {
+  const response = await fetch(`${URL}/link-type`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(link),
+  });
+  if (!response.ok) throw new Error("Failed to create link");
+  return response.json();
+}
+
+/** Notification  **/
 export function subscribeToNotifications(callback: (event: ServerSentEventNotificationDto) => void): EventSource {
   const eventSource = new EventSource(`${URL}/notification/subscribe`);
   eventSource.onmessage = (e) => callback(JSON.parse(e.data));
@@ -74,4 +109,4 @@ export function subscribeToNotifications(callback: (event: ServerSentEventNotifi
 }
 
 
-export default {getItemById, searchItems, getItemTypeById, searchItemTypes, subscribeToNotifications, getServerInfo}
+export default {getItemById, searchItems, getItemTypeById, searchItemTypes, getLinkTypeById, searchLinkTypes, createNewLinkType, subscribeToNotifications, getServerInfo}

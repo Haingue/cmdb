@@ -19,7 +19,6 @@ public class AttributeEntity extends Auditable {
     @ManyToOne
     @JoinColumn
     private AttributeTypeEntity attributeType;
-    @NotBlank
     private String valueStr;
 
     public AttributeTypeEntity getAttributeType() {

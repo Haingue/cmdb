@@ -1,6 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit'
 import uxReducer from './ux.slice.ts'
 import itemTypeReducer from './itemType.slice.ts'
+import linkTypeReducer from './linkType.slice.ts'
 import itemReducer from './item.slice.ts'
 import notificationReducer from './notification.slice.ts'
 
@@ -9,6 +10,7 @@ const store = configureStore({
     ux: uxReducer,
     notifications: notificationReducer,
     itemTypes: itemTypeReducer,
+    linkTypes: linkTypeReducer,
     items: itemReducer,
   },
 })
