@@ -1,13 +1,9 @@
-import type { ItemDto, ItemTypeDto, PaginatedResponseDto, ServerSentEventNotificationDto, UUID } from "./types"
+import type { InventoryServiceServerInfo, ItemDto, ItemTypeDto, PaginatedResponseDto, ServerSentEventNotificationDto, UUID } from "./types"
 
 const URL = 'http://localhost:8090/api/inventory'
 
 /** Server **/
-export async function getServerInfo(): Promise<{
-  name: string
-  version: string
-  description: string
-}> {
+export async function getServerInfo(): Promise<InventoryServiceServerInfo> {
   const response = await fetch(`${URL}/actuator/info`);
   if (!response.ok) throw new Error("Failed to fetch server status");
   return response.json();

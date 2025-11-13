@@ -1,3 +1,11 @@
+export type InventoryServiceServerInfo = {
+  application: {
+    name: string
+    version: string
+    description: string
+  }
+}
+
 export type UUID = string;
 export type DateTime = string;
 

@@ -1,13 +1,10 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import PageTitle from '../components/PageTitle'
 import BackendService from '../service/backend/BackendSync'
 import InventoryService from '../service/inventory/InventorySync'
+import type { InventoryServiceServerInfo } from '../service/inventory/types'
+import type { BackendServerInfo } from '../service/backend/types'
 
-type ServerInfo = {
-  name: string
-  version: string
-  description: string
-}
 type ComponentStatusProps = {
   name: string
   version: string
@@ -38,28 +35,30 @@ const ComponentStatus = ({component} : {component: ComponentStatusProps}) => (
   )
 
 const About = () => {
-  const components: ComponentStatusProps[] = [
+  const [components, setComponents] = useState<ComponentStatusProps[]>([
     { name: 'Backend', version: '0.0.0', isUp: false },
     { name: 'InventoryService', version: '0.0.0', isUp: false },
-  ]
+  ])
 
   useEffect(() => {
     BackendService.getServerInfo()
-      .then((appInfo: ServerInfo) => {
+      .then(({ application }: BackendServerInfo) => {
         components[0].isUp = true
-        components[0].version = appInfo.version
+        components[0].version = application.version
       })
       .catch(() => {
         components[0].isUp = false
       })
+      .finally(() => setComponents([...components]))
     InventoryService.getServerInfo()
-      .then((status: ServerInfo) => {
+      .then(({ application }: InventoryServiceServerInfo) => {
         components[1].isUp = true
-        components[1].version = status.version
+        components[1].version = application.version
       })
       .catch(() => {
         components[1].isUp = false
       })
+      .finally(() => setComponents([...components]))
   }, [])
 
   return (
