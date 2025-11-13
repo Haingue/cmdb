@@ -7,7 +7,7 @@ import java.util.Set;
 
 public enum FakeProject {
 
-    PROJECT_1(new Project("Project 1", "P1", "Fake project", FakeBusinessService.BUSINESS_SERVICE_1.businessService, FakeUserGroup.TECHNICAL_GROUP.userGroup, FakeUserGroup.BUSINESS_GROUP.userGroup));
+    PROJECT_1(Project.create("Project 1", "P1", "Fake project", FakeBusinessService.BUSINESS_SERVICE_1.businessService, FakeUserGroup.TECHNICAL_GROUP.userGroup, FakeUserGroup.BUSINESS_GROUP.userGroup));
 
     public final Project project;
 
