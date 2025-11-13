@@ -68,7 +68,7 @@ export async function getItemTypeById(itemTypeId: UUID): Promise<ItemTypeDto> {
 }
 
 export function subscribeToNotifications(callback: (event: ServerSentEventNotificationDto) => void): EventSource {
-  const eventSource = new EventSource("${URL}/notification/subscribe");
+  const eventSource = new EventSource(`${URL}/notification/subscribe`);
   eventSource.onmessage = (e) => callback(JSON.parse(e.data));
   return eventSource;
 }

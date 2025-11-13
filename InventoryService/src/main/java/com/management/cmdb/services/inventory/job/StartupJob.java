@@ -1,7 +1,5 @@
 package com.management.cmdb.services.inventory.job;
 
-import com.management.cmdb.core.models.business.project.BusinessService;
-import com.management.cmdb.core.models.business.project.Project;
 import com.management.cmdb.services.inventory.entity.AttributeTypeEntity;
 import com.management.cmdb.services.inventory.entity.ItemTypeEntity;
 import com.management.cmdb.services.inventory.mapper.ItemTypeMapper;
@@ -16,6 +14,7 @@ import org.springframework.stereotype.Component;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.RecordComponent;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -37,8 +36,8 @@ public class StartupJob implements CommandLineRunner {
         // String packageName = "com.management.cmdb.core.models.business";
         // Set<Class> coreModels = findAllClassesUsingClassLoader(packageName);
         Set<Class> coreModels = Set.of(
-                BusinessService.class,
-                Project.class,
+                com.management.cmdb.core.models.business.project.BusinessService.class,
+                com.management.cmdb.core.models.business.project.Project.class,
                 com.management.cmdb.core.models.business.project.Environment.class,
                 com.management.cmdb.core.models.business.component.Component.class,
                 com.management.cmdb.core.models.business.component.Software.class,
@@ -59,7 +58,7 @@ public class StartupJob implements CommandLineRunner {
             List<String> attributes;
             if (coreModel.isRecord()) {
                 attributes = Arrays.stream(coreModel.getRecordComponents())
-                        .map(recordComponent -> recordComponent.getName())
+                        .map(RecordComponent::getName)
                         .toList();
             } else {
                 attributes = Arrays.stream(coreModel.getMethods())
@@ -68,6 +67,10 @@ public class StartupJob implements CommandLineRunner {
                         .map(method -> method.getName().replaceAll("^get", ""))
                         .toList();
             }
+            attributes = attributes.stream()
+                    .distinct()
+                    .filter(attribute -> !Arrays.asList("name", "description").contains(attribute.toLowerCase()))
+                    .toList();
             for (String attribute : attributes) {
                 AttributeTypeEntity attributeType = new AttributeTypeEntity();
                 attributeType.setUuid(UUID.randomUUID());
