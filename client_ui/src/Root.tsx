@@ -13,6 +13,7 @@ import LinkTypeExplorer from './pages/InventoryService/link-type'
 import LinkTypeForm from './pages/InventoryService/link-type-form'
 import ItemExplorer from './pages/InventoryService/items'
 import ItemFormPage from './pages/InventoryService/item-form'
+import TrafficPage from './pages/traffic'
 
 const Root = () => {
   return (
@@ -28,6 +29,7 @@ const Root = () => {
               <Route path="/" Component={Dashboard} />
               <Route path="/map" Component={Map} />
               <Route path="/map-items" Component={MapItems} />
+              <Route path="/traffic" Component={TrafficPage} />
               <Route path="/inventory-service" Component={InventoryService} />
               <Route path="/inventory-service/item-types" Component={ItemTypeExplorer} />
               <Route path="/inventory-service/item-type-form" Component={ItemTypeForm} />

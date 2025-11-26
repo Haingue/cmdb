@@ -6,6 +6,8 @@ import { loadItemTypes, type ItemTypeState } from "../../store/itemType.slice"
 import ItemForm from "./item-form/ItemForm"
 import type { AppDispatch } from "../../store"
 import { Link } from "react-router"
+import { loadItems, type ItemState } from "../../store/item.slice"
+import { loadLinkTypes, type LinkTypeState } from "../../store/linkType.slice"
 
 const ItemTypeSection = ({itemTypesPage} : {itemTypesPage: PaginatedResponseDto<ItemTypeDto>}) => {
   if (!itemTypesPage || itemTypesPage.totalElements === 0) {
@@ -36,19 +38,15 @@ const ItemTypeSection = ({itemTypesPage} : {itemTypesPage: PaginatedResponseDto<
 
 const InventoryService = () => {
   const dispatch = useDispatch<AppDispatch>()
-  const {itemTypes, isLoading, error} = useSelector<ItemTypeState>((state) => state.itemTypes) as ItemTypeState
+  const {itemTypes} = useSelector<ItemTypeState>((state) => state.itemTypes) as ItemTypeState
+  const {items} = useSelector<ItemState>((state) => state.items) as ItemState
+  const {linkTypes} = useSelector<LinkTypeState>((state) => state.linkTypes) as LinkTypeState
 
   useEffect(() => {
     dispatch(loadItemTypes())
+    dispatch(loadItems())
+    dispatch(loadLinkTypes())
   }, [dispatch])
-
-  if (error) {
-    return <div className="text-red-500">Error: {error}</div>
-  }
-
-  if (isLoading) {
-    return <div>Loading item types...</div>
-  }
 
   return (
     <>
@@ -60,11 +58,11 @@ const InventoryService = () => {
         </div>
         <div className="mb-4 badge badge-lg border p-3 bg-gray-100 shadow-md rounded-xl">
           <h3 className="text-xl font-semibold">Available items</h3>
-          <span className="text-gray-600">Total: ?</span>
+          <span className="text-gray-600">Total: {items?.totalElements}</span>
         </div>
         <div className="mb-4 badge badge-lg border p-3 bg-gray-100 shadow-md rounded-xl">
           <h3 className="text-xl font-semibold">Available link types</h3>
-          <span className="text-gray-600">Total: ?</span>
+          <span className="text-gray-600">Total: {linkTypes.totalElements}</span>
         </div>
         <div className="mb-4 badge badge-lg border p-3 bg-gray-100 shadow-md rounded-xl">
           <h3 className="text-xl font-semibold">Number of item links</h3>

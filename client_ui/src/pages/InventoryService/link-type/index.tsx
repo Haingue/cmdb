@@ -27,7 +27,6 @@ const LinkTypeExplorer = () => {
         {linkTypes.content.map((linkType) => (
           <div key={linkType.uuid} className="mb-4 p-4 border rounded">
             <h2 className="text-xl font-bold mb-2">{linkType.label}</h2>
-            <p className="text-gray-600">UUID: {linkType.uuid}</p>
           </div>
         ))}
       </section>

@@ -33,7 +33,7 @@ public class LinkTypeServiceImpl implements LinkTypeService {
     @Override
     public LinkTypeDto create(LinkTypeDto linkTypeDto, UserDetail author) {
         if (StringUtils.isBlank(linkTypeDto.label())) throw new LinkTypeNotValid();
-        if (this.linkTypeRepository.findFirstByLabel(linkTypeDto.label()).isPresent()) throw new LinkTypeExist();
+        if (this.linkTypeRepository.findFirstByLabelIgnoreCase(linkTypeDto.label()).isPresent()) throw new LinkTypeExist();
 
         LinkTypeEntity newLinkType = LinkTypeMapper.INSTANCE.toEntity(linkTypeDto);
         newLinkType.setUuid(UUID.randomUUID());
@@ -60,13 +60,14 @@ public class LinkTypeServiceImpl implements LinkTypeService {
     @Override
     public Optional<LinkTypeDto> findByLabel(String label) {
         return this.linkTypeRepository
-                .findFirstByLabel(label)
+                .findFirstByLabelIgnoreCase(label)
                 .map(LinkTypeMapper.INSTANCE::toDto);
     }
 
     @Override
     public PaginatedResponseDto<LinkTypeDto> search(String label, int pageNumber, int pageSize) {
+        if (label == null) label = "";
         return PaginatedResponseDto.toPaginatedDto(this.linkTypeRepository
-                .searchAllByLabelLikeIgnoreCase(label, PageRequest.of(pageNumber, pageSize)), LinkTypeMapper.INSTANCE::toDto);
+                .searchAllByLabelContainingIgnoreCase(label, PageRequest.of(pageNumber, pageSize)), LinkTypeMapper.INSTANCE::toDto);
     }
 }

@@ -76,7 +76,7 @@ public class ItemServiceImpl implements ItemService {
         if (!itemEntity.getOutgoingLinks().isEmpty()) {
             for (LinkEntity linkEntity : itemEntity.getOutgoingLinks()) {
                 linkEntity.setUuid(UUID.randomUUID());
-                linkEntity.setLinkType(linkTypeRepository.findFirstByLabel(newItemDto.type().label())
+                linkEntity.setLinkType(linkTypeRepository.findFirstByLabelIgnoreCase(newItemDto.type().label())
                         .orElseGet(() -> createLinkType(linkEntity.getLinkType(), author)));
                 linkEntity.setSourceItem(itemEntity);
                 ItemEntity targetItem = itemRepository.findById(linkEntity.getTargetItem().getUuid())
@@ -87,7 +87,7 @@ public class ItemServiceImpl implements ItemService {
         if (!itemEntity.getIncomingLinks().isEmpty()) {
             for (LinkEntity linkEntity : itemEntity.getIncomingLinks()) {
                 linkEntity.setUuid(UUID.randomUUID());
-                linkEntity.setLinkType(linkTypeRepository.findFirstByLabel(newItemDto.type().label())
+                linkEntity.setLinkType(linkTypeRepository.findFirstByLabelIgnoreCase(newItemDto.type().label())
                         .orElseGet(() -> createLinkType(linkEntity.getLinkType(), author)));
 
                 ItemEntity sourceItem = itemRepository.findById(linkEntity.getSourceItem().getUuid())

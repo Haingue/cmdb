@@ -6,13 +6,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface LinkTypeRepository extends CrudRepository<LinkTypeEntity, UUID> {
-    Optional<LinkTypeEntity> findFirstByLabel(String label);
+    Optional<LinkTypeEntity> findFirstByLabelIgnoreCase(String label);
 
-    Page<LinkTypeEntity> searchAllByLabelLikeIgnoreCase(String label, Pageable page);
+    Page<LinkTypeEntity> searchAllByLabelContainingIgnoreCase(String label, Pageable page);
 }
