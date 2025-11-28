@@ -1,19 +1,19 @@
 package com.management.cmdb.services.aggregator.syslog.server;
 
-import io.netty.bootstrap.Bootstrap;
+import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.nio.NioDatagramChannel;
+import io.netty.channel.socket.nio.NioServerSocketChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.SmartLifecycle;
 import org.springframework.stereotype.Component;
 
 @Component
-public class SyslogServer implements SmartLifecycle {
+public class SyslogTcpServer implements SmartLifecycle {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SyslogServer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SyslogTcpServer.class);
 
     private final SyslogServerProperties properties;
     private final SyslogServerHandler syslogServerHandler;
@@ -21,30 +21,31 @@ public class SyslogServer implements SmartLifecycle {
     private Channel channel;
     private boolean isRunning = false;
 
-    public SyslogServer(SyslogServerProperties properties, SyslogServerHandler syslogServerHandler) {
+    public SyslogTcpServer(SyslogServerProperties properties, SyslogServerHandler syslogServerHandler) {
         this.properties = properties;
         this.syslogServerHandler = syslogServerHandler;
     }
 
     @Override
     public void start() {
-        if (isRunning) {
+        if (!properties.isTcpEnable() || isRunning) {
             return;
         }
         group = new NioEventLoopGroup();
         try {
-            Bootstrap bootstrap = new Bootstrap();
+            ServerBootstrap bootstrap = new ServerBootstrap();
             bootstrap.group(group)
-                    .channel(NioDatagramChannel.class)
-                    .handler(syslogServerHandler);
-
-            channel = bootstrap.bind("0.0.0.0", properties.getPort()).sync().channel();
+                    .channel(NioServerSocketChannel.class)
+                    .childHandler(syslogServerHandler);
+            channel = bootstrap.bind("0.0.0.0", properties.getTcpPort()).sync().channel();
             isRunning = true;
-            LOGGER.info("Syslog server started on port {}", properties.getPort());
+            LOGGER.info("Syslog server started on port [tcp={}]", properties.getTcpPort());
         } catch (InterruptedException e) {
             LOGGER.error("Failed to start Syslog server", e);
             Thread.currentThread().interrupt();
             throw new RuntimeException("Failed to start Syslog server", e);
+        } catch (Exception e) {
+            LOGGER.error("Failed to start Syslog server", e);
         }
     }
 
@@ -54,8 +55,12 @@ public class SyslogServer implements SmartLifecycle {
             return;
         }
         try {
-            channel.close().sync();
-            group.shutdownGracefully().sync();
+            if (channel != null) {
+                channel.close().sync();
+            }
+            if (group != null) {
+                group.shutdownGracefully().sync();
+            }
             isRunning = false;
             LOGGER.info("Syslog server stopped");
         } catch (InterruptedException e) {
