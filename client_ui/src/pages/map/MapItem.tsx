@@ -1,17 +1,23 @@
-import { Background, BackgroundVariant, ControlButton, Controls, MiniMap, ReactFlow, useEdgesState, useNodesState, type Node, type NodeProps, type XYPosition } from "@xyflow/react";
+import { Background, BackgroundVariant, ControlButton, Controls, Handle, MiniMap, Position, ReactFlow, useEdgesState, useNodesState, type Edge, type Node, type NodeProps, type XYPosition } from "@xyflow/react";
 
 import { useEffect } from "react";
 import { searchItems } from "../../service/inventory/InventorySync";
 import PageTitle from "../../components/PageTitle";
 
 import '@xyflow/react/dist/style.css';
-import type { AttributeDto, ItemDto } from "../../service/inventory/types";
+import type { AttributeDto, ItemDto, LinkDto } from "../../service/inventory/types";
 
 const nodeTypes = {
   itemType: ({ data }: NodeProps) => {
     const item: ItemDto = data as ItemDto;
     return (
       <div className="p-4 bg-white border border-gray-300 rounded-lg shadow-md">
+        <Handle
+          type="source"
+          position={Position.Left}
+          onConnect={(params) => console.log('handle onConnect', params)}
+          isConnectable={false}
+        />
         <p className="text-xs text-center">[{item?.type?.label}]</p>
         <h3 className="text-lg font-semibold text-center">{item?.name}</h3>
         <p className="text-sm text-gray-600">{item?.description}</p>
@@ -24,6 +30,12 @@ const nodeTypes = {
             </div>
           ))}
         </section>
+        <Handle
+          type="target"
+          position={Position.Right}
+          onConnect={(params) => console.log('handle onConnect', params)}
+          isConnectable={false}
+        />
       </div>
     );
   }
@@ -34,14 +46,29 @@ const MapItems = () => {
     const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   
     const loadProjects = async () => {
-      const json = await searchItems()
+      const json = await searchItems(undefined, undefined, 0, 100)
       console.log(json)
       json.content
+        .filter((item, key) => json.content.indexOf(item) == key)
         .forEach((item, index) => {
-            const _node = { id: item.uuid, type: 'itemType', data: { uuid: item.uuid, label: `${item.label}`, ...item } }
+            const _node = { id: item.uuid, type: 'itemType', data: { label: `${item.name}`, ...item } }
             addNode(_node, { x: Math.random() * 600, y: Math.random() * 900 })
+
+            item.outgoingLinks?.forEach(link => addEdge(link))
         });
       return json
+    }
+
+    const addEdge = (link: LinkDto): Edge => {
+      const edge: Edge = {
+        id: `${link.sourceItemId}-${link.targetItemId}` as string,
+        source: link.sourceItemId as string,
+        target: link.targetItemId as string,
+        label: link.linkType.label,
+        data: link
+      }
+      setEdges((eds) => eds.concat(edge))
+      return edge
     }
 
     const addNode = (entity: any, position: XYPosition): Node => {
@@ -57,6 +84,7 @@ const MapItems = () => {
     }
 
     useEffect(() => {
+      console.log('Load Items from API')
       loadProjects()
     }, [])
 
@@ -64,7 +92,7 @@ const MapItems = () => {
     <>
         <PageTitle title="React Flow" />
         <div>
-            <button onClick={() => loadProjects()}>Load project</button>
+            <button onClick={loadProjects}>Load project</button>
         </div>
         <div className=" h-[80vh] border border-gray-300 rounded-lg mt-4">
             <ReactFlow

@@ -36,7 +36,10 @@ public class ExceptionAdvice {
     @ExceptionHandler({
             BadRequestException.class,
             HttpClientErrorException.class,
-            TransactionSystemException.class
+            TransactionSystemException.class,
+            ItemNotValid.class,
+            ItemTypeNotExist.class,
+            LinkTypeNotValid.class
     })
     public ResponseEntity<ProblemDetail> handleClientException(RuntimeException ex) {
         return ResponseEntity.badRequest().body(generateProblemDetail(HttpStatus.BAD_REQUEST, ex));

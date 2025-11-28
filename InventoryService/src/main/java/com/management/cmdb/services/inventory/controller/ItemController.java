@@ -42,6 +42,15 @@ public class ItemController {
         return ResponseEntity.ok(itemService.searchItemByNameOrType(itemName, itemType, page, pageSize, UserDetail.UNKNOWN));
     }
 
+    @GetMapping("/any/{attributeName}/{attributeValue}")
+    public ResponseEntity<PaginatedResponseDto<ItemDto>> getItemsByAttribute(
+            @PathVariable String attributeName, @PathVariable String attributeValue,
+            @RequestParam(name = "itemType", required = false) String itemType
+    ) {
+        LOGGER.info("Get items by attribute [attribute={}, value={}, itemType={}]", attributeName, attributeValue, itemType);
+        return ResponseEntity.ok(itemService.searchItemByAttribute(itemType, attributeName, attributeValue, UserDetail.UNKNOWN));
+    }
+
     @PostMapping
     public ResponseEntity<ItemDto> createItem(@RequestBody ItemDto itemDto) {
         LOGGER.info("Create item: {}", itemDto);

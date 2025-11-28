@@ -2,10 +2,12 @@ package com.management.cmdb.services.inventory.service.impl;
 
 import com.management.cmdb.services.inventory.dto.AuthorDto;
 import com.management.cmdb.services.inventory.dto.ItemDto;
+import com.management.cmdb.services.inventory.dto.LinkDto;
 import com.management.cmdb.services.inventory.dto.NotificationDto;
 import com.management.cmdb.services.inventory.dto.wrapper.PaginatedResponseDto;
 import com.management.cmdb.services.inventory.entity.*;
 import com.management.cmdb.services.inventory.exception.*;
+import com.management.cmdb.services.inventory.job.StartupJob;
 import com.management.cmdb.services.inventory.mapper.ItemMapper;
 import com.management.cmdb.services.inventory.model.UserDetail;
 import com.management.cmdb.services.inventory.repository.ItemRepository;
@@ -23,6 +25,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -80,7 +83,7 @@ public class ItemServiceImpl implements ItemService {
                         .orElseGet(() -> createLinkType(linkEntity.getLinkType(), author)));
                 linkEntity.setSourceItem(itemEntity);
                 ItemEntity targetItem = itemRepository.findById(linkEntity.getTargetItem().getUuid())
-                        .orElseThrow(() -> new LinkedItemDoesNotExist(linkEntity));
+                        .orElseThrow(() -> new LinkedItemDoesNotExist(linkEntity.getTargetItem()));
                 linkEntity.setTargetItem(targetItem);
             }
         }
@@ -91,7 +94,7 @@ public class ItemServiceImpl implements ItemService {
                         .orElseGet(() -> createLinkType(linkEntity.getLinkType(), author)));
 
                 ItemEntity sourceItem = itemRepository.findById(linkEntity.getSourceItem().getUuid())
-                        .orElseThrow(() -> new LinkedItemDoesNotExist(linkEntity));
+                        .orElseThrow(() -> new LinkedItemDoesNotExist(linkEntity.getSourceItem()));
                 linkEntity.setSourceItem(sourceItem);
                 linkEntity.setTargetItem(itemEntity);
             }
@@ -134,8 +137,36 @@ public class ItemServiceImpl implements ItemService {
                 .orElseThrow(ItemTypeNotExist::new);
         existingItem.setName(itemDto.name());
         existingItem.setDescription(itemDto.description());
-        // TODO: existingItem.addToLinks(itemDto.incomingLinks());
-        // TODO: existingItem.addFromLinks(itemDto.fromLinks());
+
+        if (!itemDto.outgoingLinks().isEmpty()) {
+            // TODO Delete unupdated links ?
+            for (LinkDto linkDto : itemDto.outgoingLinks()) {
+                LinkEntity linkEntity = new LinkEntity();
+                linkEntity.setUuid(UUID.randomUUID());
+                linkEntity.setLinkType(linkTypeRepository.findFirstByLabelIgnoreCase(linkDto.linkType().label())
+                        .orElse(StartupJob.communicate_with));
+                linkEntity.setSourceItem(existingItem);
+                ItemEntity targetItem = itemRepository.findById(linkDto.targetItemId())
+                        .orElseThrow(() -> new LinkedItemDoesNotExist(linkDto.targetItemId()));
+                linkEntity.setTargetItem(targetItem);
+                existingItem.getOutgoingLinks().add(linkEntity);
+            }
+        }
+        if (!itemDto.incomingLinks().isEmpty()) {
+            // TODO Delete unupdated links ?
+            for (LinkDto linkDto : itemDto.incomingLinks()) {
+                LinkEntity linkEntity = new LinkEntity();
+                linkEntity.setUuid(UUID.randomUUID());
+                linkEntity.setLinkType(linkTypeRepository.findFirstByLabelIgnoreCase(linkDto.linkType().label())
+                        .orElse(StartupJob.communicate_with));
+
+                ItemEntity sourceItem = itemRepository.findById(linkDto.sourceItemId())
+                        .orElseThrow(() -> new LinkedItemDoesNotExist(linkDto.sourceItemId()));
+                linkEntity.setSourceItem(sourceItem);
+                linkEntity.setTargetItem(existingItem);
+                existingItem.getIncomingLinks().add(linkEntity);
+            }
+        }
         existingItem = this.itemRepository.save(existingItem);
 
         applicationEventPublisher.publishEvent(
@@ -182,5 +213,18 @@ public class ItemServiceImpl implements ItemService {
                 itemTypeLabel,
                 PageRequest.of(page, pageSize));
         return PaginatedResponseDto.<ItemDto, ItemEntity>toPaginatedDto(result, ItemMapper.INSTANCE::toDto);
+    }
+
+    @Override
+    public PaginatedResponseDto<ItemDto> searchItemByAttribute(String itemTypeLabel, String attributeName, String attributeValue, UserDetail userDetail) {
+        // TODO check user details
+        if (ObjectUtils.isEmpty(itemTypeLabel)) itemTypeLabel = "%";
+        List<ItemEntity> foundItem = this.itemRepository.searchAllByTypeLabelLike(itemTypeLabel).stream()
+                .filter(item ->
+                        item.getAttributes().stream().anyMatch(attribute ->
+                            attribute.getAttributeType().getLabel().equalsIgnoreCase(attributeName)
+                                    && attribute.getValueStr().equalsIgnoreCase(attributeValue)))
+                .toList();
+        return PaginatedResponseDto.<ItemDto, ItemEntity>toPaginatedDto(foundItem, ItemMapper.INSTANCE::toDto);
     }
 }

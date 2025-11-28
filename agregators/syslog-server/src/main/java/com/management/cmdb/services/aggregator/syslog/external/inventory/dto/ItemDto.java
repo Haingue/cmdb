@@ -1,4 +1,4 @@
-package com.management.cmdb.services.inventory.dto;
+package com.management.cmdb.services.aggregator.syslog.external.inventory.dto;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;

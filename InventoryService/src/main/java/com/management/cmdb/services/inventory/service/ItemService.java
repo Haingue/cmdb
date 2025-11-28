@@ -14,5 +14,6 @@ public interface ItemService {
 
     ItemDto findItemById (UUID uuid, UserDetail userDetail);
     PaginatedResponseDto<ItemDto> searchItemByNameOrType(String itemName, String itemTypeLabel, int page, int pageSize, UserDetail userDetail);
+    PaginatedResponseDto<ItemDto> searchItemByAttribute(String itemTypeLabel, String attributeName, String attributeValue, UserDetail userDetail);
 
 }

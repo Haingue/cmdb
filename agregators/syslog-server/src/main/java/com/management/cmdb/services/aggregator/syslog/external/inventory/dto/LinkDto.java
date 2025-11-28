@@ -1,4 +1,4 @@
-package com.management.cmdb.backend.services.inventory.dto;
+package com.management.cmdb.services.aggregator.syslog.external.inventory.dto;
 
 import java.util.UUID;
 

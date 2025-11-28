@@ -54,7 +54,7 @@ public class PaloAltoMessageParser {
         if (fields.length > 2) message.setType(fields[2]);
         if (fields.length > 3) message.setSubtype(fields[3]);
         // Skip unknown value (2817)
-        if (fields.length > 5) message.setTimeGenerated(fields[5]);
+        if (fields.length > 5) message.setTimeGenerated(LocalDateTime.parse(fields[5], DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")));
         if (fields.length > 6) message.setSrc(fields[6]);
         if (fields.length > 7) message.setDst(fields[7]);
         if (fields.length > 8) message.setNatsrc(fields[8]);

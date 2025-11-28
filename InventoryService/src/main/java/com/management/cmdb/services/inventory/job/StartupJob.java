@@ -1,10 +1,14 @@
 package com.management.cmdb.services.inventory.job;
 
+import com.management.cmdb.services.inventory.dto.LinkTypeDto;
 import com.management.cmdb.services.inventory.entity.AttributeTypeEntity;
 import com.management.cmdb.services.inventory.entity.ItemTypeEntity;
+import com.management.cmdb.services.inventory.entity.LinkTypeEntity;
 import com.management.cmdb.services.inventory.mapper.ItemTypeMapper;
+import com.management.cmdb.services.inventory.mapper.LinkTypeMapper;
 import com.management.cmdb.services.inventory.model.UserDetail;
 import com.management.cmdb.services.inventory.service.ItemTypeService;
+import com.management.cmdb.services.inventory.service.LinkTypeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -22,14 +26,22 @@ import java.util.stream.Collectors;
 public class StartupJob implements CommandLineRunner {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StartupJob.class);
+    public static LinkTypeEntity communicate_with = new LinkTypeEntity("Communicate with");
 
     private final Environment env;
 
+    private final LinkTypeService linkTypeService;
     private final ItemTypeService itemTypeService;
 
-    public StartupJob(Environment env, ItemTypeService itemTypeService) {
+    public StartupJob(Environment env, LinkTypeService linkTypeService, ItemTypeService itemTypeService) {
         this.env = env;
+        this.linkTypeService = linkTypeService;
         this.itemTypeService = itemTypeService;
+    }
+
+    private void createLinkType() {
+        LinkTypeDto savedCommunicateWithLinkType = linkTypeService.create(LinkTypeMapper.INSTANCE.toDto(communicate_with), UserDetail.SYSTEM);
+        communicate_with = LinkTypeMapper.INSTANCE.toEntity(savedCommunicateWithLinkType);
     }
 
     private void createItemType() throws NoSuchFieldException, NoSuchMethodException {
@@ -113,6 +125,7 @@ public class StartupJob implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         createItemType();
+        createLinkType();
         LOGGER.info("Starting up application");
         LOGGER.info("Profiles: {}", Arrays.toString(env.getActiveProfiles()));
         LOGGER.info("App version: {}", env.getProperty("spring.application.version"));
