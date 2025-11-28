@@ -1,6 +1,7 @@
 package com.management.cmdb.services.inventory.controller;
 
 import com.management.cmdb.services.inventory.dto.ItemDto;
+import com.management.cmdb.services.inventory.dto.wrapper.PaginatedResponseDto;
 import com.management.cmdb.services.inventory.entity.AttributeEntity;
 import com.management.cmdb.services.inventory.entity.ItemEntity;
 import com.management.cmdb.services.inventory.entity.LinkEntity;
@@ -13,6 +14,7 @@ import jakarta.annotation.Resource;
 import org.junit.jupiter.api.*;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -187,6 +189,29 @@ class ItemControllerTest {
 
     @Test
     @Order(6)
+    void getItemByAttribute() {
+        ItemEntity existingItem = itemRepository.save(ItemExample.JETTY01.toEntity());
+
+        PaginatedResponseDto<ItemDto> result = webTestClient.get()
+                .uri("/item/any/hostname/MYSERVERJETTY01")
+                .exchange()
+                .expectStatus()
+                .isOk()
+                .returnResult(new ParameterizedTypeReference<PaginatedResponseDto<ItemDto>>() {})
+                .getResponseBody()
+                .blockFirst();
+
+        Assertions.assertNotNull(result);
+        Assertions.assertFalse(result.isEmpty());
+        ItemDto itemResult = result.content().getFirst();
+        Assertions.assertEquals(ItemExample.JETTY01.toDto(), itemResult);
+        Assertions.assertEquals(ItemExample.JETTY01.toDto().name(), itemResult.name());
+        Assertions.assertTrue(ItemExample.JETTY01.toDto().attributes().stream().anyMatch(attr -> attr.label().equals("hostname") && attr.value().equals("MYSERVERJETTY01")));
+        Assertions.assertEquals(ItemExample.JETTY01.toDto().description(), itemResult.description());
+    }
+
+    @Test
+    @Order(100)
     void deleteItem() {
         ItemEntity existingItem = itemRepository.save(ItemExample.JETTY01.toEntity());
         webTestClient.method(HttpMethod.DELETE)

@@ -19,7 +19,7 @@ public class PaloAltoSyslogMessage {
     private String serial;
     private String type;
     private String subtype;
-    private String timeGenerated;
+    private LocalDateTime timeGenerated;
     private String src;
     private String dst;
     private String natsrc;

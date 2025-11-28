@@ -1,6 +1,7 @@
 package com.management.cmdb.backend.services.inventory.dto;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
@@ -11,13 +12,19 @@ public record ItemDto(
         String description,
         ItemTypeDto type,
         Set<AttributeDto> attributes,
-        Set<LinkDto> fromLinks,
-        Set<LinkDto> toLinks,
+        Set<LinkDto> outgoingLinks,
+        Set<LinkDto> incomingLinks,
         LocalDateTime createdDate,
         UUID createdBy,
         UUID lastModifiedBy,
         LocalDateTime lastModifiedDate
         ) {
+
+        public ItemDto {
+                if (attributes == null) attributes = new HashSet<>();
+                if (outgoingLinks == null) outgoingLinks = new HashSet<>();
+                if (incomingLinks == null) incomingLinks = new HashSet<>();
+        }
 
         @Override
         public boolean equals(Object o) {

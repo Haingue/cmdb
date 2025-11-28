@@ -14,6 +14,20 @@ public record PaginatedResponseDto<T> (
     boolean last
 ){
 
+    public static <Dto, Entity> PaginatedResponseDto<Dto> toPaginatedDto(List<Entity> entityList, Function<Entity, Dto> mapper) {
+        List<Dto> content = entityList.stream()
+                .map(mapper)
+                .toList();
+        return new PaginatedResponseDto<Dto>(
+                content,
+                1,
+                entityList.size(),
+                entityList.size(),
+                1,
+                true
+        );
+    }
+
     /**
      * TODO test or remove
      * @param page

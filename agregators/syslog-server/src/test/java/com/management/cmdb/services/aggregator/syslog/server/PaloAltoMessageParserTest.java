@@ -18,7 +18,7 @@ class PaloAltoMessageParserTest {
         assertEquals("TRAFFIC", parsedMessage.getType());
         assertEquals("end", parsedMessage.getSubtype());
         assertEquals("013201030824", parsedMessage.getSerial());
-        assertEquals("2025/11/27 17:37:07", parsedMessage.getTimeGenerated());
+        assertEquals("2025-11-27T17:37:07", parsedMessage.getTimeGenerated().toString());
         assertEquals("10.114.181.101", parsedMessage.getSrc());
         assertEquals("10.114.214.8", parsedMessage.getDst());
         assertEquals("0.0.0.0", parsedMessage.getNatsrc());
