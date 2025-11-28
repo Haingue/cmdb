@@ -1,0 +1,6 @@
+DB_DRIVER: org.postgresql.Driver
+DB_DIALECT: org.hibernate.dialect.PostgreSQLDialect
+DB_URL: jdbc:postgresql://localhost:5433/backend_db
+DB_USERNAME: user
+DB_PASSWORD: password
+DB_DDL_AUTO: update

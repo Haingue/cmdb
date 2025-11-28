@@ -1,0 +1,29 @@
+# .github/workflows/cd.yml
+name: CD Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+
+      - name: Build and push Backend
+        run: |
+          cd Backend
+          docker build -t votre-org/backend:${{ github.sha }} .
+          docker push votre-org/backend:${{ github.sha }}
+
+      - name: Deploy to production
+        run: |
+          # Exemple avec kubectl (si vous utilisez Kubernetes)
+          kubectl set image deployment/backend backend=votre-org/backend:${{ github.sha }}

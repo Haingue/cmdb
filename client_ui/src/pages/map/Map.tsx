@@ -35,7 +35,7 @@ const Map = () => {
       const json = await searchItemTypes()
       console.log(json)
       json.content
-        .forEach((item, index) => {
+        .forEach((item) => {
             const _node = { id: item.uuid, type: 'itemType', data: { uuid: item.uuid, label: `${item.label}`, description: `${item.description}`, attributes: item.attributes } }
             addNode(_node, { x: Math.random() * 600, y: Math.random() * 900 })
         });
@@ -62,7 +62,7 @@ const Map = () => {
     <>
         <PageTitle title="React Flow" />
         <div>
-            <button onClick={() => loadProjects()}>Load project</button>
+            <button onClick={loadProjects}>Load project</button>
         </div>
         <div className=" h-[80vh] border border-gray-300 rounded-lg mt-4">
             <ReactFlow

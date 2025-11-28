@@ -76,8 +76,8 @@ public class ItemServiceImpl implements ItemService {
         if (!itemEntity.getOutgoingLinks().isEmpty()) {
             for (LinkEntity linkEntity : itemEntity.getOutgoingLinks()) {
                 linkEntity.setUuid(UUID.randomUUID());
-                linkEntity.setLinkType(linkTypeRepository.findFirstByLabel(newItemDto.type().label())
-                        .orElseGet(() -> createLinkType(linkEntity.getLinkType())));
+                linkEntity.setLinkType(linkTypeRepository.findFirstByLabelIgnoreCase(newItemDto.type().label())
+                        .orElseGet(() -> createLinkType(linkEntity.getLinkType(), author)));
                 linkEntity.setSourceItem(itemEntity);
                 ItemEntity targetItem = itemRepository.findById(linkEntity.getTargetItem().getUuid())
                         .orElseThrow(() -> new LinkedItemDoesNotExist(linkEntity));
@@ -87,8 +87,8 @@ public class ItemServiceImpl implements ItemService {
         if (!itemEntity.getIncomingLinks().isEmpty()) {
             for (LinkEntity linkEntity : itemEntity.getIncomingLinks()) {
                 linkEntity.setUuid(UUID.randomUUID());
-                linkEntity.setLinkType(linkTypeRepository.findFirstByLabel(newItemDto.type().label())
-                        .orElseGet(() -> createLinkType(linkEntity.getLinkType())));
+                linkEntity.setLinkType(linkTypeRepository.findFirstByLabelIgnoreCase(newItemDto.type().label())
+                        .orElseGet(() -> createLinkType(linkEntity.getLinkType(), author)));
 
                 ItemEntity sourceItem = itemRepository.findById(linkEntity.getSourceItem().getUuid())
                         .orElseThrow(() -> new LinkedItemDoesNotExist(linkEntity));
@@ -99,7 +99,7 @@ public class ItemServiceImpl implements ItemService {
 
         itemEntity = this.itemRepository.save(itemEntity);
         ItemDto resultItem = ItemMapper.INSTANCE.toDto(itemEntity);
-        // Send event
+
         applicationEventPublisher.publishEvent(
                 new NotificationDto(
                         new AuthorDto(author.email()),
@@ -108,19 +108,28 @@ public class ItemServiceImpl implements ItemService {
                         resultItem.uuid()
                 )
         );
-
         return resultItem;
     }
 
-    private LinkTypeEntity createLinkType(LinkTypeEntity linkTypeEntity) {
+    private LinkTypeEntity createLinkType(LinkTypeEntity linkTypeEntity, UserDetail author) {
         if (StringUtils.isBlank(linkTypeEntity.getLabel())) throw new LinkTypeNotValid();
         linkTypeEntity.setUuid(UUID.randomUUID());
-        return linkTypeRepository.save(linkTypeEntity);
+        LinkTypeEntity newLink = linkTypeRepository.save(linkTypeEntity);
+
+        applicationEventPublisher.publishEvent(
+                new NotificationDto(
+                        new AuthorDto(author.email()),
+                        NotificationDto.NotificationType.NEW_ITEM,
+                        "Connect items",
+                        newLink.getUuid()
+                )
+        );
+        return newLink;
     }
 
     @Override
     @Tool(description = "Tool targetItemId update an existing item in the CMDB")
-    public ItemDto updateItem(ItemDto itemDto, UserDetail userDetail) {
+    public ItemDto updateItem(ItemDto itemDto, UserDetail author) {
         ItemEntity existingItem = this.itemRepository.findById(itemDto.uuid())
                 .orElseThrow(ItemTypeNotExist::new);
         existingItem.setName(itemDto.name());
@@ -128,14 +137,31 @@ public class ItemServiceImpl implements ItemService {
         // TODO: existingItem.addToLinks(itemDto.incomingLinks());
         // TODO: existingItem.addFromLinks(itemDto.fromLinks());
         existingItem = this.itemRepository.save(existingItem);
+
+        applicationEventPublisher.publishEvent(
+                new NotificationDto(
+                        new AuthorDto(author.email()),
+                        NotificationDto.NotificationType.UPDATE_ITEM,
+                        "Update item",
+                        existingItem.getUuid()
+                )
+        );
         return ItemMapper.INSTANCE.toDto(existingItem);
     }
 
     @Override
-    public void deleteItem(UUID itemId, UserDetail userDetail) {
+    public void deleteItem(UUID itemId, UserDetail author) {
         ItemEntity existingItem = this.itemRepository.findById(itemId)
                 .orElseThrow(ItemTypeNotExist::new);
         this.itemRepository.delete(existingItem);
+        applicationEventPublisher.publishEvent(
+                new NotificationDto(
+                        new AuthorDto(author.email()),
+                        NotificationDto.NotificationType.DELETE_ITEM,
+                        "Update item",
+                        existingItem.getUuid()
+                )
+        );
     }
 
     @Override

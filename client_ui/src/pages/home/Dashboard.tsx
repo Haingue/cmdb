@@ -1,3 +1,4 @@
+import NotificationBell from '../../components/NotificationBell'
 import PageTitle from '../../components/PageTitle'
 import './Dashboard.css'
 
@@ -7,7 +8,7 @@ function Dashboard() {
     <>
       <PageTitle title={title} />
       <div>
-        
+        <NotificationBell />
       </div>
     </>
   )

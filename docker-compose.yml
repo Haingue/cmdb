@@ -1,0 +1,79 @@
+services:
+  backend_db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: backend_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - backend_db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d backend_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  inventory_db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: inventory_db
+    ports:
+      - "5434:5432"
+    volumes:
+      - inventory_db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d inventory_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # zipkin:
+  #   image: openzipkin/zipkin
+  #   ports:
+  #     - "9411:9411"
+
+  # backend:
+  #   build:
+  #     context: ./Backend
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "8080:8080"
+  #   environment:
+  #     SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/inventory_db
+  #     SPRING_ZIPKIN_BASE_URL: http://zipkin:9411
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
+  #     zipkin:
+  #       condition: service_started
+
+  # inventory-service:
+  #   build:
+  #     context: ./InventoryService
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "8081:8081"
+  #   environment:
+  #     SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/inventory_db
+  #     SPRING_ZIPKIN_BASE_URL: http://zipkin:9411
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
+  #     zipkin:
+  #       condition: service_started
+
+  # client-ui:
+  #   build:
+  #     context: ./client_ui
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "3000:3000"
+  #   depends_on:
+  #     - backend
+
+volumes:
+  inventory_db:
+  backend_db:

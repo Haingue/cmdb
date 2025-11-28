@@ -12,5 +12,7 @@ public interface InventoryServiceClient {
 
     @GetMapping("/item-type")
     PaginatedResponseDto<ItemTypeDto> searchItemTypes(@RequestParam String label, @RequestParam int pageNumber, @RequestParam int pageSize);
+    @GetMapping("/item")
+    PaginatedResponseDto<ItemTypeDto> searchItems(@RequestParam String label, @RequestParam String itemType, @RequestParam int pageNumber, @RequestParam int pageSize);
 
 }
