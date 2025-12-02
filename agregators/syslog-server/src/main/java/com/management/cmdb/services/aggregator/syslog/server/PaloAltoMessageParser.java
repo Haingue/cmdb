@@ -2,15 +2,18 @@ package com.management.cmdb.services.aggregator.syslog.server;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.Month;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class PaloAltoMessageParser {
 
-    private static final Pattern SYSLOG_PATTERN = Pattern.compile("<(\\d+)>(... \\d+ \\d+:\\d+:\\d+)\\s+(\\S+)\\s+(\\d+),(.+)");
+    private static final Pattern SYSLOG_PATTERN = Pattern.compile("<(\\d+)>(... ..\\s+\\d+:\\d+:\\d+)\\s+(\\S+)\\s+(\\d+),(.+)");
+    private static final Pattern SYSLOG_TIMESTAMP_PATTERN = Pattern.compile("(\\w+)\\s+(\\d+)\\s+(\\d+):(\\d+):(\\d+)");
 
 
     private static final DateTimeFormatter TIME_FORMATTER =
@@ -37,12 +40,18 @@ public class PaloAltoMessageParser {
     }
 
     private static Instant parseTimestamp(String timestampStr) {
-        // Ajoute l'année courante pour compléter la date
+        Matcher matcher = SYSLOG_TIMESTAMP_PATTERN.matcher(timestampStr);
+        if (!matcher.matches()) {
+            throw new IllegalArgumentException("Invalid timestamp format");
+        }
         int year = java.time.Year.now().getValue();
-        String fullTimestampStr = String.format("%d %s", year, timestampStr);
-        DateTimeFormatter formatter =
-                DateTimeFormatter.ofPattern("yyyy MMM dd HH:mm:ss", Locale.ENGLISH);
-        return LocalDateTime.parse(fullTimestampStr, formatter)
+        Month month = Arrays.stream(Month.values()).filter(m -> m.name().substring(0, 3).equalsIgnoreCase(matcher.group(1)))
+                .findFirst().orElseThrow();
+        int day = Integer.parseInt(matcher.group(2));
+        int hour = Integer.parseInt(matcher.group(3));
+        int minute = Integer.parseInt(matcher.group(4));
+        int second = Integer.parseInt(matcher.group(5));
+        return LocalDateTime.of(year, month, day, hour, minute, second)
                 .atZone(ZoneId.systemDefault())
                 .toInstant();
     }

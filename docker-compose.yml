@@ -1,34 +1,55 @@
+volumes:
+  inventory_db:
+  backend_db:
+  metabase-data:
+
 services:
   backend_db:
-    image: postgres:15
+    image: postgres:17.4
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
       POSTGRES_DB: backend_db
+      PGDATA: /data/postgres
     ports:
       - "5433:5432"
     volumes:
-      - backend_db:/var/lib/postgresql/data
+      - backend_db:/data/postgres
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U user -d backend_db"]
       interval: 5s
       timeout: 5s
       retries: 5
+
   inventory_db:
-    image: postgres:15
+    image: postgres:17.4
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
       POSTGRES_DB: inventory_db
+      PGDATA: /data/postgres
     ports:
       - "5434:5432"
     volumes:
-      - inventory_db:/var/lib/postgresql/data
+      - inventory_db:/data/postgres
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U user -d inventory_db"]
       interval: 5s
       timeout: 5s
       retries: 5
+
+  metabase:
+    image: metabase/metabase:latest
+    container_name: metabase
+    depends_on:
+      - inventory_db
+      - backend_db
+    environment:
+      MB_DB_FILE: /metabase-data
+    ports:
+      - "5440:3000"
+    volumes:
+      - metabase-data:/metabase-data
 
   # zipkin:
   #   image: openzipkin/zipkin
@@ -73,7 +94,3 @@ services:
   #     - "3000:3000"
   #   depends_on:
   #     - backend
-
-volumes:
-  inventory_db:
-  backend_db:
