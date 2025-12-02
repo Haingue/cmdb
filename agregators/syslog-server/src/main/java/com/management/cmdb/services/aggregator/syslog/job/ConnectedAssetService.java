@@ -1,14 +1,17 @@
-package com.management.cmdb.services.aggregator.syslog.service;
+package com.management.cmdb.services.aggregator.syslog.job;
 
 import com.management.cmdb.services.aggregator.syslog.external.inventory.InventoryServiceClient;
 import com.management.cmdb.services.aggregator.syslog.external.inventory.dto.*;
 import com.management.cmdb.services.aggregator.syslog.external.inventory.dto.wrapper.PaginatedResponseDto;
 import com.management.cmdb.services.aggregator.syslog.model.Traffic;
+import com.management.cmdb.services.aggregator.syslog.service.SyslogService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.*;
 
 @Service
@@ -58,7 +61,8 @@ public class ConnectedAssetService {
         ItemDto sourceItem;
         if (sourceItemList.isEmpty()) {
             AttributeDto ipHost = new AttributeDto(null, newItemTypeIpAddressAttribute, null, traffic.getSourceIp(), null, null, null, null);
-            sourceItem = new ItemDto(null, traffic.getSourceIp(), newItemDescription, hostItemType, Set.of(ipHost), new HashSet<>(), new HashSet<>(), null, null, null, null);
+            String hostName = resolveHostname(traffic.getSourceIp());
+            sourceItem = new ItemDto(null, hostName, newItemDescription, hostItemType, Set.of(ipHost), new HashSet<>(), new HashSet<>(), null, null, null, null);
             sourceItem = inventoryServiceClient.createItem(sourceItem).getBody();
         } else {
             sourceItem = sourceItemList.content().getFirst();
@@ -66,7 +70,8 @@ public class ConnectedAssetService {
         ItemDto destinationItem;
         if (destinationItemList.isEmpty()) {
             AttributeDto ipHost = new AttributeDto(null, newItemTypeIpAddressAttribute, null, traffic.getDestinationIp(), null, null, null, null);
-            destinationItem = new ItemDto(null, traffic.getDestinationIp(), newItemDescription, hostItemType, Set.of(ipHost), new HashSet<>(), new HashSet<>(), null, null, null, null);
+            String hostName = resolveHostname(traffic.getDestinationIp());
+            destinationItem = new ItemDto(null, hostName, newItemDescription, hostItemType, Set.of(ipHost), new HashSet<>(), new HashSet<>(), null, null, null, null);
             destinationItem = inventoryServiceClient.createItem(destinationItem).getBody();
         } else {
             destinationItem = destinationItemList.content().getFirst();
@@ -77,6 +82,15 @@ public class ConnectedAssetService {
         sourceItem.outgoingLinks().add(linkDto);
 
         inventoryServiceClient.updateItem(sourceItem);
+    }
+
+    public static String resolveHostname(String sourceIp) {
+        try {
+            InetAddress inetAddress = InetAddress.getByName(sourceIp);
+            return inetAddress.getHostName();
+        } catch (UnknownHostException e) {
+            return sourceIp;
+        }
     }
 
 }
