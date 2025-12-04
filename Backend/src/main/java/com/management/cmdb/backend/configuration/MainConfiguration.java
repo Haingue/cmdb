@@ -1,6 +1,7 @@
 package com.management.cmdb.backend.configuration;
 
 import com.management.cmdb.backend.services.inventory.InventoryServiceClient;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
@@ -12,10 +13,14 @@ import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 
 import java.time.Duration;
 import java.util.Arrays;
+import java.util.Collections;
 
 @Configuration
 @EnableFeignClients(basePackageClasses = InventoryServiceClient.class)
 public class MainConfiguration {
+
+    @Value("${ALLOWED_HOST_REGEX:http://localhost:5173}")
+    private String allowedHost;
 
     @Bean
     public HttpMessageConverters customConverters() {
@@ -25,7 +30,7 @@ public class MainConfiguration {
     @Bean
     CorsWebFilter corsWebFilter() {
         CorsConfiguration corsConfig = new CorsConfiguration();
-        corsConfig.setAllowedOrigins(Arrays.asList("http://localhost:5173"));
+        corsConfig.setAllowedOrigins(Collections.singletonList(allowedHost));
         corsConfig.addAllowedMethod("GET");
         corsConfig.addAllowedMethod("POST");
         corsConfig.addAllowedHeader("*");

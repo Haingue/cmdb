@@ -25,13 +25,25 @@ spring:
     enabled: false
   cloud:
     gateway:
+#      globalcors:
+#        cors-configurations:
+#          '[/**]':
+#            allowedOriginPatterns: ${ALLOWED_HOST_REGEX:"http://localhost:[*]"}
+#            allowedMethods:
+#              - GET
+#              - POST
+#              - PUT
+#              - DELETE
+#              - OPTIONS
+#            allowedHeaders: "*"
+
       server:
         default-filters:
           - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
         globalcors:
           cors-configurations:
             '[/**]':
-              allowedOrigins: "http://localhost:[*]"
+              allowedOriginPatterns: ${ALLOWED_HOST_REGEX:"http://localhost:[*]"}
               allowedMethods:
                 - GET
                 - POST
