@@ -1,6 +1,7 @@
+import { BACKEND_BASE_URL } from "../../configuration";
 import type { InventoryServiceServerInfo, ItemDto, ItemTypeDto, LinkTypeDto, PaginatedResponseDto, ServerSentEventNotificationDto, UUID } from "./types"
 
-const URL = 'http://localhost:8090/api/inventory'
+const URL = `${BACKEND_BASE_URL}/api/inventory`
 
 /** Server **/
 export async function getServerInfo(): Promise<InventoryServiceServerInfo> {
