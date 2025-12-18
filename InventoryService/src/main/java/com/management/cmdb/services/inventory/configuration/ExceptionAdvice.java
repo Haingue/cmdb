@@ -1,6 +1,9 @@
-package com.management.cmdb.services.inventory.exception;
+package com.management.cmdb.services.inventory.configuration;
 
-import jakarta.validation.ConstraintViolationException;
+import com.management.cmdb.services.inventory.exception.BadRequestException;
+import com.management.cmdb.services.inventory.exception.ItemNotValid;
+import com.management.cmdb.services.inventory.exception.ItemTypeNotExist;
+import com.management.cmdb.services.inventory.exception.LinkTypeNotValid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;

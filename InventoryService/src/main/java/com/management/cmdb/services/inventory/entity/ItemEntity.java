@@ -76,6 +76,7 @@ public class ItemEntity extends Auditable {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         ItemEntity that = (ItemEntity) o;
+        if (getUuid() != null && that.getUuid() != null) return getUuid().equals(that.getUuid());
         return Objects.equals(name, that.name) && Objects.equals(type, that.type);
     }
 

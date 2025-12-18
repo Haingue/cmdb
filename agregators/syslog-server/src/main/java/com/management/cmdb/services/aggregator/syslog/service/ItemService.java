@@ -1,24 +1,24 @@
-package com.management.cmdb.services.aggregator.syslog.job;
+package com.management.cmdb.services.aggregator.syslog.service;
 
 import com.management.cmdb.services.aggregator.syslog.external.inventory.InventoryServiceClient;
 import com.management.cmdb.services.aggregator.syslog.external.inventory.dto.*;
 import com.management.cmdb.services.aggregator.syslog.external.inventory.dto.wrapper.PaginatedResponseDto;
 import com.management.cmdb.services.aggregator.syslog.model.Traffic;
-import com.management.cmdb.services.aggregator.syslog.service.SyslogService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.event.EventListener;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
-public class ConnectedAssetService {
+public class ItemService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ConnectedAssetService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ItemService.class);
 
     private final String newItemType = "Host";
     private final ItemTypeDto hostItemType = new ItemTypeDto(null, newItemType, null, null, null, null, null, null);
@@ -27,39 +27,23 @@ public class ConnectedAssetService {
     private final SyslogService syslogService;
     private final InventoryServiceClient inventoryServiceClient;
 
-    public ConnectedAssetService(SyslogService syslogService, InventoryServiceClient inventoryServiceClient) {
+    public ItemService(SyslogService syslogService, InventoryServiceClient inventoryServiceClient) {
         this.syslogService = syslogService;
         this.inventoryServiceClient = inventoryServiceClient;
     }
 
-    @Scheduled(cron = "10 * * * * *")
-    public void exportCollectedTraffics() {
-        LOGGER.debug("Exporting collected traffics to inventory");
-        Map<String, Map<String, Traffic>> traffics = syslogService.getTraffics();
-        for (Map.Entry<String, Map<String, Traffic>> source : traffics.entrySet()) {
-            LOGGER.debug("Exporting traffics from {} [destination={}]", source.getKey(), source.getValue().size());
-            try {
-                for (Map.Entry<String, Traffic> destination : source.getValue().entrySet()) {
-                    try {
-                        Traffic traffic = destination.getValue().clone();
-                        upsertItemLink(traffic);
-                    } catch (Exception e) {
-                        LOGGER.error("Failed to upsert item link", e);
-                    }
-                }
-            } catch (Exception e) {
-                LOGGER.error("Failed to export traffics from {} to inventory", source.getKey(), e);
-            }
-        }
+    @EventListener
+    public void trafficEvent (Traffic traffic) {
+        // upsertItemLink(traffic);
     }
 
-    private void upsertItemLink (Traffic traffic) {
+    public void upsertItemLink(Traffic traffic) {
         final String newItemDescription = "New host detected by syslog";
         final String newItemTypeIpAddressAttribute = "ipAddress";
         final String newItemTypeHostnameAttribute = "hostname";
 
-        PaginatedResponseDto<ItemDto> sourceItemList = inventoryServiceClient.searchItemByAttribute(newItemTypeIpAddressAttribute, traffic.getSourceIp(), newItemType);
-        PaginatedResponseDto<ItemDto> destinationItemList = inventoryServiceClient.searchItemByAttribute(newItemTypeIpAddressAttribute, traffic.getDestinationIp(), newItemType);
+        PaginatedResponseDto<ItemDto> sourceItemList = searchItemsByIpAddress(newItemTypeIpAddressAttribute, traffic.getSourceIp());
+        PaginatedResponseDto<ItemDto> destinationItemList = searchItemsByIpAddress(newItemTypeIpAddressAttribute, traffic.getDestinationIp());
         ItemDto sourceItem;
         if (sourceItemList.isEmpty()) {
             sourceItem = createNewItemDto(traffic.getSourceIp(), newItemTypeIpAddressAttribute, newItemTypeHostnameAttribute, newItemDescription);
@@ -77,7 +61,11 @@ public class ConnectedAssetService {
         LinkDto linkDto = new LinkDto(communicateWithLinkType, sourceItem.uuid(), destinationItem.uuid(), traffic.toString());
         sourceItem.outgoingLinks().add(linkDto);
 
-        inventoryServiceClient.updateItem(sourceItem);
+        inventoryServiceClient.updateItem(sourceItem, newItemTypeIpAddressAttribute, traffic.getSourceIp());
+    }
+
+    public PaginatedResponseDto<ItemDto> searchItemsByIpAddress(String newItemTypeIpAddressAttribute, String ip) {
+        return inventoryServiceClient.searchItemByAttribute(newItemTypeIpAddressAttribute, ip, newItemType);
     }
 
     private ItemDto createNewItemDto(String traffic, String newItemTypeIpAddressAttribute, String newItemTypeHostnameAttribute, String newItemDescription) {
@@ -86,7 +74,7 @@ public class ConnectedAssetService {
         AttributeDto hostNameAttribute = new AttributeDto(null, newItemTypeHostnameAttribute, null, hostName, null, null, null, null);
 
         ItemDto newItemDto = new ItemDto(null, hostName, newItemDescription, hostItemType, Set.of(ipHostAttribute, hostNameAttribute), new HashSet<>(), new HashSet<>(), null, null, null, null);
-        ResponseEntity<ItemDto> response = inventoryServiceClient.createItem(newItemDto);
+        ResponseEntity<ItemDto> response = inventoryServiceClient.createItem(newItemDto, ipHostAttribute.label(), ipHostAttribute.value());
         if (response.getStatusCode().is4xxClientError()) {
             LOGGER.error("Failed to create new item in inventory: {}", response.getBody());
             throw new RuntimeException("Failed to create new item in inventory");

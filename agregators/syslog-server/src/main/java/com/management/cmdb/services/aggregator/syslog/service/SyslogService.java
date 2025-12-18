@@ -6,6 +6,7 @@ import com.management.cmdb.services.aggregator.syslog.server.PaloAltoMessagePars
 import com.management.cmdb.services.aggregator.syslog.server.PaloAltoSyslogMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.jta.TransactionFactory;
@@ -20,9 +21,12 @@ public class SyslogService {
     private static final Logger LOGGER = LoggerFactory.getLogger(SyslogService.class);
 
     public final Sinks.Many<ServerSentEvent<Traffic>> syslogSink;
+
+    private final ApplicationEventPublisher applicationEventPublisher;
     private final TrafficRepository trafficRepository;
 
-    public SyslogService(TrafficRepository trafficRepository) {
+    public SyslogService(ApplicationEventPublisher applicationEventPublisher, TrafficRepository trafficRepository) {
+        this.applicationEventPublisher = applicationEventPublisher;
         this.trafficRepository = trafficRepository;
         this.syslogSink = Sinks.many().multicast().directBestEffort();
     }
@@ -43,6 +47,7 @@ public class SyslogService {
             oneTraffic.setLastCommunicationDatetime(parsedMessage.getTimeGenerated());
             trafficRepository.save(parsedMessage.getSrc(), parsedMessage.getDst(), oneTraffic);
 
+            applicationEventPublisher.publishEvent(oneTraffic);
             syslogSink.tryEmitNext(
                     ServerSentEvent.<Traffic>builder()
                             .id(UUID.randomUUID().toString())

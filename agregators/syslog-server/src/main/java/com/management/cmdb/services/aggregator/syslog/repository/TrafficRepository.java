@@ -55,6 +55,7 @@ public class TrafficRepository {
         if (traffics instanceof CaffeineCache caffeineCache) {
             ConcurrentMap<Object, @NonNull Object> map = caffeineCache.getNativeCache().asMap();
             map.forEach((key, value) -> result.put(key.toString(), (Map<String, Traffic>) value));
+            traffics.clear();
         }
         return result;
     }

@@ -35,7 +35,7 @@ public class PrepareData implements ApplicationRunner {
     }
 
     @Override
-    public void run(ApplicationArguments args) throws Exception {
+    public void run(ApplicationArguments args) {
         LOGGER.info("Starting up application");
         LOGGER.info("Profiles: {}", Arrays.toString(env.getActiveProfiles()));
         LOGGER.info("App version: {}", env.getProperty("spring.application.version"));

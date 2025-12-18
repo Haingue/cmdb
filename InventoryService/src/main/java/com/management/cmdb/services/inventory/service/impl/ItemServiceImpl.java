@@ -10,10 +10,7 @@ import com.management.cmdb.services.inventory.exception.*;
 import com.management.cmdb.services.inventory.job.StartupJob;
 import com.management.cmdb.services.inventory.mapper.ItemMapper;
 import com.management.cmdb.services.inventory.model.UserDetail;
-import com.management.cmdb.services.inventory.repository.ItemRepository;
-import com.management.cmdb.services.inventory.repository.ItemTypeRepository;
-import com.management.cmdb.services.inventory.repository.LinkRepository;
-import com.management.cmdb.services.inventory.repository.LinkTypeRepository;
+import com.management.cmdb.services.inventory.repository.*;
 import com.management.cmdb.services.inventory.service.ItemService;
 import jakarta.transaction.Transactional;
 import org.apache.commons.lang3.StringUtils;
@@ -39,13 +36,15 @@ public class ItemServiceImpl implements ItemService {
     private final ItemTypeRepository itemTypeRepository;
     private final LinkTypeRepository linkTypeRepository;
     private final LinkRepository linkRepository;
+    private final AttributeRepository attributeRepository;
 
-    public ItemServiceImpl(ApplicationEventPublisher applicationEventPublisher, ItemRepository itemRepository, ItemTypeRepository itemTypeRepository, LinkTypeRepository linkTypeRepository, LinkRepository linkRepository) {
+    public ItemServiceImpl(ApplicationEventPublisher applicationEventPublisher, ItemRepository itemRepository, ItemTypeRepository itemTypeRepository, LinkTypeRepository linkTypeRepository, LinkRepository linkRepository, AttributeRepository attributeRepository) {
         this.applicationEventPublisher = applicationEventPublisher;
         this.itemRepository = itemRepository;
         this.itemTypeRepository = itemTypeRepository;
         this.linkTypeRepository = linkTypeRepository;
         this.linkRepository = linkRepository;
+        this.attributeRepository = attributeRepository;
     }
 
     @Override
@@ -149,7 +148,7 @@ public class ItemServiceImpl implements ItemService {
                         .orElse(StartupJob.communicate_with);
                 ItemEntity targetItem = itemRepository.findById(linkDto.targetItemId())
                         .orElseThrow(() -> new LinkedItemDoesNotExist(linkDto.targetItemId()));
-                LinkEntity linkEntity = linkRepository.findFirstBySourceItemAndTargetItemAndLinkType(existingItem, targetItem, linkType)
+                LinkEntity linkEntity = linkRepository.findFirstBySourceItemUuidAndTargetItemUuidAndLinkTypeLabel(existingItem.getUuid(), targetItem.getUuid(), linkType.getLabel())
                         .orElseGet(() -> {
                             LinkEntity newLinkEntity = new LinkEntity();
                             newLinkEntity.setUuid(UUID.randomUUID());
@@ -169,7 +168,7 @@ public class ItemServiceImpl implements ItemService {
                         .orElse(StartupJob.communicate_with);
                 ItemEntity sourceItem = itemRepository.findById(linkDto.sourceItemId())
                         .orElseThrow(() -> new LinkedItemDoesNotExist(linkDto.sourceItemId()));
-                LinkEntity linkEntity = linkRepository.findFirstBySourceItemAndTargetItemAndLinkType(sourceItem, existingItem, linkType)
+                LinkEntity linkEntity = linkRepository.findFirstBySourceItemUuidAndTargetItemUuidAndLinkTypeLabel(sourceItem.getUuid(), existingItem.getUuid(), linkType.getLabel())
                         .orElseGet(() -> {
                             LinkEntity newLinkEntity = new LinkEntity();
                             newLinkEntity.setUuid(UUID.randomUUID());
@@ -199,6 +198,21 @@ public class ItemServiceImpl implements ItemService {
     public void deleteItem(UUID itemId, UserDetail author) {
         ItemEntity existingItem = this.itemRepository.findById(itemId)
                 .orElseThrow(ItemTypeNotExist::new);
+        if (!existingItem.getOutgoingLinks().isEmpty()) {
+            linkRepository.deleteAllBySourceItemUuidOrTargetItemUuid(existingItem.getUuid(), existingItem.getUuid());
+            existingItem.getOutgoingLinks().clear();
+        }
+        if (!existingItem.getIncomingLinks().isEmpty()) {
+            linkRepository.deleteAllBySourceItemUuidOrTargetItemUuid(existingItem.getUuid(), existingItem.getUuid());
+            existingItem.getIncomingLinks().clear();
+        }
+        if (!existingItem.getAttributes().isEmpty()) {
+            attributeRepository.deleteAllByItemUuid(existingItem.getUuid());
+            existingItem.getAttributes().clear();
+        }
+        existingItem.setType(null);
+        existingItem = this.itemRepository.save(existingItem);
+
         this.itemRepository.delete(existingItem);
         applicationEventPublisher.publishEvent(
                 new NotificationDto(

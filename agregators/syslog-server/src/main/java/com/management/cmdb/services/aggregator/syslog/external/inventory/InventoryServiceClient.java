@@ -2,6 +2,8 @@ package com.management.cmdb.services.aggregator.syslog.external.inventory;
 
 import com.management.cmdb.services.aggregator.syslog.external.inventory.dto.ItemDto;
 import com.management.cmdb.services.aggregator.syslog.external.inventory.dto.wrapper.PaginatedResponseDto;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,14 +13,17 @@ import org.springframework.web.bind.annotation.*;
 public interface InventoryServiceClient {
 
     @GetMapping("/item/any/{attributeName}/{attributeValue}")
+    @Cacheable(cacheNames = "connected-assets", key = "{#attributeName + #attributeValue}", unless = "#result.empty")
     PaginatedResponseDto<ItemDto> searchItemByAttribute(@PathVariable String attributeName,
                                                         @PathVariable String attributeValue,
                                                         @RequestParam String itemType);
 
     @PostMapping("/item")
-    ResponseEntity<ItemDto> createItem(@RequestBody ItemDto itemDto);
+    @CacheEvict(cacheNames = "connected-assets", key = "{#attributeName + #attributeValue}")
+    ResponseEntity<ItemDto> createItem(@RequestBody ItemDto itemDto, @RequestParam String attributeName, @RequestParam String attributeValue);
 
     @PutMapping("/item")
-    ResponseEntity<ItemDto> updateItem(@RequestBody ItemDto itemDto);
+    @CacheEvict(cacheNames = "connected-assets", key = "{#attributeName + #attributeValue}")
+    ResponseEntity<ItemDto> updateItem(@RequestBody ItemDto itemDto, @RequestParam String attributeName, @RequestParam String attributeValue);
 
 }

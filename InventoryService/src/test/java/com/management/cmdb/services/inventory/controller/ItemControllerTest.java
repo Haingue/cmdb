@@ -18,6 +18,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.Optional;
@@ -171,56 +172,62 @@ class ItemControllerTest {
     @Order(4)
     void putItemWithExistingLink() {
         ItemEntity existingItem = itemRepository.save(ItemExample.JETTY01.toEntity());
-        ItemEntity pgItem = ItemExample.POSTGRESQL01.toEntity();
+
         existingItem.setDescription("New description");
+        ItemEntity pgItem = ItemExample.POSTGRESQL01.toEntity();
 
         LinkEntity jettyExchangeWithPg = new LinkEntity();
         jettyExchangeWithPg.setUuid(null);
+        jettyExchangeWithPg.setDescription("1st  link description");
         jettyExchangeWithPg.setLinkType(LinkTypeExample.COMMUNICATE_WITH.toEntity());
-        jettyExchangeWithPg.setSourceItem(existingItem);
-        jettyExchangeWithPg.setTargetItem(pgItem);
+        jettyExchangeWithPg.setSourceItem(pgItem);
+        jettyExchangeWithPg.setTargetItem(existingItem);
         existingItem.getIncomingLinks().add(jettyExchangeWithPg);
 
         Mono<ItemDto> dto = Mono.just(ItemMapper.INSTANCE.toDto(existingItem));
-        webTestClient.put()
+        Flux<ItemDto> itemDtoFluxExchangeResult = webTestClient.put()
                 .uri("/item")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(dto, ItemDto.class)
                 .exchange()
                 .expectStatus()
-                .isOk();
+                .isOk()
+                .returnResult(ItemDto.class)
+                .getResponseBody();
+        ItemDto resultDto = itemDtoFluxExchangeResult.blockLast();
 
-        Optional<ItemEntity> example = itemRepository.findById(ItemExample.JETTY01.toDto().uuid());
-        Assertions.assertNotNull(example);
-        Assertions.assertTrue(example.isPresent());
-        Assertions.assertEquals(existingItem.getName(), example.get().getName());
-        Assertions.assertEquals(existingItem.getDescription(), example.get().getDescription());
-        Assertions.assertEquals(1, example.get().getIncomingLinks().size());
+        Assertions.assertNotNull(resultDto);
+        Assertions.assertEquals(existingItem.getName(), resultDto.name());
+        Assertions.assertEquals(existingItem.getDescription(), resultDto.description());
+        Assertions.assertEquals(1, resultDto.incomingLinks().size());
 
-        existingItem = example.get();
+        existingItem = ItemMapper.INSTANCE.toEntity(resultDto);
+        Assertions.assertEquals(1, existingItem.getIncomingLinks().size());
         ItemEntity pgItem2 = ItemExample.POSTGRESQL02.toEntity();
         LinkEntity jettyExchangeWithPg2 = new LinkEntity();
         jettyExchangeWithPg2.setUuid(null);
+        jettyExchangeWithPg2.setDescription("2nd link description");
         jettyExchangeWithPg2.setLinkType(LinkTypeExample.COMMUNICATE_WITH.toEntity());
-        jettyExchangeWithPg2.setSourceItem(existingItem);
-        jettyExchangeWithPg2.setTargetItem(pgItem2);
+        jettyExchangeWithPg2.setSourceItem(pgItem2);
+        jettyExchangeWithPg2.setTargetItem(existingItem);
         existingItem.getIncomingLinks().add(jettyExchangeWithPg2);
+        Assertions.assertEquals(2, existingItem.getIncomingLinks().size());
 
         dto = Mono.just(ItemMapper.INSTANCE.toDto(existingItem));
-        webTestClient.put()
+        Flux<ItemDto> responseBody = webTestClient.put()
                 .uri("/item")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(dto, ItemDto.class)
                 .exchange()
                 .expectStatus()
-                .isOk();
-
-        example = itemRepository.findById(ItemExample.JETTY01.toDto().uuid());
-        Assertions.assertNotNull(example);
-        Assertions.assertTrue(example.isPresent());
-        Assertions.assertEquals(existingItem.getName(), example.get().getName());
-        Assertions.assertEquals(existingItem.getDescription(), example.get().getDescription());
-        Assertions.assertEquals(2, example.get().getIncomingLinks().size());
+                .isOk()
+                .returnResult(ItemDto.class)
+                .getResponseBody();
+        resultDto = responseBody.blockLast();
+        Assertions.assertNotNull(resultDto);
+        Assertions.assertEquals(existingItem.getName(), resultDto.name());
+        Assertions.assertEquals(existingItem.getDescription(), resultDto.description());
+        Assertions.assertEquals(2, resultDto.incomingLinks().size());
     }
 
     @Test
@@ -247,9 +254,12 @@ class ItemControllerTest {
     @Order(6)
     void getItemByAttribute() {
         ItemEntity existingItem = itemRepository.save(ItemExample.JETTY01.toEntity());
+        String hostname = existingItem.getAttributes().stream()
+                .filter(attributeEntity -> attributeEntity.getAttributeType().getLabel().equals("hostname"))
+                .findFirst().get().getValueStr();
 
         PaginatedResponseDto<ItemDto> result = webTestClient.get()
-                .uri("/item/any/hostname/MYSERVERJETTY01")
+                .uri("/item/any/hostname/"+hostname)
                 .exchange()
                 .expectStatus()
                 .isOk()

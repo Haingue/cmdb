@@ -1,14 +1,18 @@
 package com.management.cmdb.services.inventory.entity;
 
 import com.management.cmdb.services.inventory.entity.meta.Auditable;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 import java.util.Objects;
 
 @Entity
 @Table(name = "links")
 public class LinkEntity extends Auditable {
-    @OneToOne
+    @ManyToOne
+    @JoinColumn(name = "link_type_uuid")
     private LinkTypeEntity linkType;
     @ManyToOne
     @JoinColumn(name = "source_item_uuid")
@@ -16,6 +20,7 @@ public class LinkEntity extends Auditable {
     @ManyToOne
     @JoinColumn(name = "target_item_uuid")
     private ItemEntity targetItem;
+
     private String  description;
 
     public LinkTypeEntity getLinkType() {
