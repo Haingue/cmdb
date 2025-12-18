@@ -11,6 +11,8 @@ import java.util.UUID;
 
 @Repository
 public interface LinkTypeRepository extends CrudRepository<LinkTypeEntity, UUID> {
+    boolean existsByLabelIgnoreCase(String label);
+
     Optional<LinkTypeEntity> findFirstByLabelIgnoreCase(String label);
 
     Page<LinkTypeEntity> searchAllByLabelContainingIgnoreCase(String label, Pageable page);

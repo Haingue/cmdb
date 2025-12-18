@@ -1,6 +1,6 @@
 
 import { Background, BackgroundVariant, MiniMap, ReactFlow, useEdgesState, useNodesState, type Edge, type XYZPosition } from '@xyflow/react'
-import { useEffect } from 'react'
+import { use, useEffect } from 'react'
 import NodeTypeHost from '../../components/ReactFlow/NodeTypeHost'
 import type { ItemDto, LinkDto } from '../../service/inventory/types'
 import Host from '../../models/Host'
@@ -8,13 +8,6 @@ import Host from '../../models/Host'
 const TrafficMap = ({items}: {items: ItemDto[]}) => {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
-
-  const loadItems = async () => {
-    items?.forEach((item, key) => {
-      addNode(item, { x: key * 300, y: 0, z: 100 })
-      item.outgoingLinks?.forEach(link => addEdge(link))
-    });
-  }
 
   const addNode = (item: ItemDto, position: XYZPosition): Node => {
     const node: Node = {
@@ -38,10 +31,16 @@ const TrafficMap = ({items}: {items: ItemDto[]}) => {
     setEdges((eds) => eds.concat(edge))
     return edge
   }
-  
-  useEffect(()=>{
-    loadItems()
-  }, [])
+
+  useEffect(() => {
+    setNodes([])
+    setEdges([])
+    items?.forEach((item, key) => {
+      addNode(item, { x: key * 300, y: 0, z: 100 })
+      item.outgoingLinks?.forEach(link => addEdge(link))
+      item.incomingLinks?.forEach(link => addEdge(link))
+    });
+  }, [items])
 
   return (
     <>

@@ -4,6 +4,7 @@ import com.management.cmdb.services.inventory.entity.meta.Auditable;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 
+import java.util.Objects;
 import java.util.UUID;
 
 @Entity
@@ -28,4 +29,16 @@ public class LinkTypeEntity extends Auditable {
         this.label = value;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        LinkTypeEntity that = (LinkTypeEntity) o;
+        return Objects.equals(label, that.label);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), label);
+    }
 }

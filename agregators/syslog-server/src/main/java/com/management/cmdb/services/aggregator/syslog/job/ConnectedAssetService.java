@@ -7,6 +7,7 @@ import com.management.cmdb.services.aggregator.syslog.model.Traffic;
 import com.management.cmdb.services.aggregator.syslog.service.SyslogService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -54,25 +55,20 @@ public class ConnectedAssetService {
 
     private void upsertItemLink (Traffic traffic) {
         final String newItemDescription = "New host detected by syslog";
-        final String newItemTypeIpAddressAttribute = "IpAddress";
+        final String newItemTypeIpAddressAttribute = "ipAddress";
+        final String newItemTypeHostnameAttribute = "hostname";
 
         PaginatedResponseDto<ItemDto> sourceItemList = inventoryServiceClient.searchItemByAttribute(newItemTypeIpAddressAttribute, traffic.getSourceIp(), newItemType);
         PaginatedResponseDto<ItemDto> destinationItemList = inventoryServiceClient.searchItemByAttribute(newItemTypeIpAddressAttribute, traffic.getDestinationIp(), newItemType);
         ItemDto sourceItem;
         if (sourceItemList.isEmpty()) {
-            AttributeDto ipHost = new AttributeDto(null, newItemTypeIpAddressAttribute, null, traffic.getSourceIp(), null, null, null, null);
-            String hostName = resolveHostname(traffic.getSourceIp());
-            sourceItem = new ItemDto(null, hostName, newItemDescription, hostItemType, Set.of(ipHost), new HashSet<>(), new HashSet<>(), null, null, null, null);
-            sourceItem = inventoryServiceClient.createItem(sourceItem).getBody();
+            sourceItem = createNewItemDto(traffic.getSourceIp(), newItemTypeIpAddressAttribute, newItemTypeHostnameAttribute, newItemDescription);
         } else {
             sourceItem = sourceItemList.content().getFirst();
         }
         ItemDto destinationItem;
         if (destinationItemList.isEmpty()) {
-            AttributeDto ipHost = new AttributeDto(null, newItemTypeIpAddressAttribute, null, traffic.getDestinationIp(), null, null, null, null);
-            String hostName = resolveHostname(traffic.getDestinationIp());
-            destinationItem = new ItemDto(null, hostName, newItemDescription, hostItemType, Set.of(ipHost), new HashSet<>(), new HashSet<>(), null, null, null, null);
-            destinationItem = inventoryServiceClient.createItem(destinationItem).getBody();
+            destinationItem = createNewItemDto(traffic.getDestinationIp(), newItemTypeIpAddressAttribute, newItemTypeHostnameAttribute, newItemDescription);
         } else {
             destinationItem = destinationItemList.content().getFirst();
         }
@@ -82,6 +78,21 @@ public class ConnectedAssetService {
         sourceItem.outgoingLinks().add(linkDto);
 
         inventoryServiceClient.updateItem(sourceItem);
+    }
+
+    private ItemDto createNewItemDto(String traffic, String newItemTypeIpAddressAttribute, String newItemTypeHostnameAttribute, String newItemDescription) {
+        String hostName = resolveHostname(traffic);
+        AttributeDto ipHostAttribute = new AttributeDto(null, newItemTypeIpAddressAttribute, null, traffic, null, null, null, null);
+        AttributeDto hostNameAttribute = new AttributeDto(null, newItemTypeHostnameAttribute, null, hostName, null, null, null, null);
+
+        ItemDto newItemDto = new ItemDto(null, hostName, newItemDescription, hostItemType, Set.of(ipHostAttribute, hostNameAttribute), new HashSet<>(), new HashSet<>(), null, null, null, null);
+        ResponseEntity<ItemDto> response = inventoryServiceClient.createItem(newItemDto);
+        if (response.getStatusCode().is4xxClientError()) {
+            LOGGER.error("Failed to create new item in inventory: {}", response.getBody());
+            throw new RuntimeException("Failed to create new item in inventory");
+        }
+        newItemDto = response.getBody();
+        return newItemDto;
     }
 
     public static String resolveHostname(String sourceIp) {
