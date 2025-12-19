@@ -30,7 +30,7 @@ public class MainConfiguration {
     @Bean
     CorsWebFilter corsWebFilter() {
         CorsConfiguration corsConfig = new CorsConfiguration();
-        corsConfig.setAllowedOrigins(Collections.singletonList(allowedHost));
+        corsConfig.addAllowedOriginPattern(allowedHost);
         corsConfig.addAllowedMethod("GET");
         corsConfig.addAllowedMethod("POST");
         corsConfig.addAllowedHeader("*");

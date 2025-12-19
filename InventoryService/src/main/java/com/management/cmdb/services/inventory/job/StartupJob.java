@@ -40,8 +40,11 @@ public class StartupJob implements CommandLineRunner {
     }
 
     private void createLinkType() {
-        LinkTypeDto savedCommunicateWithLinkType = linkTypeService.create(LinkTypeMapper.INSTANCE.toDto(communicate_with), UserDetail.SYSTEM);
-        communicate_with = LinkTypeMapper.INSTANCE.toEntity(savedCommunicateWithLinkType);
+        Optional<LinkTypeDto> communicationWithLinkType = linkTypeService.findByLabel(communicate_with.getLabel());
+        if (communicationWithLinkType.isEmpty()) {
+            communicationWithLinkType = Optional.of(linkTypeService.create(LinkTypeMapper.INSTANCE.toDto(communicate_with), UserDetail.SYSTEM));
+        }
+        communicate_with = LinkTypeMapper.INSTANCE.toEntity(communicationWithLinkType.get());
     }
 
     private void createItemType() throws NoSuchFieldException, NoSuchMethodException {

@@ -37,7 +37,6 @@ public class ExportCachedTraffic {
                     } catch (Exception e) {
                         LOGGER.error("Failed to upsert item link", e);
                     }
-                    Thread.sleep(1_000L);
                 }
             } catch (Exception e) {
                 LOGGER.error("Failed to export traffics from {} to inventory", source.getKey(), e);

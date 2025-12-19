@@ -5,4 +5,5 @@
 #DB_PASSWORD: password
 #DB_DDL_AUTO: update
 
-ALLOWED_HOST_REGEX: "*.common.eu.corp.toyota.com:[8080,5173,443]"
+#ALLOWED_HOST_REGEX: (http|https)://(localhost|.*.common.eu.corp.toyota.com)(:8080|:5173|:443)
+ALLOWED_HOST_REGEX: "*"
