@@ -19,7 +19,7 @@ import java.util.Collections;
 @EnableFeignClients(basePackageClasses = InventoryServiceClient.class)
 public class MainConfiguration {
 
-    @Value("${ALLOWED_HOST_REGEX:http://localhost:5173}")
+    @Value("${ALLOWED_HOST_REGEX:*}")
     private String allowedHost;
 
     @Bean
