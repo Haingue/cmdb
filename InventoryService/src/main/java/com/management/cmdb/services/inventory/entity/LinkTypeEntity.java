@@ -41,4 +41,11 @@ public class LinkTypeEntity extends Auditable {
     public int hashCode() {
         return Objects.hash(super.hashCode(), label);
     }
+
+    @Override
+    public String toString() {
+        return "LinkTypeEntity{" +
+                "label='" + label + '\'' +
+                '}';
+    }
 }

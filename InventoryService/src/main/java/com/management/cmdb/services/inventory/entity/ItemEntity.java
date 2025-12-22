@@ -22,9 +22,9 @@ public class ItemEntity extends Auditable {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private final Set<AttributeEntity> attributes = new HashSet<>();
 
-    @OneToMany(mappedBy = "sourceItem", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToMany(mappedBy = "sourceItem", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private final Set<LinkEntity> outgoingLinks = new HashSet<>();
-    @OneToMany(mappedBy = "targetItem", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToMany(mappedBy = "targetItem", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private final Set<LinkEntity> incomingLinks = new HashSet<>();
 
     public String getName() {
@@ -83,5 +83,14 @@ public class ItemEntity extends Auditable {
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), name, type);
+    }
+
+    @Override
+    public String toString() {
+        return "ItemEntity{" +
+                "name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", type=" + type +
+                '}';
     }
 }

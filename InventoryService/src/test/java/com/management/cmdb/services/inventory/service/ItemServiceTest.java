@@ -4,8 +4,10 @@ import com.management.cmdb.services.inventory.dto.ItemDto;
 import com.management.cmdb.services.inventory.dto.wrapper.PaginatedResponseDto;
 import com.management.cmdb.services.inventory.entity.ItemEntity;
 import com.management.cmdb.services.inventory.entity.ItemTypeEntity;
+import com.management.cmdb.services.inventory.entity.LinkEntity;
 import com.management.cmdb.services.inventory.exemple.ItemExample;
 import com.management.cmdb.services.inventory.exemple.ItemTypeExample;
+import com.management.cmdb.services.inventory.exemple.LinkTypeExample;
 import com.management.cmdb.services.inventory.mapper.ItemMapper;
 import com.management.cmdb.services.inventory.model.UserDetail;
 import com.management.cmdb.services.inventory.repository.ItemRepository;
@@ -67,6 +69,26 @@ class ItemServiceTest {
 
     @Test
     void findItemById() {
+        Assertions.assertDoesNotThrow(() -> {
+            ItemDto itemFound = this.itemService.findItemById(this.itemExample.getUuid(), this.userDetail);
+            Assertions.assertNotNull(itemFound);
+            Assertions.assertEquals(this.itemExample.getUuid(), itemFound.uuid());
+            Assertions.assertEquals(this.itemExample.getName(), itemFound.name());
+        });
+    }
+
+    @Test
+    void findComplexItemById() {
+        ItemEntity pgItem = ItemExample.POSTGRESQL01.toEntity();
+        LinkEntity jettyExchangeWithPg = new LinkEntity();
+        jettyExchangeWithPg.setUuid(UUID.randomUUID());
+        jettyExchangeWithPg.setDescription("1st  link description");
+        jettyExchangeWithPg.setLinkType(LinkTypeExample.COMMUNICATE_WITH.toEntity());
+        jettyExchangeWithPg.setSourceItem(pgItem);
+        jettyExchangeWithPg.setTargetItem(this.itemExample);
+        this.itemExample.getIncomingLinks().add(jettyExchangeWithPg);
+        this.itemRepository.save(this.itemExample);
+
         Assertions.assertDoesNotThrow(() -> {
             ItemDto itemFound = this.itemService.findItemById(this.itemExample.getUuid(), this.userDetail);
             Assertions.assertNotNull(itemFound);

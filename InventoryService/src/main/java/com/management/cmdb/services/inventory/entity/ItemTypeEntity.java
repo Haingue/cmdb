@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -18,8 +19,8 @@ public class ItemTypeEntity extends Auditable {
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private final Set<AttributeTypeEntity> attributes = new HashSet<>();
-    @OneToMany
-    private final Set<ItemEntity> items = new HashSet<>();
+//    @OneToMany(fetch = FetchType.LAZY)
+//    private final Set<ItemEntity> items = new HashSet<>();
 
     public String getLabel() {
         return label;
@@ -45,8 +46,16 @@ public class ItemTypeEntity extends Auditable {
         return this.attributes.add(attributeTypeEntity);
     }
 
-    public Set<ItemEntity> getItems() {
-        return items;
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof ItemTypeEntity that)) return false;
+        if (!super.equals(o)) return false;
+        return Objects.equals(label, that.label);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), label);
     }
 
     @Override

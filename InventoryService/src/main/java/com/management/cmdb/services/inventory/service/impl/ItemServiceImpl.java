@@ -26,6 +26,7 @@ import org.springframework.util.ObjectUtils;
 import java.util.List;
 import java.util.UUID;
 
+@Transactional
 @Service
 public class ItemServiceImpl implements ItemService {
 

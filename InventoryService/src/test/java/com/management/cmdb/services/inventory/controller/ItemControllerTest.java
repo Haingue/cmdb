@@ -1,6 +1,7 @@
 package com.management.cmdb.services.inventory.controller;
 
 import com.management.cmdb.services.inventory.dto.ItemDto;
+import com.management.cmdb.services.inventory.dto.LinkDto;
 import com.management.cmdb.services.inventory.dto.wrapper.PaginatedResponseDto;
 import com.management.cmdb.services.inventory.entity.AttributeEntity;
 import com.management.cmdb.services.inventory.entity.ItemEntity;
@@ -92,17 +93,14 @@ class ItemControllerTest {
 
         Assertions.assertNotNull(itemDto);
         Assertions.assertNotNull(itemDto.uuid());
-        Optional<ItemEntity> example = itemRepository.findById(itemDto.uuid());
-        Assertions.assertNotNull(example);
-        Assertions.assertTrue(example.isPresent());
-        Assertions.assertEquals(newItem.getName(), example.get().getName());
-        Assertions.assertEquals(newItem.getDescription(), example.get().getDescription());
+        Assertions.assertEquals(newItem.getName(), itemDto.name());
+        Assertions.assertEquals(newItem.getDescription(), itemDto.description());
 
-        Assertions.assertFalse(example.get().getOutgoingLinks().isEmpty());
-        Optional<LinkEntity> firstLink = example.get().getOutgoingLinks().stream().findFirst();
+        Assertions.assertFalse(itemDto.outgoingLinks().isEmpty());
+        Optional<LinkDto> firstLink = itemDto.outgoingLinks().stream().findFirst();
         Assertions.assertNotNull(firstLink);
         Assertions.assertTrue(firstLink.isPresent());
-        Assertions.assertEquals(pgItem.getUuid(), firstLink.get().getTargetItem().getUuid());
+        Assertions.assertEquals(pgItem.getUuid(), firstLink.get().targetItemId());
     }
     @Test
     @Order(2)
@@ -132,18 +130,15 @@ class ItemControllerTest {
 
         Assertions.assertNotNull(itemDto);
         Assertions.assertNotNull(itemDto.uuid());
-        Optional<ItemEntity> example = itemRepository.findById(itemDto.uuid());
-        Assertions.assertNotNull(example);
-        Assertions.assertTrue(example.isPresent());
-        Assertions.assertEquals(newItem.getName(), example.get().getName());
-        Assertions.assertEquals(newItem.getDescription(), example.get().getDescription());
+        Assertions.assertEquals(newItem.getName(), itemDto.name());
+        Assertions.assertEquals(newItem.getDescription(), itemDto.description());
 
-        Assertions.assertFalse(example.get().getIncomingLinks().isEmpty());
-        Optional<LinkEntity> firstLink = example.get().getIncomingLinks().stream().findFirst();
+        Assertions.assertFalse(itemDto.incomingLinks().isEmpty());
+        Optional<LinkDto> firstLink = itemDto.incomingLinks().stream().findFirst();
         Assertions.assertNotNull(firstLink);
         Assertions.assertTrue(firstLink.isPresent());
-        Assertions.assertEquals(pgItem.getUuid(), firstLink.get().getSourceItem().getUuid());
-        Assertions.assertEquals(itemDto.uuid(), firstLink.get().getTargetItem().getUuid());
+        Assertions.assertEquals(pgItem.getUuid(), firstLink.get().sourceItemId());
+        Assertions.assertEquals(itemDto.uuid(), firstLink.get().targetItemId());
     }
 
     @Test

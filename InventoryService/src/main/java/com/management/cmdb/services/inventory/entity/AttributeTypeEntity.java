@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
@@ -77,6 +78,18 @@ public class AttributeTypeEntity extends Auditable {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof AttributeTypeEntity that)) return false;
+        if (!super.equals(o)) return false;
+        return Objects.equals(label, that.label);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), label);
+    }
+
+    @Override
     public String toString() {
         return "AttributeTypeEntity{" +
                 "uuid='" + getUuid() + '\'' +
@@ -85,8 +98,6 @@ public class AttributeTypeEntity extends Auditable {
                 ", shortDescription='" + shortDescription + '\'' +
                 ", placeholder='" + placeholder + '\'' +
                 ", regex='" + regex + '\'' +
-                ", createdDate=" + createdDate +
-                ", createdBy=" + createdBy +
                 '}';
     }
 }

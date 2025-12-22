@@ -67,4 +67,14 @@ public class LinkEntity extends Auditable {
     public int hashCode() {
         return Objects.hash(super.hashCode(), linkType, sourceItem, targetItem);
     }
+
+    @Override
+    public String toString() {
+        return "LinkEntity{" +
+                "linkType=" + (linkType != null ? linkType.getLabel() : null) +
+                ", sourceItem=" + (sourceItem != null ? sourceItem.getUuid() : null) +
+                ", targetItem=" + (targetItem != null ? targetItem.getUuid() : null) +
+                ", description='" + description + '\'' +
+                '}';
+    }
 }

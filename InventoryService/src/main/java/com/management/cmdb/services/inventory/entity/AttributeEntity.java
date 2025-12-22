@@ -62,8 +62,6 @@ public class AttributeEntity extends Auditable {
                 "item=" + (item != null ? item.getName() : null) +
                 ", attributeType=" + (attributeType != null ? attributeType.getLabel() : null) +
                 ", valueStr='" + valueStr + '\'' +
-                ", createdDate=" + createdDate +
-                ", createdBy=" + createdBy +
                 '}';
     }
 }
