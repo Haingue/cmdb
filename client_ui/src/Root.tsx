@@ -14,6 +14,7 @@ import LinkTypeForm from './pages/InventoryService/link-type-form'
 import ItemExplorer from './pages/InventoryService/items'
 import ItemFormPage from './pages/InventoryService/item-form'
 import TrafficPage from './pages/traffic'
+import ItemDetailsPage from './pages/InventoryService/items/item-details'
 
 const Root = () => {
   return (
@@ -36,6 +37,7 @@ const Root = () => {
               <Route path="/inventory-service/link-types" Component={LinkTypeExplorer} />
               <Route path="/inventory-service/link-type-form" Component={LinkTypeForm} />
               <Route path="/inventory-service/items" Component={ItemExplorer} />
+              <Route path="/inventory-service/items/:itemUuid" Component={ItemDetailsPage} />
               <Route path="/inventory-service/item-form" Component={ItemFormPage} />
               <Route path="/about" Component={About} />
               <Route path="*" Component={NotFound} />

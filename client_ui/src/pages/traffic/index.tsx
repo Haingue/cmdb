@@ -36,9 +36,9 @@ const TrafficPage = () => {
       if (targetItem) hostList.push(targetItem)
     });
     focusItem?.incomingLinks?.forEach(link => {
-      console.log('Focus item link:', link.targetItemId)
-      const targetItem : ItemDto | undefined = items?.content?.find(item => item.uuid === link.targetItemId)
-      if (targetItem) hostList.push(targetItem)
+      console.log('Focus item link:', link.sourceItemId)
+      const sourceItem : ItemDto | undefined = items?.content?.find(item => item.uuid === link.sourceItemId)
+      if (sourceItem) hostList.push(sourceItem)
     });
     console.debug('List of displayed hosts:', hostList)
     return hostList

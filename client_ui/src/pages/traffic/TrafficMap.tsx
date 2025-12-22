@@ -1,6 +1,6 @@
 
-import { Background, BackgroundVariant, MiniMap, ReactFlow, useEdgesState, useNodesState, type Edge, type XYZPosition } from '@xyflow/react'
-import { use, useEffect } from 'react'
+import { Background, BackgroundVariant, MiniMap, ReactFlow, useEdgesState, useNodesState, type Edge, type Node, type XYZPosition } from '@xyflow/react'
+import { useEffect } from 'react'
 import NodeTypeHost from '../../components/ReactFlow/NodeTypeHost'
 import type { ItemDto, LinkDto } from '../../service/inventory/types'
 import Host from '../../models/Host'
@@ -19,7 +19,7 @@ const TrafficMap = ({items}: {items: ItemDto[]}) => {
     setNodes((nds) => nds.concat(node))
     return node
   }
-  
+
   const addEdge = (link: LinkDto): Edge => {
     const edge: Edge = {
       id: `${link.sourceItemId}-${link.targetItemId}` as string,
