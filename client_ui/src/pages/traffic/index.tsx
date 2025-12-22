@@ -66,7 +66,7 @@ const TrafficPage = () => {
         </div>
       </section>
       <section>
-        <div className=" h-[70vh] border border-gray-300 rounded-lg mt-4">
+        <div className="h-[70vh] border border-gray-300 rounded-lg mt-4">
           <TrafficMap items={hosts()} />
         </div>
       </section>
