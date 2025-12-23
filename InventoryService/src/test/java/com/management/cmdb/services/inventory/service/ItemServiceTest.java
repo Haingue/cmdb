@@ -11,12 +11,15 @@ import com.management.cmdb.services.inventory.exemple.LinkTypeExample;
 import com.management.cmdb.services.inventory.mapper.ItemMapper;
 import com.management.cmdb.services.inventory.model.UserDetail;
 import com.management.cmdb.services.inventory.repository.ItemRepository;
+import com.management.cmdb.services.inventory.repository.ItemTypeRepository;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Optional;
@@ -26,6 +29,7 @@ import java.util.UUID;
 @SpringBootTest
 class ItemServiceTest {
 
+    private final ItemTypeRepository itemTypeRepository;
     private final ItemRepository itemRepository;
     private final ItemService itemService;
 
@@ -34,11 +38,12 @@ class ItemServiceTest {
     private final UserDetail userDetail;
 
     @Autowired
-    public ItemServiceTest(ItemRepository itemRepository, ItemService itemService) {
+    public ItemServiceTest(ItemTypeRepository itemTypeRepository, ItemRepository itemRepository, ItemService itemService) {
+        this.itemTypeRepository = itemTypeRepository;
         this.itemRepository = itemRepository;
         this.itemService = itemService;
 
-        this.itemTypeExample = ItemTypeExample.HOST.itemType;
+        this.itemTypeExample = itemTypeRepository.save(ItemTypeExample.HOST.itemType);
         this.itemExample = itemRepository.save(ItemExample.JETTY01.toEntity());
         this.userDetail = new UserDetail(new UUID(0, 0), "test","test@test.com");
     }
@@ -135,5 +140,32 @@ class ItemServiceTest {
         this.itemService.deleteItem(this.itemExample.getUuid(), userDetail);
 
         Assertions.assertTrue(this.itemRepository.findById(this.itemExample.getUuid()).isEmpty());
+    }
+
+    @Test
+    @Transactional
+    void shouldNotDuplicateItemType () {
+        Optional<ItemTypeEntity> searchItemType = this.itemTypeRepository.findFirstByLabel(this.itemTypeExample.getLabel());
+        Assertions.assertTrue(searchItemType.isPresent());
+        ItemTypeEntity itemTypeEntity = searchItemType.get();
+        itemTypeEntity = this.itemTypeRepository.save(itemTypeEntity);
+        itemTypeEntity = this.itemTypeRepository.save(itemTypeEntity);
+        itemTypeEntity = this.itemTypeRepository.save(itemTypeEntity);
+        itemTypeEntity = this.itemTypeRepository.save(itemTypeEntity);
+        Assertions.assertEquals(itemTypeEntity.getLabel(), this.itemTypeExample.getLabel());
+
+
+        ItemEntity newItem = ItemExample.JETTY01.toEntity();
+        newItem.setName("New Jetty 01");
+        this.itemService.createItem(ItemMapper.INSTANCE.toDto(newItem), this.userDetail);
+        newItem = ItemExample.JETTY01.toEntity();
+        newItem.setName("New Jetty 02");
+        this.itemService.createItem(ItemMapper.INSTANCE.toDto(newItem), this.userDetail);
+        newItem = ItemExample.JETTY01.toEntity();
+        newItem.setName("New Jetty 03");
+        this.itemService.createItem(ItemMapper.INSTANCE.toDto(newItem), this.userDetail);
+
+        Page<ItemTypeEntity> itemTypeList = this.itemTypeRepository.searchAllByLabelContainingIgnoreCase(this.itemTypeExample.getLabel(), PageRequest.of(0, 10));
+        Assertions.assertEquals(2L, itemTypeList.getTotalElements());
     }
 }

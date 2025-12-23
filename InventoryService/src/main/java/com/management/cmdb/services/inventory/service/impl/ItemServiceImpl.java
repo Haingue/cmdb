@@ -142,6 +142,10 @@ public class ItemServiceImpl implements ItemService {
         existingItem.setName(itemDto.name());
         existingItem.setDescription(itemDto.description());
 
+        ItemTypeEntity itemTypeEntity = this.itemTypeRepository.findFirstByLabel(itemDto.type().label())
+                .orElseThrow(ItemTypeNotExist::new);
+        existingItem.setType(itemTypeEntity);
+
         if (!itemDto.outgoingLinks().isEmpty()) {
             // TODO Delete unupdated links ?
             for (LinkDto linkDto : itemDto.outgoingLinks()) {
@@ -230,7 +234,7 @@ public class ItemServiceImpl implements ItemService {
     public ItemDto findItemById(UUID uuid, UserDetail userDetail) {
         return this.itemRepository.findById(uuid)
                 .map(ItemMapper.INSTANCE::toDto)
-                .orElseThrow(ItemTypeNotExist::new);
+                .orElseThrow(ItemNotExist::new);
     }
 
     @Override

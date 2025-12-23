@@ -47,9 +47,9 @@ public class PrepareData implements ApplicationRunner {
         for (ItemTypeExample itemTypeExample : ItemTypeExample.values()) {
             itemTypeRepository.save(itemTypeExample.itemType);
         }
-        for (ItemExample itemExample : ItemExample.values()) {
-            ItemEntity entity = itemExample.toEntity();
-            itemRepository.save(entity);
-        }
+//        for (ItemExample itemExample : ItemExample.values()) {
+//            ItemEntity entity = itemExample.toEntity();
+//            itemRepository.save(entity);
+//        }
     }
 }

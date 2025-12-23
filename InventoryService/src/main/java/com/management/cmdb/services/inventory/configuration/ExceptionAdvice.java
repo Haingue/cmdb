@@ -1,9 +1,6 @@
 package com.management.cmdb.services.inventory.configuration;
 
-import com.management.cmdb.services.inventory.exception.BadRequestException;
-import com.management.cmdb.services.inventory.exception.ItemNotValid;
-import com.management.cmdb.services.inventory.exception.ItemTypeNotExist;
-import com.management.cmdb.services.inventory.exception.LinkTypeNotValid;
+import com.management.cmdb.services.inventory.exception.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -41,11 +38,19 @@ public class ExceptionAdvice {
             HttpClientErrorException.class,
             TransactionSystemException.class,
             ItemNotValid.class,
-            ItemTypeNotExist.class,
             LinkTypeNotValid.class
     })
     public ResponseEntity<ProblemDetail> handleClientException(RuntimeException ex) {
         return ResponseEntity.badRequest().body(generateProblemDetail(HttpStatus.BAD_REQUEST, ex));
+    }
+
+    /** Catch business exception for not found entities **/
+    @ExceptionHandler({
+            ItemTypeNotExist.class,
+            ItemNotExist.class
+    })
+    public ResponseEntity<ProblemDetail> handleNotFoundException(RuntimeException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(generateProblemDetail(HttpStatus.NOT_FOUND, ex));
     }
 
     /** Catch security exception **/

@@ -23,7 +23,7 @@ public enum LinkTypeExample {
         return this.linkType;
     }
 
-    public LinkTypeDto getLinkTypeDto() {
+    public LinkTypeDto toDto() {
         return LinkTypeMapper.INSTANCE.toDto(this.linkType);
     }
 }
