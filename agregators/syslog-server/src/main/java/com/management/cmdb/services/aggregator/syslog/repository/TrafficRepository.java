@@ -1,13 +1,11 @@
 package com.management.cmdb.services.aggregator.syslog.repository;
 
 import com.management.cmdb.services.aggregator.syslog.model.Traffic;
-import com.management.cmdb.services.aggregator.syslog.server.PaloAltoSyslogMessage;
 import org.jspecify.annotations.NonNull;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.caffeine.CaffeineCache;
 import org.springframework.stereotype.Component;
-import reactor.core.publisher.Flux;
 
 import java.util.HashMap;
 import java.util.Map;

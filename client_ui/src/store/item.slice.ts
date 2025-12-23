@@ -12,6 +12,7 @@ export const loadItems = createAsyncThunk('item/search', async (_, { getState, r
       }
   }
   try {
+    console.debug('Fetching items from server...')
     return { cached: false, data: await searchItems() }
   } catch (error) {
     if (error instanceof Error) return rejectWithValue(error.message)

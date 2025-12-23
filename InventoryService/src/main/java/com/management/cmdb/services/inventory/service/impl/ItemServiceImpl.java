@@ -20,6 +20,7 @@ import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
@@ -245,7 +246,7 @@ public class ItemServiceImpl implements ItemService {
         Page<ItemEntity> result = this.itemRepository.searchAllByNameContainingIgnoreCaseOrTypeLabel(
                 itemName,
                 itemTypeLabel,
-                PageRequest.of(page, pageSize));
+                PageRequest.of(page, pageSize).withSort(Sort.by("name").ascending()));
         return PaginatedResponseDto.<ItemDto, ItemEntity>toPaginatedDto(result, ItemMapper.INSTANCE::toDto);
     }
 
