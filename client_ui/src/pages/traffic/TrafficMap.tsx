@@ -42,7 +42,7 @@ const TrafficMap = ({items}: {items: ItemDto[]}) => {
 
   const getLayoutedElements = (nodes: Node[], edges: Edge[], direction = 'TB'): { nodes: Node[], edges: Edge[] } => {
     const _isHorizontal = direction === 'LR';
-    autoLayout.setGraph({ rankdir: direction });
+    autoLayout.setGraph({ rankdir: direction, nodesep: 2, ranksep: 10, ranker: 'longest-path' });
   
     nodes.forEach((node: Node) => {
       autoLayout.setNode(node.id, { width: nodeWidth, height: nodeHeight });
@@ -63,8 +63,8 @@ const TrafficMap = ({items}: {items: ItemDto[]}) => {
         // We are shifting the dagre node position (anchor=center center) to the top left
         // so it matches the React Flow node anchor point (top left).
         position: {
-          x: nodeWithPosition.x - nodeWidth / 5,
-          y: nodeWithPosition.y - nodeHeight / 5,
+          x: nodeWithPosition.x - nodeWidth / 2,
+          y: nodeWithPosition.y - nodeHeight / 2,
           z: 0,
         },
       };
@@ -126,6 +126,7 @@ const TrafficMap = ({items}: {items: ItemDto[]}) => {
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           ref={flowRef}
+          fitView
       >
         <Controls>
           <ControlButton onClick={() => onChangeDirection()}>
@@ -139,7 +140,7 @@ const TrafficMap = ({items}: {items: ItemDto[]}) => {
             <span>🗑</span>
           </ControlButton>
         </Controls>
-        <MiniMap pannable zoomable />
+        <MiniMap pannable zoomable nodeStrokeColor="black" maskStrokeWidth={1} maskStrokeColor="red" />
         <Background variant={BackgroundVariant.Cross} gap={12} size={1} />
       </ReactFlow>
     </>
