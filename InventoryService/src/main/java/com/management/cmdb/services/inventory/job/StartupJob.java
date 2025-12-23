@@ -1,5 +1,6 @@
 package com.management.cmdb.services.inventory.job;
 
+import com.management.cmdb.services.inventory.dto.ItemTypeDto;
 import com.management.cmdb.services.inventory.dto.LinkTypeDto;
 import com.management.cmdb.services.inventory.entity.AttributeTypeEntity;
 import com.management.cmdb.services.inventory.entity.ItemTypeEntity;
@@ -62,6 +63,10 @@ public class StartupJob implements CommandLineRunner {
         );
         List<ItemTypeEntity> modelEntities = new ArrayList<>();
         for (Class coreModel : coreModels) {
+            Optional<ItemTypeDto> existingItemType = itemTypeService.findByLabel(coreModel.getSimpleName());
+            if (existingItemType.isPresent()) {
+                continue;
+            }
             ItemTypeEntity itemTypeEntity = new ItemTypeEntity();
             itemTypeEntity.setUuid(UUID.randomUUID());
             itemTypeEntity.setLabel(coreModel.getSimpleName());
