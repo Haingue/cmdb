@@ -65,6 +65,7 @@ const TrafficMap = ({items}: {items: ItemDto[]}) => {
         position: {
           x: nodeWithPosition.x - nodeWidth / 5,
           y: nodeWithPosition.y - nodeHeight / 5,
+          z: 0,
         },
       };
   
@@ -100,7 +101,12 @@ const TrafficMap = ({items}: {items: ItemDto[]}) => {
   const onLoad = () => {
     onClean()
     items?.forEach((item, key) => {
-      addNode(item, { x: key * 300, y: 0, z: 100 })
+      const position = { x: key * 10, y: 350, z: 0 }
+      if (key === 0) {
+        position.x = 350
+        position.y = 100
+      }
+      addNode(item, position)
       item.outgoingLinks?.forEach(link => addEdge(link))
       item.incomingLinks?.forEach(link => addEdge(link))
     });
