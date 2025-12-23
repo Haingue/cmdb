@@ -1,5 +1,6 @@
 package com.management.cmdb.services.aggregator.syslog.server;
 
+import com.management.cmdb.services.aggregator.syslog.configuration.SyslogServerProperties;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.EventLoopGroup;
@@ -39,7 +40,7 @@ public class SyslogTcpServer implements SmartLifecycle {
                     .childHandler(syslogServerHandler);
             channel = bootstrap.bind("0.0.0.0", properties.getTcpPort()).sync().channel();
             isRunning = true;
-            LOGGER.info("Syslog server started on port [tcp={}]", properties.getTcpPort());
+            LOGGER.info("Syslog server started on port [tcp={}, focusHost={}]", properties.getTcpPort(), properties.getFocusedHost());
         } catch (InterruptedException e) {
             LOGGER.error("Failed to start Syslog server", e);
             Thread.currentThread().interrupt();

@@ -1,5 +1,6 @@
 package com.management.cmdb.services.aggregator.syslog.service;
 
+import com.management.cmdb.services.aggregator.syslog.configuration.SyslogServerProperties;
 import com.management.cmdb.services.aggregator.syslog.model.Traffic;
 import com.management.cmdb.services.aggregator.syslog.repository.TrafficRepository;
 import com.management.cmdb.services.aggregator.syslog.server.PaloAltoMessageParser;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.jta.TransactionFactory;
 import reactor.core.publisher.Sinks;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -22,10 +24,12 @@ public class SyslogService {
 
     public final Sinks.Many<ServerSentEvent<Traffic>> syslogSink;
 
+    private final SyslogServerProperties syslogServerProperties;
     private final ApplicationEventPublisher applicationEventPublisher;
     private final TrafficRepository trafficRepository;
 
-    public SyslogService(ApplicationEventPublisher applicationEventPublisher, TrafficRepository trafficRepository) {
+    public SyslogService(SyslogServerProperties syslogServerProperties, ApplicationEventPublisher applicationEventPublisher, TrafficRepository trafficRepository) {
+        this.syslogServerProperties = syslogServerProperties;
         this.applicationEventPublisher = applicationEventPublisher;
         this.trafficRepository = trafficRepository;
         this.syslogSink = Sinks.many().multicast().directBestEffort();
@@ -33,7 +37,12 @@ public class SyslogService {
 
     public void syslogAnalysis(String message) {
         PaloAltoSyslogMessage parsedMessage = PaloAltoMessageParser.parse(message);
+
         if (parsedMessage.getType().equals("TRAFFIC") && parsedMessage.getAction().equals("allow")) {
+            if (isIgnoredHost(parsedMessage)) {
+                return;
+            }
+
             LOGGER.trace("Traffic log: {}", parsedMessage);
             Traffic oneTraffic = trafficRepository.getOneTraffic(parsedMessage.getSrc(), parsedMessage.getDst())
                     .orElseGet(() -> Traffic.builder()
@@ -56,6 +65,15 @@ public class SyslogService {
                             .data(oneTraffic)
                             .build());
         }
+    }
+
+    private boolean isIgnoredHost(PaloAltoSyslogMessage traffic) {
+        for (String host : syslogServerProperties.getFocusedHost()) {
+            if (traffic.getSrc().equalsIgnoreCase(host) || traffic.getDst().equalsIgnoreCase(host)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public Map<String, Map<String, Traffic>> getTraffics() {

@@ -39,8 +39,8 @@ public class ItemService {
 
     public void upsertItemLink(Traffic traffic) {
         final String newItemDescription = "New host detected by syslog";
-        final String newItemTypeIpAddressAttribute = "ipAddress";
-        final String newItemTypeHostnameAttribute = "hostname";
+        final String newItemTypeIpAddressAttribute = "IpAddress";
+        final String newItemTypeHostnameAttribute = "Hostname";
 
         PaginatedResponseDto<ItemDto> sourceItemList = searchItemsByIpAddress(newItemTypeIpAddressAttribute, traffic.getSourceIp());
         PaginatedResponseDto<ItemDto> destinationItemList = searchItemsByIpAddress(newItemTypeIpAddressAttribute, traffic.getDestinationIp());

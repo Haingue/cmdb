@@ -1,5 +1,6 @@
 package com.management.cmdb.services.aggregator.syslog.server;
 
+import com.management.cmdb.services.aggregator.syslog.configuration.SyslogServerProperties;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.EventLoopGroup;
@@ -39,7 +40,7 @@ public class SyslogUdpServer implements SmartLifecycle {
                     .handler(syslogServerHandler);
             channel = bootstrap.bind("0.0.0.0", properties.getUdpPort()).sync().channel();
             isRunning = true;
-            LOGGER.info("Syslog server started on port [udp={}]", properties.getUdpPort());
+            LOGGER.info("Syslog server started on port [udp={}, focusHost={}]", properties.getUdpPort(), properties.getFocusedHost());
         } catch (InterruptedException e) {
             LOGGER.error("Failed to start Syslog server", e);
             Thread.currentThread().interrupt();
