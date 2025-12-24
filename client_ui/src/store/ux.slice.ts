@@ -11,7 +11,7 @@ export const uxSlice = createSlice({
   initialState,
   reducers: {
     toggleSidebar: (state) => {
-      console.debug('Toggle sidebar')
+      console.debug(`Toggle sidebar (sidebarCollapsed=${state.sidebarCollapsed})`)
       state.sidebarCollapsed = !state.sidebarCollapsed
     },
     collapseSidebar: (state) => {

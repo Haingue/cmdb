@@ -2,7 +2,6 @@ import { Route, Routes } from 'react-router'
 import Dashboard from './pages/home/Dashboard'
 import NotFound from './pages/NotFound'
 import Map from './pages/map/Map'
-import MapItems from './pages/map/MapItem'
 import SideBar from './components/navigation/SideBar'
 import NavBar from './components/navigation/NavBar'
 import InventoryService from './pages/InventoryService'
@@ -29,7 +28,6 @@ const Root = () => {
             <Routes>
               <Route path="/" Component={Dashboard} />
               <Route path="/map" Component={Map} />
-              <Route path="/map-items" Component={MapItems} />
               <Route path="/traffic" Component={TrafficPage} />
               <Route path="/inventory-service" Component={InventoryService} />
               <Route path="/inventory-service/item-types" Component={ItemTypeExplorer} />

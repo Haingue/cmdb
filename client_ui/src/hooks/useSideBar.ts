@@ -13,7 +13,7 @@ type useSideBarReturn = {
 
 export default function useSideBar(): useSideBarReturn {
   const dispatch = useDispatch<AppDispatch>()
-  const { sidebarCollapsed } = useSelector<RootState>((state) => state.ux.sidebarCollapsed) as UxStateType
+  const { sidebarCollapsed } = useSelector<RootState>((state) => state.ux) as UxStateType
   const { width } = useWindowDimensions()
 
   const toggleSideBarVisibility: EventHandler<MouseEvent> = () => {
