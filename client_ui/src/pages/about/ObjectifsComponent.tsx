@@ -4,17 +4,22 @@ const ObjectifsComponent = () => {
         <div className="flex">
             <div className="flex-12 lg:flex-4/5">
                 <h2 className="text-2xl font-semibold mb-2">Objectifs</h2>
-                <div>       
-                    <ul className="list-disc">
+                <div>
+                    <ul className="ps-5 my-2 space-y-1 list-disc">
                         <li>Centralize informations
-                            <ul className="list-disc">
-                                <li>Projects</li>
-                                <li>Environments</li>
-                                <li>Connected assets</li>
-                                <li>Technologies</li>
+                            <ul className="ps-5 mt-2 space-y-1 list-disc">
+                                <li>Scan automatically every data source to define Items</li>
+                                <li>Manual input of conceptual item (like project, user groups, etc...)</li>
+                                <li>Item validation</li>
+                                <li>Single source of truth for project, connected assets, technologies, etc...</li>
                             </ul>
                         </li>
-                        <li>Replace our infinit Excel files</li>
+                        <li>Replace our infinit Excel files
+                            <ul className="ps-5 mt-2 space-y-1 list-disc">
+                                <li>Plan you activities on fresh data</li>
+                                <li>Measure your activities using automated scanner or by filling manually items</li>
+                            </ul>
+                        </li>
                     </ul>
                     <p>Since several years, our small team has been maintaining multiple projects for different clients. Each project has its own environment and set of connected assets. To keep track of everything, we initially relied on Excel files. However, as the number of projects and assets grew, managing them through spreadsheets became increasingly cumbersome and error-prone.</p>
                     <p>We want something between a design application (like Bizzdesign) and a configuration management tool (like ServiceNow).</p>

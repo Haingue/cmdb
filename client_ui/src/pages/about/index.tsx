@@ -7,7 +7,8 @@ import InventoryService from '../../service/inventory/InventorySync'
 import type { InventoryServiceServerInfo } from '../../service/inventory/types'
 import type { BackendServerInfo } from '../../service/backend/types'
 import ObjectifsComponent from './ObjectifsComponent'
-import EntityDescriptionsComponent from './EntityDescriptionsComponent'
+import ItemHierarchyComponent from './ItemHierarchyComponent'
+import ItemDescriptionComponent from './ItemDescriptionComponent'
 
 type ComponentStatusProps = {
   name: string
@@ -90,7 +91,10 @@ const About = () => {
         <ObjectifsComponent />
       </section>
       <section className="mt-8 space-y-2">
-        <EntityDescriptionsComponent />
+        <ItemDescriptionComponent />
+      </section>
+      <section className="mt-8 space-y-2">
+        <ItemHierarchyComponent />
       </section>
     </>
   )

@@ -1,17 +1,25 @@
 import { Background, BackgroundVariant, Handle, Position, ReactFlow, useEdgesState, useNodesState } from "@xyflow/react"
 import { useState } from "react";
 
-const BusinessServiceNodeType = ({ data }: any) => {
+const BusinessServiceNodeType = ({ data }: { data: {label: string} }) => {
+  const [showProps, setShowProps] = useState<boolean>(false)
   return (
     <div className="p-4 bg-blue-100 border border-blue-300 rounded-lg shadow-md">
-      <p className="text-xs text-center">[Business Service]</p>
+      <p className="text-xs text-center cursor-pointer" onClick={() => setShowProps(!showProps)}>[Business Service]</p>
       <h3 className="text-lg font-semibold text-center">{data.label}</h3>
+      <section className={`transition-all duration-300 ease-in-out ${showProps ? 'max-h-96 w-auto opacity-100 mt-2' : 'max-h-0 max-w-0 opacity-0 overflow-hidden'}`}>
+        <hr />
+        <ul className="ps-5 my-2 space-y-1 list-disc text-xs">
+          <li>abbreviation: String</li>
+          <li>name: String</li>
+        </ul>
+      </section>
       <Handle type="target" position={Position.Top} />
       <Handle type="source" position={Position.Bottom} />
     </div>
   );
 }
-const ProjectNodeType = ({ data }: any) => {
+const ProjectNodeType = ({ data }: { data: {label: string} }) => {
   const [showProps, setShowProps] = useState<boolean>(false)
   return (
     <div className="p-4 bg-green-100 border border-green-300 rounded-lg shadow-md">
@@ -19,7 +27,7 @@ const ProjectNodeType = ({ data }: any) => {
       <h3 className="text-lg font-semibold text-center">{data.label}</h3>
       <section className={`transition-all duration-300 ease-in-out ${showProps ? 'max-h-96 w-auto opacity-100 mt-2' : 'max-h-0 max-w-0 opacity-0 overflow-hidden'}`}>
         <hr />
-        <ul className="mt-2 mb-2 list-disc">
+        <ul className="ps-5 my-2 space-y-1 list-disc text-xs">
           <li>description: String</li>
           <li>businessService: BusinessService</li>
           <li>fullName: String</li>
@@ -34,31 +42,89 @@ const ProjectNodeType = ({ data }: any) => {
     </div>
   );
 }
-const EnvironmentNodeType = ({ data }: any) => {
+const EnvironmentNodeType = ({ data }: { data: {label: string} }) => {
+  const [showProps, setShowProps] = useState<boolean>(false)
   return (
     <div className="p-4 bg-yellow-100 border border-yellow-300 rounded-lg shadow-md">
-      <p className="text-xs text-center">[Environment]</p>
+      <p className="text-xs text-center cursor-pointer" onClick={() => setShowProps(!showProps)}>[Environment]</p>
       <h3 className="text-lg font-semibold text-center">{data.label}</h3>
+      <section className={`transition-all duration-300 ease-in-out ${showProps ? 'max-h-96 w-auto opacity-100 mt-2' : 'max-h-0 max-w-0 opacity-0 overflow-hidden'}`}>
+        <hr />
+        <ul className="ps-5 my-2 space-y-1 list-disc text-xs">
+          <li>type: EnvironmentType</li>
+          <li>components: Set&lt;Component&gt;</li>
+          <li>location: String</li>
+          <li>status: EnvironmentStatus</li>
+          <li>jiraTracker: String</li>
+        </ul>
+      </section>
       <Handle type="target" position={Position.Top} />
       <Handle type="source" position={Position.Bottom} />
     </div>
   );
 }
-const HostNodeType = ({ data }: any) => {
+const HostNodeType = ({ data }: { data: {label: string} }) => {
+  const [showProps, setShowProps] = useState<boolean>(false)
+  const [showPropsDetails, setShowPropsDetails] = useState<boolean>(false)
   return (
     <div className="p-4 bg-purple-100 border border-purple-300 rounded-lg shadow-md">
-      <p className="text-xs text-center">[Host]</p>
+      <p className="text-xs text-center cursor-pointer" onClick={() => setShowProps(!showProps)}>[Host]</p>
       <h3 className="text-lg font-semibold text-center">{data.label}</h3>
+      <section className={`transition-all duration-300 ease-in-out ${showProps ? 'max-h-96 w-auto opacity-100 mt-2' : 'max-h-0 max-w-0 opacity-0 overflow-hidden'}`}>
+        <hr />
+        <ul className="ps-5 my-2 space-y-1 list-disc text-xs">
+          <li><span className="cursor-pointer" onClick={() => setShowPropsDetails(!showPropsDetails)}>[include component props]</span>
+            <ul className={`ps-5 my-2 space-y-1 list-disc transition-all duration-300 ease-in-out ${showPropsDetails ? 'max-h-96 w-auto opacity-100 mt-2' : 'max-h-0 max-w-0 opacity-0 overflow-hidden'}`}>
+              <li>uuid: UUID</li>
+              <li>version: Version</li>
+              <li>name: String</li>
+              <li>creationTimeStamp: LocalDateTime</li>
+              <li>description: String</li>
+              <li>type: ComponentType</li>
+              <li>certificate: String</li>
+              <li>technology: Technology</li>
+            </ul>
+          </li>
+          <li>patchingDay: DayOfWeek</li>
+          <li>hostname: String</li>
+          <li>dns: String</li>
+          <li>domain: ActiveDirectoryDomainName</li>
+          <li>networkArea: NetworkArea</li>
+          <li>ipAddress: InetAddress</li>
+          <li>macAddress: String</li>
+          <li>vlan: String</li>
+        </ul>
+      </section>
       <Handle type="target" position={Position.Top} />
       <Handle type="source" position={Position.Bottom} />
     </div>
   );
 }
-const SoftwareNodeType = ({ data }: any) => {
+const SoftwareNodeType = ({ data }: { data: {label: string} }) => {
+  const [showProps, setShowProps] = useState<boolean>(false)
+  const [showPropsDetails, setShowPropsDetails] = useState<boolean>(false)
   return (
     <div className="p-4 bg-red-100 border border-red-300 rounded-lg shadow-md">
-      <p className="text-xs text-center">[Software]</p>
+      <p className="text-xs text-center cursor-pointer" onClick={() => setShowProps(!showProps)}>[Software]</p>
       <h3 className="text-lg font-semibold text-center">{data.label}</h3>
+      <section className={`transition-all duration-300 ease-in-out ${showProps ? 'max-h-96 w-auto opacity-100 mt-2' : 'max-h-0 max-w-0 opacity-0 overflow-hidden'}`}>
+        <hr />
+        <ul className="ps-5 my-2 space-y-1 list-disc text-xs">
+          <li><span className="cursor-pointer" onClick={() => setShowPropsDetails(!showPropsDetails)}>[include component props]</span>
+            <ul className={`ps-5 my-2 space-y-1 list-disc transition-all duration-300 ease-in-out ${showPropsDetails ? 'max-h-96 w-auto opacity-100 mt-2' : 'max-h-0 max-w-0 opacity-0 overflow-hidden'}`}>
+              <li>uuid: UUID</li>
+              <li>version: Version</li>
+              <li>name: String</li>
+              <li>creationTimeStamp: LocalDateTime</li>
+              <li>description: String</li>
+              <li>type: ComponentType</li>
+              <li>certificate: String</li>
+              <li>technology: Technology</li>
+            </ul>
+          </li>
+          <li>host: Host</li>
+        </ul>
+      </section>
       <Handle type="target" position={Position.Top} />
       <Handle type="source" position={Position.Bottom} />
     </div>
@@ -73,8 +139,8 @@ const nodeTypes = {
   software: SoftwareNodeType,
 }
 
-const EntityDescriptionsComponent = () => {
-  const [nodes, setNodes, onNodesChange] = useNodesState([
+const ItemHierarchyComponent = () => {
+  const [nodes, , onNodesChange] = useNodesState([
     { id: 'bs1', type: 'businessservice', data: {label: 'CMDB (FR)'}, position: { x: 50, y: 50 } },
     { id: 'bs2', type: 'businessservice', data: {label: 'CMDB (UK)'}, position: { x: 100, y: 70 } },
     { id: 'p1', type: 'project', data: {label: 'CMDB'}, position: { x: 250, y: 35 } },
@@ -94,7 +160,7 @@ const EntityDescriptionsComponent = () => {
     { id: 's6', type: 'software', data: {label: 'cmdb-frontend-prod'}, position: { x: 600, y: 500 } },
     { id: 's7', type: 'software', data: {label: 'cmdb-db-prod'}, position: { x: 750, y: 500 } },
   ]);
-  const [edges, setEdges, onEdgesChange] = useEdgesState([
+  const [edges, , onEdgesChange] = useEdgesState([
     { id: 'p1-bs1', source: 'p1', target: 'bs1', animated: true, label: 'implements' },
     { id: 'p1-bs2', source: 'p1', target: 'bs2', animated: true, label: 'implements' },
 
@@ -122,8 +188,8 @@ const EntityDescriptionsComponent = () => {
   ]);
   return (
       <>
-        <h2 className="text-2xl font-semibold mb-2">Entity descriptions</h2>
-        <div className="w-2/3 h-[60vh] min-w-[60vh] m-auto">
+        <h2 className="text-2xl font-semibold mb-2">Item hierarchy</h2>
+        <div className="w-2/3 h-[65vh] min-w-[60vh] m-auto">
           <ReactFlow
             className="border border-gray-300 rounded-lg mt-4"
             nodes={nodes}
@@ -139,4 +205,4 @@ const EntityDescriptionsComponent = () => {
     )
 }
 
-export default EntityDescriptionsComponent
+export default ItemHierarchyComponent
