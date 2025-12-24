@@ -42,7 +42,7 @@ const TrafficMap = ({items}: {items: ItemDto[]}) => {
 
   const getLayoutedElements = (nodes: Node[], edges: Edge[], direction = 'TB'): { nodes: Node[], edges: Edge[] } => {
     const _isHorizontal = direction === 'LR';
-    autoLayout.setGraph({ rankdir: direction, nodesep: 2, ranksep: 10, ranker: 'longest-path' });
+    autoLayout.setGraph({ rankdir: direction });
   
     nodes.forEach((node: Node) => {
       autoLayout.setNode(node.id, { width: nodeWidth, height: nodeHeight });
