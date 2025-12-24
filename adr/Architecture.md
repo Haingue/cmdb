@@ -56,16 +56,16 @@ package CMDB {
     [Git API] as git
   }
   [Firewall] as networkdevice
-  networkdevice -> networkdevice
+  networkdevice -> syslog : syslog (UPD)
 
   package Cartography {
     [Backend] as cartographybackend
     [Frontend] as cartographyfrontend
     cartographyfrontend - cartographybackend
   }
-  cartographybackend <-> inventoryservice
-  syslog -> cartographybackend
-  git -> cartographybackend
+  cartographybackend -> inventoryservice : HTTPS
+  syslog -> cartographybackend : HTTPS
+  git -> cartographybackend : HTTPS
 }
 
 @enduml

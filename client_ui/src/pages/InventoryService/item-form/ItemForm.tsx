@@ -11,7 +11,7 @@ const ItemInputForm = ({propertyName, label, type, value, updateItemField}: {pro
       <span className="text-gray-700">{label[0].toUpperCase()+label.slice(1).toLowerCase()}</span>
       <input
         type={type}
-        className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+        className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-brand-strong focus:border-brand-strong sm:text-sm"
         placeholder={`Enter item ${label.toLowerCase()}`}
         value={value}
         onChange={(e) => updateItemField(propertyName, e.target.value)}
@@ -94,7 +94,7 @@ const ItemForm = () => {
         <label className="block">
           <span className="text-gray-700">Item type</span>
           <select
-            className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-brand-medium focus:border-brand-medium sm:text-sm"
             value={item?.type?.uuid}
             onChange={(e) => updateItemField('type', e.target.value)}
             disabled={isLoading || !!error}
@@ -121,7 +121,7 @@ const ItemForm = () => {
           ))}
         </div>
 
-        <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700" onClick={submitForm}>
+        <button type="submit" className="px-4 py-2 bg-brand-medium text-white rounded-md hover:bg-brand-strong" onClick={submitForm}>
           Create Item
         </button>
       </form>

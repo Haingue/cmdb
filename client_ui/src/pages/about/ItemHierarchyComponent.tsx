@@ -4,12 +4,12 @@ import { useState } from "react";
 const BusinessServiceNodeType = ({ data }: { data: {label: string} }) => {
   const [showProps, setShowProps] = useState<boolean>(false)
   return (
-    <div className="p-4 bg-blue-100 border border-blue-300 rounded-lg shadow-md">
+    <div className="p-4 bg-brand-softer border border-brand-medium rounded-lg shadow-md">
       <p className="text-xs text-center cursor-pointer" onClick={() => setShowProps(!showProps)}>[Business Service]</p>
       <h3 className="text-lg font-semibold text-center">{data.label}</h3>
       <section className={`transition-all duration-300 ease-in-out ${showProps ? 'max-h-96 w-auto opacity-100 mt-2' : 'max-h-0 max-w-0 opacity-0 overflow-hidden'}`}>
         <hr />
-        <ul className="ps-5 my-2 space-y-1 list-disc text-xs">
+        <ul className="ps-5 my-2 space-y-1 list-disc text-xs font-normal">
           <li>abbreviation: String</li>
           <li>name: String</li>
         </ul>
@@ -27,7 +27,7 @@ const ProjectNodeType = ({ data }: { data: {label: string} }) => {
       <h3 className="text-lg font-semibold text-center">{data.label}</h3>
       <section className={`transition-all duration-300 ease-in-out ${showProps ? 'max-h-96 w-auto opacity-100 mt-2' : 'max-h-0 max-w-0 opacity-0 overflow-hidden'}`}>
         <hr />
-        <ul className="ps-5 my-2 space-y-1 list-disc text-xs">
+        <ul className="ps-5 my-2 space-y-1 list-disc text-xs font-normal">
           <li>description: String</li>
           <li>businessService: BusinessService</li>
           <li>fullName: String</li>
@@ -50,7 +50,7 @@ const EnvironmentNodeType = ({ data }: { data: {label: string} }) => {
       <h3 className="text-lg font-semibold text-center">{data.label}</h3>
       <section className={`transition-all duration-300 ease-in-out ${showProps ? 'max-h-96 w-auto opacity-100 mt-2' : 'max-h-0 max-w-0 opacity-0 overflow-hidden'}`}>
         <hr />
-        <ul className="ps-5 my-2 space-y-1 list-disc text-xs">
+        <ul className="ps-5 my-2 space-y-1 list-disc text-xs font-normal">
           <li>type: EnvironmentType</li>
           <li>components: Set&lt;Component&gt;</li>
           <li>location: String</li>
@@ -72,7 +72,7 @@ const HostNodeType = ({ data }: { data: {label: string} }) => {
       <h3 className="text-lg font-semibold text-center">{data.label}</h3>
       <section className={`transition-all duration-300 ease-in-out ${showProps ? 'max-h-96 w-auto opacity-100 mt-2' : 'max-h-0 max-w-0 opacity-0 overflow-hidden'}`}>
         <hr />
-        <ul className="ps-5 my-2 space-y-1 list-disc text-xs">
+        <ul className="ps-5 my-2 space-y-1 list-disc text-xs font-normal">
           <li><span className="cursor-pointer" onClick={() => setShowPropsDetails(!showPropsDetails)}>[include component props]</span>
             <ul className={`ps-5 my-2 space-y-1 list-disc transition-all duration-300 ease-in-out ${showPropsDetails ? 'max-h-96 w-auto opacity-100 mt-2' : 'max-h-0 max-w-0 opacity-0 overflow-hidden'}`}>
               <li>uuid: UUID</li>
@@ -109,7 +109,7 @@ const SoftwareNodeType = ({ data }: { data: {label: string} }) => {
       <h3 className="text-lg font-semibold text-center">{data.label}</h3>
       <section className={`transition-all duration-300 ease-in-out ${showProps ? 'max-h-96 w-auto opacity-100 mt-2' : 'max-h-0 max-w-0 opacity-0 overflow-hidden'}`}>
         <hr />
-        <ul className="ps-5 my-2 space-y-1 list-disc text-xs">
+        <ul className="ps-5 my-2 space-y-1 list-disc text-xs font-normal">
           <li><span className="cursor-pointer" onClick={() => setShowPropsDetails(!showPropsDetails)}>[include component props]</span>
             <ul className={`ps-5 my-2 space-y-1 list-disc transition-all duration-300 ease-in-out ${showPropsDetails ? 'max-h-96 w-auto opacity-100 mt-2' : 'max-h-0 max-w-0 opacity-0 overflow-hidden'}`}>
               <li>uuid: UUID</li>

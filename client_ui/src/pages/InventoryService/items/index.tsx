@@ -1,10 +1,10 @@
 import { useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import PageTitle from "../../../components/PageTitle"
-import { loadItems, type ItemState } from "../../../store/item.slice"
-import type { AppDispatch } from "../../../store"
-import type { UUID } from "../../../service/inventory/types"
 import { useNavigate } from "react-router"
+import PageTitle from "../../../components/PageTitle"
+import type { UUID } from "../../../service/inventory/types"
+import type { AppDispatch } from "../../../store"
+import { loadItems, type ItemState } from "../../../store/item.slice"
 
 const ItemExplorer = () => {
   const dispatch = useDispatch<AppDispatch>()

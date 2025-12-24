@@ -25,7 +25,9 @@ export const notification = createSlice({
           state.isOpen = true
           eventSource.addEventListener('message', (notification: ServerSentEventNotificationDto) => {
             console.debug('Received notification:', notification)
-            state.notifications.push(notification)
+            const _notification: Array<ServerSentEventNotificationDto> = state.notifications.slice()
+            _notification.push(notification)
+            state.notifications = _notification
             state.lastFetched = Date.now()
             state.isOpen = true
           })
