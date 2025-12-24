@@ -17,7 +17,8 @@ import java.util.stream.Collectors;
 public enum ItemExample {
 
     JETTY01("787860cd-9e3c-4198-8455-c7e7457c1d21", "JETTY 01", "First Jetty server", ItemTypeExample.HOST, Map.of("hostname", "MYSERVERJETTY01"), Set.of(), Set.of()),
-    POSTGRESQL01("74bf882b-ecaf-4575-a142-2a6f46cd79b9", "PostgreSQL 01", "First PostGreSQL server", ItemTypeExample.HOST, Map.of("hostname", "MYSERVERDB01"), Set.of(), Set.of());
+    POSTGRESQL01("74bf882b-ecaf-4575-a142-2a6f46cd79b9", "PostgreSQL 01", "First PostGreSQL server", ItemTypeExample.HOST, Map.of("hostname", "MYSERVERDB01"), Set.of(), Set.of()),
+    POSTGRESQL02("b1b58ee0-969f-4f6a-9ba8-d9d878f96993", "PostgreSQL 02", "Second PostGreSQL server", ItemTypeExample.HOST, Map.of("hostname", "MYSERVERDB02"), Set.of(), Set.of());
 
     public final ItemDto itemDto;
 

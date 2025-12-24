@@ -12,6 +12,7 @@ export const loadItemTypes = createAsyncThunk<{cached: boolean, data: PaginatedR
       }
   }
   try {
+    console.debug('Fetching item types from server...')
     return { cached: false, data: await searchItemTypes() }
   } catch (error) {
     if (error instanceof Error) return rejectWithValue(error.message)

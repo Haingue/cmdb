@@ -15,7 +15,7 @@ export async function searchItems(
   itemName?: string,
   itemType?: string,
   pageNumber: number = 0,
-  pageSize: number = 10
+  pageSize: number = 100
 ): Promise<PaginatedResponseDto<ItemDto>> {
   const queryParams = new URLSearchParams();
   if (itemName) queryParams.append("itemName", itemName);

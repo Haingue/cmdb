@@ -20,6 +20,7 @@ export default class Host {
 
     constructor (item: ItemDto) {
         if (!item.attributes) return
+        this.name = item.name
         for (const attibute of item.attributes) {
             switch (attibute.label) {
                 case 'Hostname':

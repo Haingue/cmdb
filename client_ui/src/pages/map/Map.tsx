@@ -64,7 +64,7 @@ const Map = () => {
         <div>
             <button onClick={loadProjects}>Load project</button>
         </div>
-        <div className=" h-[80vh] border border-gray-300 rounded-lg mt-4">
+        <div className="h-[80vh] border border-gray-300 rounded-lg mt-4">
             <ReactFlow
                 nodes={nodes}
                 edges={edges}

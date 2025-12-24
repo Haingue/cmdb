@@ -4,17 +4,22 @@ import com.management.cmdb.services.inventory.dto.ItemDto;
 import com.management.cmdb.services.inventory.dto.wrapper.PaginatedResponseDto;
 import com.management.cmdb.services.inventory.entity.ItemEntity;
 import com.management.cmdb.services.inventory.entity.ItemTypeEntity;
+import com.management.cmdb.services.inventory.entity.LinkEntity;
 import com.management.cmdb.services.inventory.exemple.ItemExample;
 import com.management.cmdb.services.inventory.exemple.ItemTypeExample;
+import com.management.cmdb.services.inventory.exemple.LinkTypeExample;
 import com.management.cmdb.services.inventory.mapper.ItemMapper;
 import com.management.cmdb.services.inventory.model.UserDetail;
 import com.management.cmdb.services.inventory.repository.ItemRepository;
+import com.management.cmdb.services.inventory.repository.ItemTypeRepository;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Optional;
@@ -24,6 +29,7 @@ import java.util.UUID;
 @SpringBootTest
 class ItemServiceTest {
 
+    private final ItemTypeRepository itemTypeRepository;
     private final ItemRepository itemRepository;
     private final ItemService itemService;
 
@@ -32,11 +38,12 @@ class ItemServiceTest {
     private final UserDetail userDetail;
 
     @Autowired
-    public ItemServiceTest(ItemRepository itemRepository, ItemService itemService) {
+    public ItemServiceTest(ItemTypeRepository itemTypeRepository, ItemRepository itemRepository, ItemService itemService) {
+        this.itemTypeRepository = itemTypeRepository;
         this.itemRepository = itemRepository;
         this.itemService = itemService;
 
-        this.itemTypeExample = ItemTypeExample.HOST.itemType;
+        this.itemTypeExample = itemTypeRepository.save(ItemTypeExample.HOST.itemType);
         this.itemExample = itemRepository.save(ItemExample.JETTY01.toEntity());
         this.userDetail = new UserDetail(new UUID(0, 0), "test","test@test.com");
     }
@@ -67,6 +74,26 @@ class ItemServiceTest {
 
     @Test
     void findItemById() {
+        Assertions.assertDoesNotThrow(() -> {
+            ItemDto itemFound = this.itemService.findItemById(this.itemExample.getUuid(), this.userDetail);
+            Assertions.assertNotNull(itemFound);
+            Assertions.assertEquals(this.itemExample.getUuid(), itemFound.uuid());
+            Assertions.assertEquals(this.itemExample.getName(), itemFound.name());
+        });
+    }
+
+    @Test
+    void findComplexItemById() {
+        ItemEntity pgItem = ItemExample.POSTGRESQL01.toEntity();
+        LinkEntity jettyExchangeWithPg = new LinkEntity();
+        jettyExchangeWithPg.setUuid(UUID.randomUUID());
+        jettyExchangeWithPg.setDescription("1st  link description");
+        jettyExchangeWithPg.setLinkType(LinkTypeExample.COMMUNICATE_WITH.toEntity());
+        jettyExchangeWithPg.setSourceItem(pgItem);
+        jettyExchangeWithPg.setTargetItem(this.itemExample);
+        this.itemExample.getIncomingLinks().add(jettyExchangeWithPg);
+        this.itemRepository.save(this.itemExample);
+
         Assertions.assertDoesNotThrow(() -> {
             ItemDto itemFound = this.itemService.findItemById(this.itemExample.getUuid(), this.userDetail);
             Assertions.assertNotNull(itemFound);
@@ -113,5 +140,32 @@ class ItemServiceTest {
         this.itemService.deleteItem(this.itemExample.getUuid(), userDetail);
 
         Assertions.assertTrue(this.itemRepository.findById(this.itemExample.getUuid()).isEmpty());
+    }
+
+    @Test
+    @Transactional
+    void shouldNotDuplicateItemType () {
+        Optional<ItemTypeEntity> searchItemType = this.itemTypeRepository.findFirstByLabel(this.itemTypeExample.getLabel());
+        Assertions.assertTrue(searchItemType.isPresent());
+        ItemTypeEntity itemTypeEntity = searchItemType.get();
+        itemTypeEntity = this.itemTypeRepository.save(itemTypeEntity);
+        itemTypeEntity = this.itemTypeRepository.save(itemTypeEntity);
+        itemTypeEntity = this.itemTypeRepository.save(itemTypeEntity);
+        itemTypeEntity = this.itemTypeRepository.save(itemTypeEntity);
+        Assertions.assertEquals(itemTypeEntity.getLabel(), this.itemTypeExample.getLabel());
+
+
+        ItemEntity newItem = ItemExample.JETTY01.toEntity();
+        newItem.setName("New Jetty 01");
+        this.itemService.createItem(ItemMapper.INSTANCE.toDto(newItem), this.userDetail);
+        newItem = ItemExample.JETTY01.toEntity();
+        newItem.setName("New Jetty 02");
+        this.itemService.createItem(ItemMapper.INSTANCE.toDto(newItem), this.userDetail);
+        newItem = ItemExample.JETTY01.toEntity();
+        newItem.setName("New Jetty 03");
+        this.itemService.createItem(ItemMapper.INSTANCE.toDto(newItem), this.userDetail);
+
+        Page<ItemTypeEntity> itemTypeList = this.itemTypeRepository.searchAllByLabelContainingIgnoreCase(this.itemTypeExample.getLabel(), PageRequest.of(0, 10));
+        Assertions.assertEquals(2L, itemTypeList.getTotalElements());
     }
 }

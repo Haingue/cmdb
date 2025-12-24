@@ -10,9 +10,7 @@ import com.management.cmdb.services.inventory.exception.*;
 import com.management.cmdb.services.inventory.job.StartupJob;
 import com.management.cmdb.services.inventory.mapper.ItemMapper;
 import com.management.cmdb.services.inventory.model.UserDetail;
-import com.management.cmdb.services.inventory.repository.ItemRepository;
-import com.management.cmdb.services.inventory.repository.ItemTypeRepository;
-import com.management.cmdb.services.inventory.repository.LinkTypeRepository;
+import com.management.cmdb.services.inventory.repository.*;
 import com.management.cmdb.services.inventory.service.ItemService;
 import jakarta.transaction.Transactional;
 import org.apache.commons.lang3.StringUtils;
@@ -22,12 +20,14 @@ import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
 import java.util.List;
 import java.util.UUID;
 
+@Transactional
 @Service
 public class ItemServiceImpl implements ItemService {
 
@@ -37,12 +37,16 @@ public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final ItemTypeRepository itemTypeRepository;
     private final LinkTypeRepository linkTypeRepository;
+    private final LinkRepository linkRepository;
+    private final AttributeRepository attributeRepository;
 
-    public ItemServiceImpl(ApplicationEventPublisher applicationEventPublisher, ItemRepository itemRepository, ItemTypeRepository itemTypeRepository, LinkTypeRepository linkTypeRepository) {
+    public ItemServiceImpl(ApplicationEventPublisher applicationEventPublisher, ItemRepository itemRepository, ItemTypeRepository itemTypeRepository, LinkTypeRepository linkTypeRepository, LinkRepository linkRepository, AttributeRepository attributeRepository) {
         this.applicationEventPublisher = applicationEventPublisher;
         this.itemRepository = itemRepository;
         this.itemTypeRepository = itemTypeRepository;
         this.linkTypeRepository = linkTypeRepository;
+        this.linkRepository = linkRepository;
+        this.attributeRepository = attributeRepository;
     }
 
     @Override
@@ -71,7 +75,7 @@ public class ItemServiceImpl implements ItemService {
             attribute.setCreatedBy(author.uuid());
 
             AttributeTypeEntity attributeType = itemTypeEntity.getAttributes().stream()
-                    .filter(attributeTypeRef -> attributeTypeRef.getLabel().equals(attribute.getAttributeType().getLabel()))
+                    .filter(attributeTypeRef -> attributeTypeRef.getLabel().equalsIgnoreCase(attribute.getAttributeType().getLabel()))
                     .findFirst().orElseThrow(ItemNotValid::new);
             attribute.setAttributeType(attributeType);
         }
@@ -133,21 +137,32 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Tool(description = "Tool targetItemId update an existing item in the CMDB")
     public ItemDto updateItem(ItemDto itemDto, UserDetail author) {
+        if (itemDto == null || itemDto.uuid() == null) throw new ItemNotExist();
         ItemEntity existingItem = this.itemRepository.findById(itemDto.uuid())
                 .orElseThrow(ItemTypeNotExist::new);
         existingItem.setName(itemDto.name());
         existingItem.setDescription(itemDto.description());
 
+        ItemTypeEntity itemTypeEntity = this.itemTypeRepository.findFirstByLabel(itemDto.type().label())
+                .orElseThrow(ItemTypeNotExist::new);
+        existingItem.setType(itemTypeEntity);
+
         if (!itemDto.outgoingLinks().isEmpty()) {
             // TODO Delete unupdated links ?
             for (LinkDto linkDto : itemDto.outgoingLinks()) {
-                LinkEntity linkEntity = new LinkEntity();
-                linkEntity.setUuid(UUID.randomUUID());
-                linkEntity.setLinkType(linkTypeRepository.findFirstByLabelIgnoreCase(linkDto.linkType().label())
-                        .orElse(StartupJob.communicate_with));
-                linkEntity.setSourceItem(existingItem);
+                LinkTypeEntity linkType = linkTypeRepository.findFirstByLabelIgnoreCase(linkDto.linkType().label())
+                        .orElse(StartupJob.communicate_with);
                 ItemEntity targetItem = itemRepository.findById(linkDto.targetItemId())
                         .orElseThrow(() -> new LinkedItemDoesNotExist(linkDto.targetItemId()));
+                LinkEntity linkEntity = linkRepository.findFirstBySourceItemUuidAndTargetItemUuidAndLinkTypeLabel(existingItem.getUuid(), targetItem.getUuid(), linkType.getLabel())
+                        .orElseGet(() -> {
+                            LinkEntity newLinkEntity = new LinkEntity();
+                            newLinkEntity.setUuid(UUID.randomUUID());
+                            newLinkEntity.setLinkType(linkType);
+                            return newLinkEntity;
+                        });
+
+                linkEntity.setSourceItem(existingItem);
                 linkEntity.setTargetItem(targetItem);
                 existingItem.getOutgoingLinks().add(linkEntity);
             }
@@ -155,13 +170,18 @@ public class ItemServiceImpl implements ItemService {
         if (!itemDto.incomingLinks().isEmpty()) {
             // TODO Delete unupdated links ?
             for (LinkDto linkDto : itemDto.incomingLinks()) {
-                LinkEntity linkEntity = new LinkEntity();
-                linkEntity.setUuid(UUID.randomUUID());
-                linkEntity.setLinkType(linkTypeRepository.findFirstByLabelIgnoreCase(linkDto.linkType().label())
-                        .orElse(StartupJob.communicate_with));
-
+                LinkTypeEntity linkType = linkTypeRepository.findFirstByLabelIgnoreCase(linkDto.linkType().label())
+                        .orElse(StartupJob.communicate_with);
                 ItemEntity sourceItem = itemRepository.findById(linkDto.sourceItemId())
                         .orElseThrow(() -> new LinkedItemDoesNotExist(linkDto.sourceItemId()));
+                LinkEntity linkEntity = linkRepository.findFirstBySourceItemUuidAndTargetItemUuidAndLinkTypeLabel(sourceItem.getUuid(), existingItem.getUuid(), linkType.getLabel())
+                        .orElseGet(() -> {
+                            LinkEntity newLinkEntity = new LinkEntity();
+                            newLinkEntity.setUuid(UUID.randomUUID());
+                            newLinkEntity.setLinkType(linkType);
+                            return newLinkEntity;
+                        });
+
                 linkEntity.setSourceItem(sourceItem);
                 linkEntity.setTargetItem(existingItem);
                 existingItem.getIncomingLinks().add(linkEntity);
@@ -184,6 +204,21 @@ public class ItemServiceImpl implements ItemService {
     public void deleteItem(UUID itemId, UserDetail author) {
         ItemEntity existingItem = this.itemRepository.findById(itemId)
                 .orElseThrow(ItemTypeNotExist::new);
+        if (!existingItem.getOutgoingLinks().isEmpty()) {
+            linkRepository.deleteAllBySourceItemUuidOrTargetItemUuid(existingItem.getUuid(), existingItem.getUuid());
+            existingItem.getOutgoingLinks().clear();
+        }
+        if (!existingItem.getIncomingLinks().isEmpty()) {
+            linkRepository.deleteAllBySourceItemUuidOrTargetItemUuid(existingItem.getUuid(), existingItem.getUuid());
+            existingItem.getIncomingLinks().clear();
+        }
+        if (!existingItem.getAttributes().isEmpty()) {
+            attributeRepository.deleteAllByItemUuid(existingItem.getUuid());
+            existingItem.getAttributes().clear();
+        }
+        existingItem.setType(null);
+        existingItem = this.itemRepository.save(existingItem);
+
         this.itemRepository.delete(existingItem);
         applicationEventPublisher.publishEvent(
                 new NotificationDto(
@@ -200,7 +235,7 @@ public class ItemServiceImpl implements ItemService {
     public ItemDto findItemById(UUID uuid, UserDetail userDetail) {
         return this.itemRepository.findById(uuid)
                 .map(ItemMapper.INSTANCE::toDto)
-                .orElseThrow(ItemTypeNotExist::new);
+                .orElseThrow(ItemNotExist::new);
     }
 
     @Override
@@ -211,7 +246,7 @@ public class ItemServiceImpl implements ItemService {
         Page<ItemEntity> result = this.itemRepository.searchAllByNameContainingIgnoreCaseOrTypeLabel(
                 itemName,
                 itemTypeLabel,
-                PageRequest.of(page, pageSize));
+                PageRequest.of(page, pageSize).withSort(Sort.by("name").ascending()));
         return PaginatedResponseDto.<ItemDto, ItemEntity>toPaginatedDto(result, ItemMapper.INSTANCE::toDto);
     }
 

@@ -3,9 +3,12 @@ import { useDispatch, useSelector } from "react-redux"
 import PageTitle from "../../../components/PageTitle"
 import { loadItems, type ItemState } from "../../../store/item.slice"
 import type { AppDispatch } from "../../../store"
+import type { UUID } from "../../../service/inventory/types"
+import { useNavigate } from "react-router"
 
 const ItemExplorer = () => {
   const dispatch = useDispatch<AppDispatch>()
+  const navigate = useNavigate()
   const {items, isLoading, error} = useSelector<ItemState>((state) => state.items) as ItemState
 
   useEffect(() => {
@@ -20,12 +23,16 @@ const ItemExplorer = () => {
     return <div>Loading item types...</div>
   }
 
+  const openItemDetails = (itemUuid: UUID) => {
+    navigate(`/inventory-service/items/${itemUuid}`)
+  }
+
   return (
     <>
       <PageTitle title="Item explorer" />
       <section>
         {items.content.map((item) => (
-          <div key={item.uuid} className="mb-4 p-4 border rounded">
+          <div key={item.uuid} className="mb-4 p-4 border rounded" onClick={() => openItemDetails(item.uuid!)} >
             <h2 className="text-xl font-bold mb-2">{item.name}</h2>
             <div>{item.description}</div>
             <div>{item.type?.label}</div>

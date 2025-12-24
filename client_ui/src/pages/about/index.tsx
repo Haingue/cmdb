@@ -1,9 +1,14 @@
 import { useEffect, useState } from 'react'
-import PageTitle from '../components/PageTitle'
-import BackendService from '../service/backend/BackendSync'
-import InventoryService from '../service/inventory/InventorySync'
-import type { InventoryServiceServerInfo } from '../service/inventory/types'
-import type { BackendServerInfo } from '../service/backend/types'
+import PageTitle from '../../components/PageTitle'
+import BackendService from '../../service/backend/BackendSync'
+import SyslogAgregatorSync from '../../service/agregator-syslog/SyslogAgregatorSync'
+import type { SyslogAgregatorServiceServerInfo } from '../../service/agregator-syslog/types'
+import InventoryService from '../../service/inventory/InventorySync'
+import type { InventoryServiceServerInfo } from '../../service/inventory/types'
+import type { BackendServerInfo } from '../../service/backend/types'
+import ObjectifsComponent from './ObjectifsComponent'
+import ItemHierarchyComponent from './ItemHierarchyComponent'
+import ItemDescriptionComponent from './ItemDescriptionComponent'
 
 type ComponentStatusProps = {
   name: string
@@ -38,6 +43,7 @@ const About = () => {
   const [components, setComponents] = useState<ComponentStatusProps[]>([
     { name: 'Backend', version: '0.0.0', isUp: false },
     { name: 'InventoryService', version: '0.0.0', isUp: false },
+    { name: 'SyslogAgregatorService', version: '0.0.0', isUp: false },
   ])
 
   useEffect(() => {
@@ -59,6 +65,15 @@ const About = () => {
         components[1].isUp = false
       })
       .finally(() => setComponents([...components]))
+    SyslogAgregatorSync.getServerInfo()
+      .then(({ application }: SyslogAgregatorServiceServerInfo) => {
+        components[2].isUp = true
+        components[2].version = application.version
+      })
+      .catch(() => {
+        components[2].isUp = false
+      })
+      .finally(() => setComponents([...components]))
   }, [])
 
   return (
@@ -71,6 +86,15 @@ const About = () => {
               <ComponentStatus key={component.name} component={component} />
             ))}
         </div>
+      </section>
+      <section className="mt-8 space-y-2">
+        <ObjectifsComponent />
+      </section>
+      <section className="mt-8 space-y-2">
+        <ItemDescriptionComponent />
+      </section>
+      <section className="mt-8 space-y-2">
+        <ItemHierarchyComponent />
       </section>
     </>
   )

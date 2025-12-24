@@ -19,7 +19,7 @@ import java.util.Collections;
 @EnableFeignClients(basePackageClasses = InventoryServiceClient.class)
 public class MainConfiguration {
 
-    @Value("${ALLOWED_HOST_REGEX:http://localhost:5173}")
+    @Value("${ALLOWED_HOST_REGEX:*}")
     private String allowedHost;
 
     @Bean
@@ -30,7 +30,7 @@ public class MainConfiguration {
     @Bean
     CorsWebFilter corsWebFilter() {
         CorsConfiguration corsConfig = new CorsConfiguration();
-        corsConfig.setAllowedOrigins(Collections.singletonList(allowedHost));
+        corsConfig.addAllowedOriginPattern(allowedHost);
         corsConfig.addAllowedMethod("GET");
         corsConfig.addAllowedMethod("POST");
         corsConfig.addAllowedHeader("*");

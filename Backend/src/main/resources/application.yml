@@ -10,6 +10,9 @@ com.management.cmdb:
   services:
     inventory:
       url: ${InventoryService_URL:http://localhost:8080}
+    aggregators:
+      syslog:
+        url: ${SyslogAggregatorService_URL:http://localhost:8095}
   tools:
     tracing:
       url: ${TracingTool_URL:http://localhost:9411}
@@ -25,32 +28,7 @@ spring:
     enabled: false
   cloud:
     gateway:
-#      globalcors:
-#        cors-configurations:
-#          '[/**]':
-#            allowedOriginPatterns: ${ALLOWED_HOST_REGEX:"http://localhost:[*]"}
-#            allowedMethods:
-#              - GET
-#              - POST
-#              - PUT
-#              - DELETE
-#              - OPTIONS
-#            allowedHeaders: "*"
-
       server:
-        default-filters:
-          - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
-        globalcors:
-          cors-configurations:
-            '[/**]':
-              allowedOriginPatterns: ${ALLOWED_HOST_REGEX:"http://localhost:[*]"}
-              allowedMethods:
-                - GET
-                - POST
-                - PUT
-                - DELETE
-                - OPTIONS
-              allowedHeaders: "*"
         webflux:
           routes:
             - id: inventory_service
@@ -68,6 +46,15 @@ spring:
 #                - name: CacheRequestBody
 #                  args:
 #                    bodyClass: java.lang.String
+
+            - id: aggregator_syslog_service
+              uri: ${com.management.cmdb.services.aggregators.syslog.url}
+              predicates:
+                - Path=/api/aggregator/syslog/**
+                - Method=GET
+              filters:
+                - RewritePath=/api/aggregator/syslog/?(?<segment>.*), /$\{segment}
+                - LocalResponseCache=30m,500MB
           default-filters:
             - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
   sleuth:

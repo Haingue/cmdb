@@ -12,6 +12,7 @@ export const loadLinkTypes = createAsyncThunk<{cached: boolean, data: PaginatedR
       }
   }
   try {
+    console.debug('Fetching link types from server...')
     return { cached: false, data: await searchLinkTypes() }
   } catch (error) {
     if (error instanceof Error) return rejectWithValue(error.message)

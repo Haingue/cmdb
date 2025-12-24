@@ -4,11 +4,13 @@ import com.management.cmdb.services.aggregator.syslog.external.inventory.Invento
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @Configuration
 @EnableConfigurationProperties
 @EnableScheduling
+@EnableAsync
 @EnableFeignClients(basePackageClasses = InventoryServiceClient.class)
 public class MainConfiguration {
 }

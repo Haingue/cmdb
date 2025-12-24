@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -21,9 +22,9 @@ public class ItemEntity extends Auditable {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private final Set<AttributeEntity> attributes = new HashSet<>();
 
-    @OneToMany(mappedBy = "sourceItem", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToMany(mappedBy = "sourceItem", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private final Set<LinkEntity> outgoingLinks = new HashSet<>();
-    @OneToMany(mappedBy = "targetItem", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToMany(mappedBy = "targetItem", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private final Set<LinkEntity> incomingLinks = new HashSet<>();
 
     public String getName() {
@@ -70,4 +71,26 @@ public class ItemEntity extends Auditable {
         return attributes;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        ItemEntity that = (ItemEntity) o;
+        if (getUuid() != null && that.getUuid() != null) return getUuid().equals(that.getUuid());
+        return Objects.equals(name, that.name) && Objects.equals(type, that.type);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), name, type);
+    }
+
+    @Override
+    public String toString() {
+        return "ItemEntity{" +
+                "name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", type=" + type +
+                '}';
+    }
 }

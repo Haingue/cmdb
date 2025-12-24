@@ -5,7 +5,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
 
 import java.util.Objects;
 
@@ -63,8 +62,6 @@ public class AttributeEntity extends Auditable {
                 "item=" + (item != null ? item.getName() : null) +
                 ", attributeType=" + (attributeType != null ? attributeType.getLabel() : null) +
                 ", valueStr='" + valueStr + '\'' +
-                ", createdDate=" + createdDate +
-                ", createdBy=" + createdBy +
                 '}';
     }
 }

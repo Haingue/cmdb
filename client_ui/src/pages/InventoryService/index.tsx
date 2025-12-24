@@ -56,7 +56,7 @@ const InventoryService = () => {
           <h3 className="text-xl font-semibold">Available item types</h3>
           <span className="text-gray-600">Total: {itemTypes?.totalElements}</span>
         </div>
-        <div className="mb-4 badge badge-lg border p-3 bg-gray-100 shadow-md rounded-xl">
+        <div className="mb-4 badge badge-lg border p-3 bg-gray-100 shadow-md rounded-xl" onClick={() => dispatch(loadItems())}>
           <h3 className="text-xl font-semibold">Available items</h3>
           <span className="text-gray-600">Total: {items?.totalElements}</span>
         </div>
