@@ -14,6 +14,10 @@ import ItemExplorer from './pages/InventoryService/items'
 import ItemFormPage from './pages/InventoryService/item-form'
 import TrafficPage from './pages/traffic'
 import ItemDetailsPage from './pages/InventoryService/items/item-details'
+import ProjectIndexPage from './pages/project'
+import BusinessServiceIndexPage from './pages/business-service'
+import EnvironmentIndexPage from './pages/environment'
+import ComponentIndexPage from './pages/component'
 
 const Root = () => {
   return (
@@ -28,6 +32,11 @@ const Root = () => {
             <Routes>
               <Route path="/" Component={Dashboard} />
               <Route path="/map" Component={Map} />
+              <Route path="/project" Component={ProjectIndexPage} />
+              <Route path="/business-service" Component={BusinessServiceIndexPage} />
+              <Route path="/environment" Component={EnvironmentIndexPage} />
+              <Route path="/component" Component={ComponentIndexPage} />
+
               <Route path="/traffic" Component={TrafficPage} />
               <Route path="/inventory-service" Component={InventoryService} />
               <Route path="/inventory-service/item-types" Component={ItemTypeExplorer} />
@@ -38,6 +47,7 @@ const Root = () => {
               <Route path="/inventory-service/items/:itemUuid" Component={ItemDetailsPage} />
               <Route path="/inventory-service/item-form" Component={ItemFormPage} />
               <Route path="/about" Component={About} />
+
               <Route path="*" Component={NotFound} />
             </Routes>
           </main>
