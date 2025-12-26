@@ -92,8 +92,10 @@ const ItemDetailsPage = () => {
   useEffect(() => {
     const searchedItemUuid: UUID = params.itemUuid as UUID
     getItemById(searchedItemUuid).then(fetchedItem => {
-      setItem(fetchedItem)
-      setInitialItem(fetchedItem)
+      setItem({...fetchedItem, attributes: fetchedItem.attributes})
+
+      const attributes: AttributeDto[] = fetchedItem.attributes ? fetchedItem.attributes.map(attr => ({...attr})) : []
+      setInitialItem({...fetchedItem, attributes: attributes})
     }).catch(error => {
       console.error('Error fetching item details:', error)
     })
@@ -115,7 +117,7 @@ const ItemDetailsPage = () => {
             <section className="grid lg:grid-cols-2 gap-x-4 gap-y-2.5 mb-6">
               <TextInput name="name" label="name" initialValue={initialItem?.name} value={item.name} readonly={!editFields} onChange={updateItemField}/>
               <TextInput name="description" label="description" initialValue={initialItem?.description} value={item.description} readonly={!editFields} onChange={updateItemField}/>
-              <TextInput name="type" label="label" initialValue={initialItem?.type?.label} value={item.type?.label} readonly={!editFields} onChange={updateItemField}/>
+              <TextInput name="label" label="type" initialValue={initialItem?.type?.label} value={item.type?.label} readonly={!editFields} onChange={updateItemField}/>
               <div/>
               <TextInput name="createdBy" label="createdBy" initialValue={initialItem?.createdBy} value={item.createdBy} readonly={true} onChange={updateItemField}/>
               <DatetimeInput name="createdDate" label="createdDate" initialValue={initialItem?.createdDate} value={item.createdDate} readonly={true} onChange={updateItemField}/>
