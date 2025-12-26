@@ -27,7 +27,7 @@ const TextInput = ({ name, label, initialValue, value, onChange, description, di
             { initialValue !== value && <InitialValueHint initialValue={initialValue} onClick={() => onChange && initialValue && onChange({ target: { id: `${name}-input`, value: initialValue } } as ChangeEvent<HTMLInputElement>)} /> }
         </label>
         { readonly &&
-            <span className="px-3 pt-3 pb-2.5 inline-block text-sm font-medium text-neutral-500">{value}</span>
+            <span className="px-3 pt-3 pb-2.5 inline-block text-body">{value}</span>
         }
         { disabled &&
             <input
@@ -39,7 +39,7 @@ const TextInput = ({ name, label, initialValue, value, onChange, description, di
                 value={value}
                 placeholder={placeholder}
                 onChange={onChange}
-                className='block w-full px-3 py-2.5 bg-neutral-secondary-medium disabled:bg-neutral-400 border text-heading text-sm rounded-base shadow-xs'
+                className='text-body block w-full px-3 py-2.5 bg-neutral-secondary-medium disabled:bg-neutral-400 border rounded-base shadow-xs'
             />
         }
         { !readonly && !disabled && 
@@ -50,7 +50,7 @@ const TextInput = ({ name, label, initialValue, value, onChange, description, di
                 value={value}
                 placeholder={placeholder}
                 onChange={onChange}
-                className='block w-full px-3 py-2.5 bg-neutral-secondary-medium border text-heading text-sm rounded-base shadow-xs focus:border-brand'
+                className='text-body block w-full px-3 py-2.5 bg-neutral-secondary-medium border rounded-base shadow-xs focus:border-brand'
                 />
         }
     </div>

@@ -4,7 +4,7 @@ import { useState } from "react";
 const BusinessServiceNodeType = ({ data }: { data: {label: string} }) => {
   const [showProps, setShowProps] = useState<boolean>(false)
   return (
-    <div className="p-4 bg-brand-softer border border-brand-medium rounded-lg shadow-md">
+    <div className="p-4 bg-brand-softer border border-brand-medium rounded-lg shadow-md text-black">
       <p className="text-xs text-center cursor-pointer" onClick={() => setShowProps(!showProps)}>[Business Service]</p>
       <h3 className="text-lg font-semibold text-center">{data.label}</h3>
       <section className={`transition-all duration-300 ease-in-out ${showProps ? 'max-h-96 w-auto opacity-100 mt-2' : 'max-h-0 max-w-0 opacity-0 overflow-hidden'}`}>
@@ -22,7 +22,7 @@ const BusinessServiceNodeType = ({ data }: { data: {label: string} }) => {
 const ProjectNodeType = ({ data }: { data: {label: string} }) => {
   const [showProps, setShowProps] = useState<boolean>(false)
   return (
-    <div className="p-4 bg-green-100 border border-green-300 rounded-lg shadow-md">
+    <div className="p-4 bg-green-100 border border-green-300 rounded-lg shadow-md text-black">
       <p className="text-xs text-center cursor-pointer" onClick={() => setShowProps(!showProps)}>[Project]</p>
       <h3 className="text-lg font-semibold text-center">{data.label}</h3>
       <section className={`transition-all duration-300 ease-in-out ${showProps ? 'max-h-96 w-auto opacity-100 mt-2' : 'max-h-0 max-w-0 opacity-0 overflow-hidden'}`}>
@@ -45,7 +45,7 @@ const ProjectNodeType = ({ data }: { data: {label: string} }) => {
 const EnvironmentNodeType = ({ data }: { data: {label: string} }) => {
   const [showProps, setShowProps] = useState<boolean>(false)
   return (
-    <div className="p-4 bg-yellow-100 border border-yellow-300 rounded-lg shadow-md">
+    <div className="p-4 bg-yellow-100 border border-yellow-300 rounded-lg shadow-md text-black">
       <p className="text-xs text-center cursor-pointer" onClick={() => setShowProps(!showProps)}>[Environment]</p>
       <h3 className="text-lg font-semibold text-center">{data.label}</h3>
       <section className={`transition-all duration-300 ease-in-out ${showProps ? 'max-h-96 w-auto opacity-100 mt-2' : 'max-h-0 max-w-0 opacity-0 overflow-hidden'}`}>
@@ -67,7 +67,7 @@ const HostNodeType = ({ data }: { data: {label: string} }) => {
   const [showProps, setShowProps] = useState<boolean>(false)
   const [showPropsDetails, setShowPropsDetails] = useState<boolean>(false)
   return (
-    <div className="p-4 bg-purple-100 border border-purple-300 rounded-lg shadow-md">
+    <div className="p-4 bg-purple-100 border border-purple-300 rounded-lg shadow-md text-black">
       <p className="text-xs text-center cursor-pointer" onClick={() => setShowProps(!showProps)}>[Host]</p>
       <h3 className="text-lg font-semibold text-center">{data.label}</h3>
       <section className={`transition-all duration-300 ease-in-out ${showProps ? 'max-h-96 w-auto opacity-100 mt-2' : 'max-h-0 max-w-0 opacity-0 overflow-hidden'}`}>
@@ -104,7 +104,7 @@ const SoftwareNodeType = ({ data }: { data: {label: string} }) => {
   const [showProps, setShowProps] = useState<boolean>(false)
   const [showPropsDetails, setShowPropsDetails] = useState<boolean>(false)
   return (
-    <div className="p-4 bg-red-100 border border-red-300 rounded-lg shadow-md">
+    <div className="p-4 bg-red-100 border border-red-300 rounded-lg shadow-md text-black">
       <p className="text-xs text-center cursor-pointer" onClick={() => setShowProps(!showProps)}>[Software]</p>
       <h3 className="text-lg font-semibold text-center">{data.label}</h3>
       <section className={`transition-all duration-300 ease-in-out ${showProps ? 'max-h-96 w-auto opacity-100 mt-2' : 'max-h-0 max-w-0 opacity-0 overflow-hidden'}`}>
@@ -188,7 +188,7 @@ const ItemHierarchyComponent = () => {
   ]);
   return (
       <>
-        <h2 className="text-2xl font-semibold mb-2">Item hierarchy</h2>
+        <h2 className="text-heading text-2xl! mb-2">Item hierarchy</h2>
         <div className="w-2/3 h-[65vh] min-w-[60vh] m-auto">
           <ReactFlow
             className="border border-gray-300 rounded-lg mt-4"

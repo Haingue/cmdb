@@ -26,12 +26,12 @@ const DatetimeInput = ({ name, label, initialValue, value, onChange, description
     const valueString: string = value ? dateFromTimestamp(value).toLocaleString() : ""
   return (
     <div>
-        <label htmlFor={`${name}-input`} className='block mb-1 text-sm font-medium text-heading'>
+        <label htmlFor={`${name}-input`} className='block mb-1 text-heading'>
             <span className="capitalize">{label}</span>
             { initialValue !== value && <InitialValueHint initialValue={initialValueString} onClick={() => onChange && initialValue && onChange({ target: { id: `${name}-input`, value: initialValue } } as ChangeEvent<HTMLInputElement>)} /> }
         </label>
         { readonly &&
-            <span className="px-3 pt-3 pb-2.5 inline-block text-sm font-medium text-neutral-500">{valueString}</span>
+            <span className="px-3 pt-3 pb-2.5 inline-block text-body">{valueString}</span>
         }
         { disabled &&
             <input

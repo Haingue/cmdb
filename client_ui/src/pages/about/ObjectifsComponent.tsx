@@ -3,8 +3,8 @@ const ObjectifsComponent = () => {
       <>
         <div className="flex">
             <div className="flex-12 lg:flex-4/5">
-                <h2 className="text-2xl font-semibold mb-2">Objectifs</h2>
-                <div>
+                <h2 className="text-heading text-2xl! mb-2">Objectifs</h2>
+                <div className="text-body">
                     <ul className="ps-5 my-2 space-y-1 list-disc">
                         <li>Centralize informations
                             <ul className="ps-5 mt-2 space-y-1 list-disc">

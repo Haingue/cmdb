@@ -18,15 +18,15 @@ type ComponentStatusProps = {
 const ComponentStatus = ({component} : {component: ComponentStatusProps}) => (
     <div
       key={component.name}
-      className="flex items-center justify-between px-3 py-2 rounded-md border bg-white shadow-sm"
+      className="flex items-center justify-between px-3 py-2 border rounded-md dark:bg-none shadow-sm"
       role="group"
       aria-label={`${component.name} status`}
     >
-      <div className="flex-1 text-sm font-medium text-gray-700 truncate">
+      <div className="flex-1 text-sm font-medium text-heading truncate">
         {component.name}
       </div>
 
-      <div className="mx-4 text-sm text-gray-500">{component.version}</div>
+      <div className="mx-4 text-body">{component.version}</div>
 
       <div
         className={`ml-2 px-2 py-0.5 text-xs font-semibold rounded-full ${
@@ -80,7 +80,7 @@ const About = () => {
     <>
       <PageTitle title="About" />
       <section className="mt-4">
-        <h2 className="text-2xl font-semibold mb-2">Components</h2>
+        <h2 className="text-heading text-2xl! mb-2">Components</h2>
         <div className="mb-4 space-y-2">
             {components.map((component) => (
               <ComponentStatus key={component.name} component={component} />
