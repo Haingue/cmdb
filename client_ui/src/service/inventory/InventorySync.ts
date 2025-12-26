@@ -42,7 +42,19 @@ export async function createNewItem(item: ItemDto): Promise<ItemDto> {
     },
     body: JSON.stringify(item),
   });
-  if (!response.ok) throw new Error("Failed to create item");
+  if (response.status != 201) throw new Error("Failed to create item");
+  return response.json();
+}
+
+export async function updateItem(item: ItemDto): Promise<ItemDto> {
+  const response = await fetch(`${URL}/item`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(item),
+  });
+  if (!response.ok) throw new Error("Failed to update item");
   return response.json();
 }
 

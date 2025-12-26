@@ -1,43 +1,48 @@
-import React, { useEffect, useState } from 'react'
-import type { AttributeDto, ItemDto, LinkDto, UUID } from '../../../service/inventory/types'
-import { getItemById } from '../../../service/inventory/InventorySync'
-import PageTitle from '../../../components/PageTitle'
+import React, { useEffect, useState, type ChangeEvent, type ChangeEventHandler } from 'react'
 import { useParams } from 'react-router'
+import DatetimeInput from '../../../components/form/DatetimeInput'
 import TextInput from '../../../components/form/TextInput'
+import PageTitle from '../../../components/PageTitle'
+import { getItemById, updateItem } from '../../../service/inventory/InventorySync'
+import type { AttributeDto, ItemDto, LinkDto, UUID } from '../../../service/inventory/types'
 
-const ItemAttributes = ({attributes, initialAttributes, readonly} : {attributes: AttributeDto[], initialAttributes: AttributeDto[], readonly?: boolean}) => {
+const ItemAttributes = ({attributes, initialAttributes, readonly, onChange} : {attributes: AttributeDto[], initialAttributes: AttributeDto[], readonly?: boolean, onChange?: ChangeEventHandler<HTMLInputElement>}) => {
   return (
     <div>
-      {attributes && Object.entries(attributes).map(([key, attribute]) =>
-        <TextInput key={key} label={attribute.label} value={String(attribute.value)} initialValue={String(initialAttributes[key].value)} readonly={readonly} />
+      {attributes && Object.entries(attributes).map(([key, attribute], index) =>
+        <TextInput key={`${key}-${index}`} name={attribute.label} label={attribute.label} value={String(attribute.value)} initialValue={String(initialAttributes[index].value)} readonly={readonly} onChange={onChange} />
       )}
     </div>
   )
 }
 
-const ItemLinks = ({ links }: { links: LinkDto[] }) => {
+const ItemLinks = ({ links, isCollapsed }: { links: LinkDto[], isCollapsed: boolean }) => {
   return (
     <>
-      <table className="w-full text-sm text-left rtl:text-right text-body">
-        <thead className="text-sm text-body bg-neutral-secondary-soft border-b rounded-base border-default">
-          <tr>
-            <th>Source Item ID</th>
-            <th>Link Type</th>
-            <th>Description</th>
-            <th>Last Modified Date</th>
-          </tr>
-        </thead>
-        <tbody>
-          {links && links.map((link, key) => (
-            <tr key={key} className="bg-neutral-primary-soft border-b border-default hover:bg-neutral-secondary-medium">
-              <td>{link.sourceItemId}</td>
-              <td>{link.linkType.label}</td>
-              <td>{link.description}</td>
-              <td>{link.lastModifiedDate}</td>
+      <div className={`${isCollapsed ? 'max-h-0 opacity-0 overflow-auto' : 'max-h-100 opacity-100 overflow-auto'} transition-all delay-75 duration-300 ease-in-out rounded-sm border border-solid border-neutral-200 dark:border-gray-700 flex flex-col`}>
+        <table className="w-full">
+          <thead className="sticky top-0 text-sm text-body bg-neutral-100 dark:bg-gray-800 border-b border-neutral-200 dark:border-gray-700 rounded-base border-default">
+            <tr>
+              <th>Source Item ID</th>
+              <th>Destination Item ID</th>
+              <th>Link Type</th>
+              <th>Description</th>
+              <th>Last Modified Date</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {links && links.map((link, key) => (
+              <tr key={key} className="border-b border-default border-neutral-200 dark:border-gray-700 hover:bg-neutral-50 dark:hover:bg-gray-600">
+                <td title={link.sourceItemId}>{link.sourceItemName}</td>
+                <td title={link.targetItemId}>{link.targetItemName}</td>
+                <td>{link.linkType.label}</td>
+                <td>{link.description}</td>
+                <td>{link.lastModifiedDate}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </>
   )
 }
@@ -47,12 +52,41 @@ const ItemDetailsPage = () => {
   const [initialItem, setInitialItem] = useState<ItemDto>()
   const [item, setItem] = useState<ItemDto>()
   const [editFields, setEditFields] = useState<boolean>(false)
+  const [collapseIncomingLinks, setCollapseIncomingLinks] = useState<boolean>(true)
+  const [collapseOutgoingLinks, setCollapseOutgoingLinks] = useState<boolean>(true)
 
-  const updateItemField = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const updateItemField = (event: ChangeEvent<HTMLInputElement>) => {
     const _item = {...item} as ItemDto
-    const field: keyof ItemDto = e.target.id.replace('-input', '') as keyof ItemDto
-    _item[field] = e.target.value
+    const field: keyof ItemDto = event.target.id.replace('-input', '') as keyof ItemDto
+    _item[field] = event.target.value as never
     setItem(_item)
+  }
+
+  const updateItemAttribute = (event: ChangeEvent<HTMLInputElement>) => {
+    const _item = {...item} as ItemDto
+    for (const [, attribute] of Object.entries(_item.attributes || {})) {
+      if (attribute.label === event.target.id.replace('-input', '')) {
+        attribute.value = event.target.value
+      }
+    }
+    setItem(_item)
+  }
+
+  const isChangedItem = (): boolean => {
+    return JSON.stringify(initialItem) !== JSON.stringify(item)
+  }
+
+  const saveModifiedItem = () => {
+    console.debug('Saving modified item:', item)
+    updateItem(item as ItemDto)
+      .then(updatedItem => {
+        setItem(updatedItem)
+        setInitialItem(updatedItem)
+        setEditFields(false)
+      })
+      .catch(error => {
+        console.error('Error updating item:', error)
+      })
   }
 
   useEffect(() => {
@@ -79,25 +113,35 @@ const ItemDetailsPage = () => {
         {item && (
           <>
             <section className="grid lg:grid-cols-2 gap-x-4 gap-y-2.5 mb-6">
-              <TextInput label="name" initialValue={initialItem?.name} value={item.name} readonly={!editFields} onChange={(e) => updateItemField(e)}/>
-              <TextInput label="description" initialValue={initialItem?.description} value={item.description} readonly={!editFields} onChange={(e) => updateItemField(e)}/>
-              <TextInput label="label" initialValue={initialItem?.type?.label} value={item.type?.label} readonly={!editFields} onChange={(e) => updateItemField(e)}/>
-              <TextInput label="createdBy" initialValue={initialItem?.createdBy} value={item.createdBy} readonly={!editFields} onChange={(e) => updateItemField(e)}/>
-              <TextInput label="createdDate" initialValue={initialItem?.createdDate} value={item.createdDate} readonly={!editFields} onChange={(e) => updateItemField(e)}/>
-              <TextInput label="lastModifiedBy" initialValue={initialItem?.lastModifiedBy} value={item.lastModifiedBy} readonly={!editFields} onChange={(e) => updateItemField(e)}/>
-              <TextInput label="lastModifiedDate" initialValue={initialItem?.lastModifiedDate} value={item.lastModifiedDate} readonly={!editFields} onChange={(e) => updateItemField(e)}/>
+              <TextInput name="name" label="name" initialValue={initialItem?.name} value={item.name} readonly={!editFields} onChange={updateItemField}/>
+              <TextInput name="description" label="description" initialValue={initialItem?.description} value={item.description} readonly={!editFields} onChange={updateItemField}/>
+              <TextInput name="type" label="label" initialValue={initialItem?.type?.label} value={item.type?.label} readonly={!editFields} onChange={updateItemField}/>
+              <div/>
+              <TextInput name="createdBy" label="createdBy" initialValue={initialItem?.createdBy} value={item.createdBy} readonly={true} onChange={updateItemField}/>
+              <DatetimeInput name="createdDate" label="createdDate" initialValue={initialItem?.createdDate} value={item.createdDate} readonly={true} onChange={updateItemField}/>
+              <TextInput name="lastModifiedBy" label="lastModifiedBy" initialValue={initialItem?.lastModifiedBy} value={item.lastModifiedBy} readonly={true} onChange={updateItemField}/>
+              <DatetimeInput name="lastModifiedDate" label="lastModifiedDate" initialValue={initialItem?.lastModifiedDate} value={item.lastModifiedDate} readonly={true} onChange={updateItemField}/>
             </section>
             <section className=" mb-6">
               <h3 className="font-medium text-heading">Attributes</h3>
-              <ItemAttributes readonly={!editFields} attributes={item.attributes || []} initialAttributes={initialItem?.attributes || []} />
+              <ItemAttributes readonly={!editFields} attributes={item?.attributes || []} initialAttributes={initialItem?.attributes || []} onChange={updateItemAttribute} />
             </section>
             <section className="mb-6">
-              <h3 className="font-medium text-heading">Incoming link</h3>
-              <ItemLinks links={item.incomingLinks || []} />
+              <h3 className="font-medium text-heading cursor-pointer" title="Click to expand/collapse incoming links" onClick={()=>setCollapseIncomingLinks(!collapseIncomingLinks)}>Incoming link <span className="ms-2 text-xs text-neutral-500">({item.incomingLinks?.length})</span></h3>
+              <ItemLinks links={item.incomingLinks || []} isCollapsed={collapseIncomingLinks} />
             </section>
             <section className="">
-              <h3 className="font-medium text-heading">Outgoing link</h3>
-              <ItemLinks links={item.outgoingLinks || []} />
+              <h3 className="font-medium text-heading cursor-pointer" title="Click to expand/collapse outgoing links" onClick={()=>setCollapseOutgoingLinks(!collapseOutgoingLinks)}>Outgoing link <span className="ms-2 text-xs text-neutral-500">({item.outgoingLinks?.length})</span></h3>
+              <ItemLinks links={item.outgoingLinks || []} isCollapsed={collapseOutgoingLinks} />
+            </section>
+            <section className="fixed bottom-4 right-4 p-3">
+              <button
+                className={`mt-4 px-4 py-2 transition-opacity delay-75 duration-300 opacity-100 disabled:opacity-0 rounded-md bg-brand text-white hover:bg-brand-strong`}
+                disabled={isChangedItem() === false}
+                onClick={saveModifiedItem}
+              >
+                Save changes
+              </button>
             </section>
           </>
         )}
