@@ -5,6 +5,7 @@ import TextInput from '../../../components/form/TextInput'
 import PageTitle from '../../../components/PageTitle'
 import { getItemById, updateItem } from '../../../service/inventory/InventorySync'
 import type { AttributeDto, ItemDto, LinkDto, UUID } from '../../../service/inventory/types'
+import SimpleTable from '../../../components/table-simple'
 
 const ItemAttributes = ({attributes, initialAttributes, readonly, onChange} : {attributes: AttributeDto[], initialAttributes: AttributeDto[], readonly?: boolean, onChange?: ChangeEventHandler<HTMLInputElement>}) => {
   return (
@@ -13,37 +14,6 @@ const ItemAttributes = ({attributes, initialAttributes, readonly, onChange} : {a
         <TextInput key={`${key}-${index}`} name={attribute.label} label={attribute.label} value={String(attribute.value)} initialValue={String(initialAttributes[index].value)} readonly={readonly} onChange={onChange} />
       )}
     </div>
-  )
-}
-
-const ItemLinks = ({ links, isCollapsed }: { links: LinkDto[], isCollapsed: boolean }) => {
-  return (
-    <>
-      <div className={`${isCollapsed ? 'max-h-0 opacity-0 overflow-auto' : 'max-h-100 opacity-100 overflow-auto'} transition-all delay-75 duration-300 ease-in-out rounded-sm border border-solid border-neutral-200 dark:border-gray-700 flex flex-col`}>
-        <table className="w-full">
-          <thead className="sticky top-0 text-sm text-body bg-neutral-100 dark:bg-gray-800 border-b border-neutral-200 dark:border-gray-700 rounded-base border-default">
-            <tr>
-              <th>Source Item ID</th>
-              <th>Destination Item ID</th>
-              <th>Link Type</th>
-              <th>Description</th>
-              <th>Last Modified Date</th>
-            </tr>
-          </thead>
-          <tbody>
-            {links && links.map((link, key) => (
-              <tr key={key} className="border-b border-default border-neutral-200 dark:border-gray-700 hover:bg-neutral-50 dark:hover:bg-gray-600">
-                <td title={link.sourceItemId}>{link.sourceItemName}</td>
-                <td title={link.targetItemId}>{link.targetItemName}</td>
-                <td>{link.linkType.label}</td>
-                <td>{link.description}</td>
-                <td>{link.lastModifiedDate}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </>
   )
 }
 
@@ -130,11 +100,43 @@ const ItemDetailsPage = () => {
             </section>
             <section className="mb-6">
               <h3 className="font-medium text-heading cursor-pointer" title="Click to expand/collapse incoming links" onClick={()=>setCollapseIncomingLinks(!collapseIncomingLinks)}>Incoming link <span className="ms-2 text-xs text-neutral-500">({item.incomingLinks?.length})</span></h3>
-              <ItemLinks links={item.incomingLinks || []} isCollapsed={collapseIncomingLinks} />
+              <SimpleTable
+                columns={[
+                  { name: 'sourceItemName', label: 'sourceItemName' },
+                  { name: 'targetItemName', label: 'targetItemName' },
+                  { name: 'linkTypeLabel', label: 'linkTypeLabel' },
+                  { name: 'description', label: 'description' },
+                  { name: 'lastModifiedDate', label: 'lastModifiedDate' },
+                ]}
+                rows={item.incomingLinks?.map(link => ({
+                  sourceItemName: {content: link.sourceItemName},
+                  targetItemName: {content: link.targetItemName},
+                  "linkTypeLabel": {content: link.linkType?.label},
+                  description: {content: link.description},
+                  lastModifiedDate: {content: link.lastModifiedDate},
+                })) || []}
+                isCollapsed={collapseIncomingLinks}
+              />
             </section>
             <section className="">
               <h3 className="font-medium text-heading cursor-pointer" title="Click to expand/collapse outgoing links" onClick={()=>setCollapseOutgoingLinks(!collapseOutgoingLinks)}>Outgoing link <span className="ms-2 text-xs text-neutral-500">({item.outgoingLinks?.length})</span></h3>
-              <ItemLinks links={item.outgoingLinks || []} isCollapsed={collapseOutgoingLinks} />
+              <SimpleTable
+                columns={[
+                  { name: 'sourceItemName', label: 'sourceItemName' },
+                  { name: 'targetItemName', label: 'targetItemName' },
+                  { name: 'linkTypeLabel', label: 'linkTypeLabel' },
+                  { name: 'description', label: 'description' },
+                  { name: 'lastModifiedDate', label: 'lastModifiedDate' },
+                ]}
+                rows={item.outgoingLinks?.map(link => ({
+                  sourceItemName: {content: link.sourceItemName},
+                  targetItemName: {content: link.targetItemName},
+                  "linkTypeLabel": {content: link.linkType?.label},
+                  description: {content: link.description},
+                  lastModifiedDate: {content: link.lastModifiedDate},
+                })) || []}
+                isCollapsed={collapseOutgoingLinks}
+              />
             </section>
             <section className="fixed bottom-4 right-4 p-3">
               <button
