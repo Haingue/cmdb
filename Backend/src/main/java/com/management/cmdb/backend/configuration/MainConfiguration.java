@@ -33,6 +33,7 @@ public class MainConfiguration {
         corsConfig.addAllowedOriginPattern(allowedHost);
         corsConfig.addAllowedMethod("GET");
         corsConfig.addAllowedMethod("POST");
+        corsConfig.addAllowedMethod("PUT");
         corsConfig.addAllowedHeader("*");
 
         corsConfig.setAllowCredentials(true);
