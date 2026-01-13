@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router'
 import useSideBar from '../../hooks/useSideBar'
+import NotificationBell from '../NotificationBell'
 
 const NavBar = () => {
   const { toggleSideBarVisibility } = useSideBar()
@@ -67,6 +68,9 @@ const NavBar = () => {
                 ></path>
               </svg>
             </button>
+            <NotificationBell
+              className="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5"
+            />
             <div
               role="tooltip"
               className="absolute z-10 inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm tooltip opacity-0 invisible"

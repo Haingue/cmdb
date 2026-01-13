@@ -28,7 +28,7 @@ const Root = () => {
       <div className="flex pt-16 overflow-hidden">
         <div className={`relative grow h-full overflow-y-auto transition duration-75 lg:ml-64 ml-4`}>
           <SideBar backdrop />
-          <main>
+          <main className="p-4">
             <Routes>
               <Route path="/" Component={Dashboard} />
               <Route path="/map" Component={Map} />
