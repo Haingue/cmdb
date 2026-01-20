@@ -2,7 +2,6 @@ package com.management.cmdb.core.ports.outputs;
 
 import com.management.cmdb.core.models.business.project.BusinessService;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface BusinessServiceOutputPort {

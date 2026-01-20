@@ -1,4 +1,4 @@
-package com.management.cmdb.core.models.business.constants;
+package com.management.cmdb.core.models.business.constant;
 
 public enum EnvironmentType {
 

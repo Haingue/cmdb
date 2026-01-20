@@ -1,12 +1,15 @@
 package com.management.cmdb.core.service;
 
 import com.management.cmdb.core.models.business.component.Component;
+import com.management.cmdb.core.models.business.identity.User;
 import com.management.cmdb.core.models.business.identity.UserGroup;
 import com.management.cmdb.core.models.business.project.Environment;
 import com.management.cmdb.core.models.business.project.Project;
 import com.management.cmdb.core.models.business.technology.Technology;
-import com.management.cmdb.core.models.exceptions.*;
-import com.management.cmdb.core.ports.inputs.EnvironmentInputPort;
+import com.management.cmdb.core.models.exceptions.CoreException;
+import com.management.cmdb.core.models.exceptions.InvalidObjectException;
+import com.management.cmdb.core.models.exceptions.NotFoundException;
+import com.management.cmdb.core.models.exceptions.NotImplemented;
 import com.management.cmdb.core.ports.inputs.IdentityInputPort;
 import com.management.cmdb.core.ports.outputs.EnvironmentOutputPort;
 import com.management.cmdb.core.ports.outputs.IdentityOutputPort;
@@ -28,22 +31,38 @@ public class IdentityService implements IdentityInputPort {
     }
 
     @Override
-    public UserGroup createUserGroup(UserGroup userGroup) {
+    public UserGroup findOne(String name, User initiator) {
+        return identityOutputPort.findOne(name)
+                .orElseThrow(() -> new NotFoundException(name));
+    }
+
+    @Override
+    public UserGroup create(UserGroup userGroup, User initiator) {
         if (userGroup == null) throw new InvalidObjectException("UserGroup is null");
-        if (!userGroup.isValid()) throw new InvalidObjectException("UserGroup is not valid", userGroup);
+        if (!userGroup.checkIntegrity()) throw new InvalidObjectException("UserGroup is not valid", userGroup);
 
         return identityOutputPort.save(userGroup);
     }
 
     @Override
-    public UserGroup updateUserGroup(UserGroup userGroup) throws InvalidObjectException {
+    public UserGroup update(UserGroup userGroup, User initiator) throws InvalidObjectException {
         if (userGroup == null) throw new InvalidObjectException("UserGroup is null");
-        if (!userGroup.isValid()) throw new InvalidObjectException("UserGroup is not valid", userGroup);
+        if (!userGroup.checkIntegrity()) throw new InvalidObjectException("UserGroup is not valid", userGroup);
 
         UserGroup existingUserGroup = identityOutputPort.findOne(userGroup.name())
                 .orElseThrow(() -> new NotFoundException(userGroup.name()));
         // TODO updates linked entities (ex: component, ...)
         return identityOutputPort.save(userGroup);
+    }
+
+    @Override
+    public void archive(String name, User initiator) {
+        throw new NotImplemented();
+    }
+
+    @Override
+    public void delete(String name, User initiator) {
+        throw new NotImplemented();
     }
 
     @Override

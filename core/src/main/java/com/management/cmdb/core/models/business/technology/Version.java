@@ -8,12 +8,6 @@ public class Version implements Comparable {
     int minor;
     int patch;
 
-    public Version(int major, int minor, int patch) {
-        this.major = major;
-        this.minor = minor;
-        this.patch = patch;
-    }
-
     public static Version fromString(String version) {
         if (!version.matches("[0-9]+.[0-9]+.[0-9]+")) {
             throw new IllegalArgumentException(version);
@@ -24,6 +18,35 @@ public class Version implements Comparable {
                 Integer.parseInt(token[1]),
                 Integer.parseInt(token[2])
         );
+    }
+
+    public Version() {
+        this.major = 0;
+        this.minor = 0;
+        this.patch = 1;
+    }
+
+    public Version(int major, int minor, int patch) {
+        this.major = major;
+        this.minor = minor;
+        this.patch = patch;
+    }
+
+    public Version majorRelease() {
+        this.minorRelease();
+        this.major++;
+        return this;
+    }
+
+    public Version minorRelease() {
+        this.minor++;
+        this.patch = 0;
+        return this;
+    }
+
+    public Version patch() {
+        this.patch++;
+        return this;
     }
 
     @Override

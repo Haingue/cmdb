@@ -1,5 +1,6 @@
 package com.management.cmdb.core.service;
 
+import com.management.cmdb.core.models.business.identity.User;
 import com.management.cmdb.core.models.business.project.BusinessService;
 import com.management.cmdb.core.models.exceptions.CoreException;
 import com.management.cmdb.core.models.exceptions.InvalidObjectException;
@@ -24,9 +25,17 @@ public class BusinessServiceService implements BusinessServiceInputPort {
     }
 
     @Override
-    public BusinessService create(BusinessService businessService) {
+    public BusinessService findOne(String name, User initiator) {
+        // TODO check initiator permissions
+        return businessServiceOutputPort.findOne(name)
+                .orElseThrow(() -> new NotFoundException(name));
+    }
+
+    @Override
+    public BusinessService create(BusinessService businessService, User initiator) {
+        // TODO check initiator permissions
         if (businessService == null) throw new InvalidObjectException("Business service cannot be null");
-        businessService.isValid();
+        businessService.checkIntegrity();
 
         isUniqueAbbreviation(businessService.abbreviation());
 
@@ -34,9 +43,10 @@ public class BusinessServiceService implements BusinessServiceInputPort {
     }
 
     @Override
-    public BusinessService update(BusinessService businessService) {
+    public BusinessService update(BusinessService businessService, User initiator) {
+        // TODO check initiator permissions
         if (businessService == null) throw new InvalidObjectException("Business service cannot be null");
-        businessService.isValid();
+        businessService.checkIntegrity();
 
         businessServiceOutputPort.findByAbbreviation(businessService.abbreviation())
                 .orElseThrow(() -> new NotFoundException(businessService.name()));
@@ -46,21 +56,17 @@ public class BusinessServiceService implements BusinessServiceInputPort {
     }
 
     @Override
-    public void archive(String name) {
+    public void archive(String name, User initiator) {
+        // TODO check initiator permissions
         throw new NotImplemented();
     }
 
     @Override
-    public void delete(String name) {
+    public void delete(String name, User initiator) {
+        // TODO check initiator permissions
         if (name == null) throw new CoreException("BusinessService name cannot be null");
         businessServiceOutputPort.findOne(name)
                 .orElseThrow(() -> new NotFoundException(name));
         businessServiceOutputPort.delete(name);
-    }
-
-    @Override
-    public BusinessService findOneByName(String name) {
-        return businessServiceOutputPort.findOne(name)
-                .orElseThrow(() -> new NotFoundException(name));
     }
 }

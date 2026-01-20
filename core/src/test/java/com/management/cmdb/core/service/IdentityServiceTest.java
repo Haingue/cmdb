@@ -9,9 +9,9 @@ import com.management.cmdb.core.models.exceptions.NotFoundException;
 import com.management.cmdb.core.ports.outputs.EnvironmentOutputPort;
 import com.management.cmdb.core.ports.outputs.IdentityOutputPort;
 import com.management.cmdb.core.ports.outputs.ProjectOutputPort;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.List;
@@ -38,35 +38,35 @@ class IdentityServiceTest {
     public void shouldBeSavedNewUserGroup () {
         UserGroup originalUserGroup = FakeUserGroup.TECHNICAL_GROUP.userGroup;
 
-        UserGroup newUserGroup = this.identityService.createUserGroup(originalUserGroup);
+        UserGroup newUserGroup = this.identityService.create(originalUserGroup, FakeUser.SUPER_ADMIN.user);
         Mockito.verify(identityOutputPort).save(originalUserGroup);
     }
 
     @Test
     public void shouldNotBeValid () {
-        Assertions.assertThrows(InvalidObjectException.class, () -> this.identityService.createUserGroup(
-                new UserGroup("", FakeUserGroup.TECHNICAL_GROUP.userGroup.email(), FakeUserGroup.TECHNICAL_GROUP.userGroup.description(), FakeUserGroup.TECHNICAL_GROUP.userGroup.owner(), FakeUserGroup.TECHNICAL_GROUP.userGroup.members())
+        Assertions.assertThrows(InvalidObjectException.class, () -> this.identityService.create(
+                new UserGroup("", FakeUserGroup.TECHNICAL_GROUP.userGroup.email(), FakeUserGroup.TECHNICAL_GROUP.userGroup.description(), FakeUserGroup.TECHNICAL_GROUP.userGroup.owner(), FakeUserGroup.TECHNICAL_GROUP.userGroup.members()), FakeUser.SUPER_ADMIN.user
         ));
 
-        Assertions.assertThrows(InvalidObjectException.class, () -> this.identityService.createUserGroup(
-                new UserGroup(FakeUserGroup.TECHNICAL_GROUP.userGroup.name(), FakeUserGroup.TECHNICAL_GROUP.userGroup.email(), FakeUserGroup.TECHNICAL_GROUP.userGroup.description(), null, FakeUserGroup.TECHNICAL_GROUP.userGroup.members())
+        Assertions.assertThrows(InvalidObjectException.class, () -> this.identityService.create(
+                new UserGroup(FakeUserGroup.TECHNICAL_GROUP.userGroup.name(), FakeUserGroup.TECHNICAL_GROUP.userGroup.email(), FakeUserGroup.TECHNICAL_GROUP.userGroup.description(), null, FakeUserGroup.TECHNICAL_GROUP.userGroup.members()), FakeUser.SUPER_ADMIN.user
         ));
     }
 
     @Test
-    public void shouldUpdateUserGroup () {
+    public void shouldUpdate() {
         UserGroup originalUserGroup = FakeUserGroup.TECHNICAL_GROUP.userGroup;
         Mockito.when(identityOutputPort.findOne(originalUserGroup.name())).thenReturn(Optional.of(originalUserGroup));
 
-        UserGroup newUserGroup = this.identityService.updateUserGroup(originalUserGroup);
+        UserGroup newUserGroup = this.identityService.update(originalUserGroup, FakeUser.SUPER_ADMIN.user);
         Mockito.verify(identityOutputPort).save(originalUserGroup);
     }
 
     @Test
-    public void shouldNotUpdateUserGroup () {
+    public void shouldNotUpdate() {
         UserGroup originalUserGroup = FakeUserGroup.TECHNICAL_GROUP.userGroup;
 
-        Assertions.assertThrows(NotFoundException.class, () -> this.identityService.updateUserGroup(originalUserGroup));
+        Assertions.assertThrows(NotFoundException.class, () -> this.identityService.update(originalUserGroup, FakeUser.SUPER_ADMIN.user));
     }
 
     @Test

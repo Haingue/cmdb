@@ -1,7 +1,7 @@
 package com.management.cmdb.core.ports.inputs.search;
 
 import com.management.cmdb.core.models.business.component.Component;
-import com.management.cmdb.core.models.business.constants.TechnologyType;
+import com.management.cmdb.core.models.business.constant.TechnologyType;
 import com.management.cmdb.core.models.business.project.BusinessService;
 import com.management.cmdb.core.models.business.project.Environment;
 import com.management.cmdb.core.models.business.project.Project;

@@ -1,7 +1,8 @@
 package com.management.cmdb.core.service;
 
-import com.management.cmdb.core.models.business.constants.EnvironmentType;
-import com.management.cmdb.core.models.business.constants.GlobalStaticParameter;
+import com.management.cmdb.core.models.business.constant.EnvironmentType;
+import com.management.cmdb.core.models.business.constant.GlobalStaticParameter;
+import com.management.cmdb.core.models.business.identity.User;
 import com.management.cmdb.core.models.business.project.Environment;
 import com.management.cmdb.core.models.exceptions.CoreException;
 import com.management.cmdb.core.models.exceptions.InvalidObjectException;
@@ -23,26 +24,37 @@ public class EnvironmentService implements EnvironmentInputPort {
     }
 
     @Override
-    public Environment create(String location, EnvironmentType type, String jiraTracker) {
-        Environment environment = Environment.create(location, type, jiraTracker);
-        environment.isValid();
-        environment = environmentOutputPort.save(environment);
+    public Environment findOne(UUID uuid, User initiator) {
+        return environmentOutputPort.findOne(uuid)
+                .orElseThrow(() -> new NotFoundException(uuid));
+    }
+
+    @Override
+    public Environment create(String location, EnvironmentType type, String jiraTracker, User initiator) {
+        Environment environment = new Environment(location, type, jiraTracker);
+        return this.create(environment, initiator);
+    }
+
+    @Override
+    public Environment create(Environment newEntity, User initiator) {
+        newEntity.checkIntegrity();
+        newEntity = environmentOutputPort.save(newEntity);
 
         // Create component
         try {
-            environment.getComponents().forEach(componentService::create);
+            newEntity.getComponents().forEach(component -> componentService.create(component, initiator));
         } catch (CoreException e) {
-            environmentOutputPort.delete(environment);
+            environmentOutputPort.delete(newEntity);
             throw e;
         }
 
         // TODO notify maintainer
 
-        return environmentOutputPort.save(environment);
+        return environmentOutputPort.save(newEntity);
     }
 
     @Override
-    public Environment update(Environment environment) {
+    public Environment update(Environment environment, User initiator) {
         if (environment == null) throw new InvalidObjectException("Environment cannot be null");
 
         Environment existingEnvironment = environmentOutputPort.findOne(environment.getUuid())
@@ -60,21 +72,16 @@ public class EnvironmentService implements EnvironmentInputPort {
     }
 
     @Override
-    public void archive(UUID uuid) {
+    public void archive(UUID uuid, User initiator) {
         throw new NotImplemented();
     }
 
     @Override
-    public void delete(UUID uuid) {
+    public void delete(UUID uuid, User initiator) {
         Environment existingEnvironment = environmentOutputPort.findOne(uuid)
                 .orElseThrow(() -> new NotFoundException(uuid.toString()));
         environmentOutputPort.delete(existingEnvironment);
         environmentOutputPort.save(existingEnvironment);
     }
 
-    @Override
-    public Environment findOne(UUID uuid) {
-        return environmentOutputPort.findOne(uuid)
-                .orElseThrow(() -> new NotFoundException(uuid));
-    }
 }

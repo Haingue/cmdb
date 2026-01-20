@@ -1,19 +1,17 @@
 package com.management.cmdb.core.service;
 
-import com.management.cmdb.core.models.business.constants.GlobalStaticParameter;
+import com.management.cmdb.core.models.business.constant.GlobalStaticParameter;
+import com.management.cmdb.core.models.business.identity.User;
 import com.management.cmdb.core.models.business.identity.UserGroup;
 import com.management.cmdb.core.models.business.project.BusinessService;
 import com.management.cmdb.core.models.business.project.Environment;
 import com.management.cmdb.core.models.business.project.Project;
 import com.management.cmdb.core.models.exceptions.CoreException;
 import com.management.cmdb.core.models.exceptions.NotFoundException;
-import com.management.cmdb.core.models.exceptions.NotImplemented;
-import com.management.cmdb.core.ports.inputs.BusinessServiceInputPort;
 import com.management.cmdb.core.ports.inputs.ProjectInputPort;
-import com.management.cmdb.core.ports.outputs.BusinessServiceOutputPort;
-import com.management.cmdb.core.ports.outputs.EnvironmentOutputPort;
 import com.management.cmdb.core.ports.outputs.ProjectOutputPort;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
 
@@ -30,18 +28,38 @@ public class ProjectService implements ProjectInputPort {
     }
 
     @Override
-    public Project create(String fullName, String shortName, String description, BusinessService businessService, UserGroup maintainers, UserGroup owners, Set<Environment> environments) {
-        Project project = Project.create(fullName, shortName, description, businessService, maintainers, owners);
-        project.isValid();
+    public Project findOne(UUID uuid, User initiator) {
+        // TODO check initiator permissions
+        return this.projectOutputPort.findOne(uuid)
+                .orElseThrow(() -> new NotFoundException("Project with id " + uuid.toString() + " not found"));
+    }
 
-        BusinessService savedBusinessService = this.businessServiceService.findOneByName(project.getBusinessService().name());
+    @Override
+    public Project findOneByUuid(UUID uuid, User initiator) {
+        // TODO check initiator permissions
+        return this.findOne(uuid, initiator);
+    }
+
+    @Override
+    public Project findOneByShortName(String shortName, User initiator) {
+        // TODO check initiator permissions
+        return this.projectOutputPort.findOneByShortName(shortName)
+                .orElseThrow(() -> new NotFoundException(shortName));
+    }
+
+    @Override
+    public Project create(String fullName, String shortName, String description, BusinessService businessService, UserGroup maintainers, UserGroup owners, Set<Environment> environments, User initiator) {
+        Project project = new Project(fullName, shortName, description, businessService, maintainers, owners);
+        project.checkIntegrity();
+
+        BusinessService savedBusinessService = this.businessServiceService.findOne(project.getBusinessService().name(), initiator);
         project.setBusinessService(savedBusinessService);
         project = this.projectOutputPort.save(project);
 
         if (environments != null && !environments.isEmpty()) {
             try {
                 environments.stream()
-                        .peek(environment -> environmentService.create(environment.getLocation(), environment.getType(), environment.getJiraTracker()))
+                        .peek(environment -> environmentService.create(environment.getLocation(), environment.getType(), environment.getJiraTracker(), initiator))
                         .forEach(project::addEnvironment);
             } catch (CoreException e) {
                 this.projectOutputPort.delete(project.getUuid());
@@ -52,12 +70,16 @@ public class ProjectService implements ProjectInputPort {
     }
 
     @Override
-    public Project update(Project project) {
+    public Project create(Project newEntity, User initiator) {
+        return this.create(newEntity.getFullName(), newEntity.getShortName(), newEntity.getDescription(), newEntity.getBusinessService(), newEntity.getMaintainers(), newEntity.getOwners(), newEntity.getEnvironments(), initiator);
+    }
+
+    @Override
+    public Project update(Project project, User initiator) {
         if (project == null) throw new CoreException("Project cannot be null");
         if (project.getUuid() == null) throw new CoreException("Project uuid cannot be null");
 
-        Project existingProject = this.projectOutputPort.findOne(project.getUuid())
-                .orElseThrow(() -> new NotFoundException(project.getUuid()));
+        Project existingProject = this.findOne(project.getUuid(), initiator);
         existingProject.setFullName(project.getFullName());
         existingProject.setShortName(project.getShortName());
         existingProject.setDescription(project.getDescription());
@@ -66,52 +88,43 @@ public class ProjectService implements ProjectInputPort {
         existingProject.setMaintainers(project.getMaintainers());
         // TODO notify new/previous maintainer
 
-        BusinessService businessService = this.businessServiceService.findOneByName(project.getBusinessService().name());
+        BusinessService businessService = this.businessServiceService.findOne(project.getBusinessService().name(), initiator);
         existingProject.setBusinessService(businessService);
 
         project.getEnvironments()
-                .stream().map(this.environmentService::update)
+                .stream().map((Environment env) -> this.environmentService.update(env, initiator))
                 .forEach(existingProject::addEnvironment);
         existingProject.getEnvironments()
                 .stream()
                 .filter(environment -> !project.getEnvironments().contains(environment))
-                .peek(environment -> this.environmentService.delete(environment.getUuid()))
+                .peek(environment -> this.environmentService.delete(environment.getUuid(), initiator))
                 .forEach(existingProject::removeEnvironment);
 
         existingProject.update(GlobalStaticParameter.SYSTEM_NAME.name());
 
-        project.isValid();
+        project.checkIntegrity();
         return this.projectOutputPort.save(existingProject);
     }
 
     @Override
-    public void archive(UUID uuid) {
-        throw new NotImplemented();
+    public void archive(UUID uuid, User initiator) {
+        Project project = this.findOne(uuid, initiator);
+        LocalDateTime now = LocalDateTime.now();
+        project.setArchiveDatetime(now);
+        project.getEnvironments().forEach(environment -> this.environmentService.archive(environment.getUuid(), initiator));
+        this.projectOutputPort.save(project);
     }
 
     @Override
-    public void delete(UUID uuid) {
+    public void delete(UUID uuid, User initiator) {
         if (uuid == null) throw new CoreException("Project uuid cannot be null");
 
-        Project existingProject = this.projectOutputPort.findOne(uuid)
-                .orElseThrow(() -> new NotFoundException(uuid));
+        Project existingProject = this.findOne(uuid, initiator);
         // TODO delete environments
         existingProject.getEnvironments().stream()
-                .peek(environment -> this.environmentService.delete(environment.getUuid()))
+                .peek(environment -> this.environmentService.delete(environment.getUuid(), initiator))
                 .forEach(existingProject::removeEnvironment);
-        existingProject.delete(GlobalStaticParameter.SYSTEM_NAME.name());
+        existingProject.archive(GlobalStaticParameter.SYSTEM_NAME.name());
         projectOutputPort.save(existingProject);
-    }
-
-    @Override
-    public Project findOneByUuid(UUID uuid) {
-        return this.projectOutputPort.findOne(uuid)
-                .orElseThrow(() -> new NotFoundException(uuid));
-    }
-
-    @Override
-    public Project findOneByShortName(String shortName) {
-        return this.projectOutputPort.findOneByShortName(shortName)
-                .orElseThrow(() -> new NotFoundException(shortName));
     }
 }

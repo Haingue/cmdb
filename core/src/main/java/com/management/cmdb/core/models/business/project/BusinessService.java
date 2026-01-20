@@ -8,11 +8,10 @@ public record BusinessService (
         String abbreviation
 ) {
 
-    public boolean isValid () {
+    public void checkIntegrity() {
         if (StringUtils.isBlank(name)) throw new InvalidObjectException("name cannot be blank", this);
         if (StringUtils.isBlank(abbreviation)) throw new InvalidObjectException("abbreviation cannot be blank", this);
         if (abbreviation.length() != 3) throw new InvalidObjectException("abbreviation length must be equals to 3", this);
-        return true;
     }
 
 }

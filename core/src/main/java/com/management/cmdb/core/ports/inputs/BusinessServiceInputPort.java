@@ -1,14 +1,8 @@
 package com.management.cmdb.core.ports.inputs;
 
 import com.management.cmdb.core.models.business.project.BusinessService;
+import com.management.cmdb.core.ports.inputs.technical.CrudOperation;
 
-public interface BusinessServiceInputPort {
-
-    BusinessService create (BusinessService businessService);
-    BusinessService update (BusinessService businessService);
-    void archive (String name);
-    void delete (String name);
-
-    BusinessService findOneByName (String name);
+public interface BusinessServiceInputPort extends CrudOperation<BusinessService, String> {
 
 }

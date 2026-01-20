@@ -1,7 +1,6 @@
 package com.management.cmdb.core.ports.outputs;
 
 import com.management.cmdb.core.models.business.project.Environment;
-import com.management.cmdb.core.models.business.project.Project;
 
 import java.util.Optional;
 import java.util.UUID;

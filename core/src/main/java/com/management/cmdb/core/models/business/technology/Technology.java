@@ -1,6 +1,6 @@
 package com.management.cmdb.core.models.business.technology;
 
-import com.management.cmdb.core.models.business.constants.TechnologyType;
+import com.management.cmdb.core.models.business.constant.TechnologyType;
 
 import java.util.Optional;
 
