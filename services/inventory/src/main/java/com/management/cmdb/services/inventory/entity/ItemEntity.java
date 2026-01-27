@@ -1,0 +1,92 @@
+package com.management.cmdb.services.inventory.entity;
+
+import com.management.cmdb.services.inventory.entity.meta.Auditable;
+import jakarta.validation.constraints.NotBlank;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.DocumentReference;
+
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
+
+@Document(collection = "items")
+public class ItemEntity extends Auditable {
+    @NotBlank
+    private String name;
+    private String description;
+
+    @DocumentReference
+    private ItemTypeEntity type;
+
+    private final Set<AttributeEntity> attributes = new HashSet<>();
+
+    private final Set<LinkEntity> outgoingLinks = new HashSet<>();
+    private final Set<LinkEntity> incomingLinks = new HashSet<>();
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public ItemTypeEntity getType() {
+        return type;
+    }
+
+    public void setType(ItemTypeEntity type) {
+        this.type = type;
+    }
+
+    public Set<LinkEntity> getOutgoingLinks() {
+        return outgoingLinks;
+    }
+
+    public void addToLinks(Set<LinkEntity> toLinks) {
+        this.outgoingLinks.addAll(toLinks);
+    }
+
+    public Set<LinkEntity> getIncomingLinks() {
+        return incomingLinks;
+    }
+
+    public void addFromLinks(Set<LinkEntity> fromLinks) {
+        this.incomingLinks.addAll(fromLinks);
+    }
+
+    public Set<AttributeEntity> getAttributes() {
+        return attributes;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        ItemEntity that = (ItemEntity) o;
+        if (getUuid() != null && that.getUuid() != null) return getUuid().equals(that.getUuid());
+        return Objects.equals(name, that.name) && Objects.equals(type, that.type);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), name, type);
+    }
+
+    @Override
+    public String toString() {
+        return "ItemEntity{" +
+                "name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", type=" + type +
+                '}';
+    }
+}
