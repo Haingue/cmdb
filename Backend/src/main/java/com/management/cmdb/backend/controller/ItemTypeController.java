@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/item-type")
+@RequestMapping("/service/item-type")
 public class ItemTypeController {
 
     private final InventoryServiceClient inventoryServiceClient;
@@ -19,6 +19,6 @@ public class ItemTypeController {
 
     @GetMapping
     public PaginatedResponseDto<ItemTypeDto> getAllItemTypes() {
-        return this.inventoryServiceClient.searchItemTypes("HOST", 0, 10);
+        return this.inventoryServiceClient.searchItemTypes(null, 0, 10);
     }
 }

@@ -18,6 +18,9 @@ import ProjectIndexPage from './pages/project'
 import BusinessServiceIndexPage from './pages/business-service'
 import EnvironmentIndexPage from './pages/environment'
 import ComponentIndexPage from './pages/component'
+import HostIndexPage from './pages/component/host'
+import SoftwareIndexPage from './pages/component/software'
+import AlertSection from './components/alert/AlertSection'
 
 const Root = () => {
   return (
@@ -29,6 +32,7 @@ const Root = () => {
         <div className={`relative grow h-full overflow-y-auto transition duration-75 lg:ml-64 ml-4`}>
           <SideBar backdrop />
           <main className="p-4">
+            <AlertSection />
             <Routes>
               <Route path="/" Component={Dashboard} />
               <Route path="/map" Component={Map} />
@@ -36,6 +40,11 @@ const Root = () => {
               <Route path="/business-service" Component={BusinessServiceIndexPage} />
               <Route path="/environment" Component={EnvironmentIndexPage} />
               <Route path="/component" Component={ComponentIndexPage} />
+              <Route path="/component/host" Component={HostIndexPage} />
+              <Route path="/component/software" Component={SoftwareIndexPage} />
+              
+              <Route path="/standards/host" Component={ComponentIndexPage} />
+              <Route path="/standards/development" Component={ComponentIndexPage} />
 
               <Route path="/traffic" Component={TrafficPage} />
               <Route path="/inventory-service" Component={InventoryService} />

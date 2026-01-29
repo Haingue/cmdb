@@ -1,5 +1,6 @@
 import { BACKEND_BASE_URL } from "../../configuration";
-import type { BackendServerInfo } from "./types";
+import type { ItemDto, PaginatedResponseDto } from "../inventory/types";
+import type { BackendServerInfo, BusinessService, ApiProblem, Project, ProjectCreationRequest } from "./types";
 
 /** Server **/
 export async function getServerInfo(): Promise<BackendServerInfo> {
@@ -8,4 +9,40 @@ export async function getServerInfo(): Promise<BackendServerInfo> {
   return response.json();
 }
 
-export default {getServerInfo}
+/** Business Service **/
+export async function searchBusinessService(name?: string): Promise<PaginatedResponseDto<ItemDto>> {
+  const queryParams = new URLSearchParams({ type: "BusinessService" });
+  if (name) {
+    queryParams.append("name", name);
+  }
+  const response = await fetch(`${BACKEND_BASE_URL}/service/item?${queryParams.toString()}`);
+  if (!response.ok) return Promise.reject(await response.json() as ApiProblem);
+  return response.json();
+}
+
+export async function createBusinessService(businessService: BusinessService): Promise<ItemDto> {
+  const response = await fetch(`${BACKEND_BASE_URL}/service/business-service`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(businessService),
+  });
+  if (!response.ok) return Promise.reject(await response.json() as ApiProblem);
+  return response.json();
+}
+
+/** Project **/
+export async function createProject(project: ProjectCreationRequest): Promise<ItemDto> {
+  const response = await fetch(`${BACKEND_BASE_URL}/service/project`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(project),
+  });
+  if (!response.ok) return Promise.reject(await response.json() as ApiProblem);
+  return response.json();
+}
+
+export default {getServerInfo, createBusinessService}

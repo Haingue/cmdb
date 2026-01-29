@@ -6,7 +6,7 @@ export type InventoryServiceServerInfo = {
   }
 }
 
-export type UUID = string;
+export type UUID = string | null;
 export type DateTime = string;
 
 export type AuditableDto = {
@@ -71,5 +71,5 @@ export type PaginatedResponseDto<T> = {
 }
 
 export type ServerSentEventNotificationDto = {
-  [key: string]: any;
+  [key: string]: object;
 }
