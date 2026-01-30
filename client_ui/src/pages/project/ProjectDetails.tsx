@@ -1,20 +1,25 @@
+import { useEffect, useState } from "react"
 import { useDispatch } from "react-redux"
+import { useParams } from "react-router"
 import ButtonInput from "../../components/form/ButtonInput"
 import FormSection from "../../components/form/FormSection"
 import SelectInput from "../../components/form/SelectInput"
 import TextInput from "../../components/form/TextInput"
 import VersionInput from "../../components/form/VersionInput"
 import PageTitle from "../../components/PageTitle"
-import type { AppDispatch } from "../../store"
-import { useEffect, useState } from "react"
 import { createProject, searchBusinessService } from "../../service/backend/BackendSync"
-import { addAlert } from "../../store/alert.slice"
 import { type BusinessService } from "../../service/backend/types"
-import SimpleTable from "../../components/table-simple"
-import type { ItemDto, ItemTypeDto } from "../../service/inventory/types"
-import { searchItems, searchItemTypes } from "../../service/inventory/InventorySync"
+import { getItemById, searchItems, searchItemTypes } from "../../service/inventory/InventorySync"
+import type { ItemDto, ItemTypeDto, UUID } from "../../service/inventory/types"
+import type { AppDispatch } from "../../store"
+import { addAlert } from "../../store/alert.slice"
+import ComingSoonComponent from "../../components/ComingSoonComponent"
 
-const ProjectIndexPage = () => {
+const ProjectDetailsPage = () => {
+  const params = useParams();
+  const projectUuid = params.projectUuid as UUID | undefined
+  const isNewProject = !projectUuid
+
   const dispatch = useDispatch<AppDispatch>()
   const [businessServices, setBusinessServices] = useState<BusinessService[]>([])
   const [projects, setProjects] = useState<ItemDto[]>([])
@@ -30,6 +35,29 @@ const ProjectIndexPage = () => {
   const [maintainers, setMaintainers] = useState("")
   
   useEffect(() => {
+    if (projectUuid) {
+      console.debug("Displaying project details for UUID:", projectUuid);
+      getItemById(projectUuid)
+      .then((item) => {
+        console.debug("Project fetched by UUID:", item)
+        // TODO set inputs
+        setName(item.name || "")
+        setDescription(item.description || "")
+        setFullname(item.attributes?.find(attr => attr.label === "fullname")?.value as string || "")
+        setShortname(item.attributes?.find(attr => attr.label === "shortname")?.value as string || "")
+        setVersion(item.attributes?.find(attr => attr.label === "version")?.value as string || "")
+        setBusiness_service(item.attributes?.find(attr => attr.label === "businessServiceUuid")?.value as string || "")
+        setOwners(item.attributes?.find(attr => attr.label === "owners")?.value as string || "")
+        setMaintainers(item.attributes?.find(attr => attr.label === "maintainers")?.value as string || "")
+      })
+      .catch((error) => {
+        console.error("Error fetching Project by UUID:", error);
+        dispatch(addAlert({ type: "error", message: "Failed to fetch Project by UUID.", details: error }))
+      })
+    } else {
+      console.debug("No project UUID provided, displaying project creation form.");
+    }
+
     searchItemTypes("Project")
     .then((_itemTypes) => {
       console.debug("Project Item Type fetched:", _itemTypes)
@@ -83,7 +111,7 @@ const ProjectIndexPage = () => {
       return
     }
     const project = {
-      uuid: null,
+      uuid: projectUuid || null,
       name,
       description,
       fullname,
@@ -128,30 +156,19 @@ const ProjectIndexPage = () => {
           <SelectInput label="Owners" name="owners" value={owners} placeholder="Select an group of the project owners" onChange={() => {}} options={[]} />
           <SelectInput label="Maintainers" name="maintainers" value={maintainers} placeholder="Select an group of the project maintainers" onChange={() => {}} options={[]} />
         </FormSection>
-        <ButtonInput name="create-project" label="Create Project" onClick={validForm} />
+        { isNewProject && <ButtonInput name="create-project" label="Create Project" onClick={validForm} /> }
+        { !isNewProject && <ButtonInput name="update-project" label="Update Project" onClick={validForm} /> }
       </section>
       <section className="mt-4">
-        <h3 className="text-xl-heading font-medium mb-2">Existing Projects</h3>
-        <SimpleTable
-          columns={[
-            { name: 'uuid', label: 'uuid' },
-            { name: 'name', label: 'name' },
-            { name: 'description', label: 'description' },
-            ...(projectItemType && projectItemType?.attributes?.map(attr => ({ name: attr.label, label: attr.label }))) || [],
-            { name: 'lastModifiedDate', label: 'lastModifiedDate' },
-          ]}
-          rows={projects?.map(item => ({
-            uuid: {content: item.uuid},
-            name: {content: item.name},
-            description: {content: item.description},
-            ...item.attributes && { ...item.attributes.reduce((acc, attr) => ({ ...acc, [attr.label]: { content: attr.value } }), {}) },
-            lastModifiedDate: {content: item.lastModifiedDate},
-          })) || []}
-          isCollapsed={false}
-        />
+        <h3 className="text-xl-heading font-medium mb-2">Childs</h3>
+        <ComingSoonComponent />
+      </section>
+      <section className="mt-4">
+        <h3 className="text-xl-heading font-medium mb-2">Linked items</h3>
+        <ComingSoonComponent />
       </section>
     </>
   )
 }
 
-export default ProjectIndexPage
+export default ProjectDetailsPage

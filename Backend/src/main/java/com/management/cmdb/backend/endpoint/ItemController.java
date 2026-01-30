@@ -1,8 +1,7 @@
-package com.management.cmdb.backend.controller;
+package com.management.cmdb.backend.endpoint;
 
 import com.management.cmdb.backend.services.inventory.InventoryServiceClient;
 import com.management.cmdb.backend.services.inventory.dto.ItemDto;
-import com.management.cmdb.backend.services.inventory.dto.ItemTypeDto;
 import com.management.cmdb.backend.services.inventory.dto.wrapper.PaginatedResponseDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

@@ -1,4 +1,4 @@
-package com.management.cmdb.backend.controller;
+package com.management.cmdb.backend.endpoint;
 
 import com.management.cmdb.backend.services.inventory.InventoryServiceClient;
 import com.management.cmdb.backend.services.inventory.dto.ItemTypeDto;

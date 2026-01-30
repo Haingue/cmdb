@@ -38,7 +38,7 @@ const Alert = ({ type, message, details, onClose }: AlertProps) => {
         </div>
         <div className="ml-3 w-full">
           { message && <p className="text-sm font-medium">{message}</p> }
-          { details && <textarea className="text-xs max-h-20 overflow-auto font-medium w-full">{JSON.stringify(details, null, 2)}</textarea> }
+          { details && <textarea className="text-xs h-20 overflow-auto font-medium w-full">{JSON.stringify(details, null, 2)}</textarea> }
         </div>
         <div className="ml-auto pl-3">
           <div className="-mx-1.5 -my-1.5">

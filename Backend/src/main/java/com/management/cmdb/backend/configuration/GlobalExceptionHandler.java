@@ -1,6 +1,7 @@
 package com.management.cmdb.backend.configuration;
 
 import com.management.cmdb.backend.scripting.ScriptException;
+import com.management.cmdb.core.models.exceptions.CoreException;
 import com.management.cmdb.core.models.exceptions.InvalidObjectException;
 import feign.FeignException;
 import org.slf4j.Logger;
@@ -18,7 +19,7 @@ import java.util.UUID;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    private static final Logger lOGGER = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     private static ProblemDetail generateProblemDetail(HttpStatus httpStatus, Exception ex) {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(httpStatus, ex.getMessage());
@@ -26,7 +27,7 @@ public class GlobalExceptionHandler {
                 "timestamp", Instant.now().toString(),
                 "uuid", UUID.randomUUID().toString()
         ));
-        lOGGER.error("Exception caught: {}", problemDetail);
+        LOGGER.error("Exception caught: {}", problemDetail);
         return problemDetail;
     }
 
@@ -46,11 +47,22 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(problemDetail);
     }
 
-    @ExceptionHandler(InvalidObjectException.class)
-    public ResponseEntity<ProblemDetail> handleScriptException(InvalidObjectException e) {
+    @ExceptionHandler({ InvalidObjectException.class, CoreException.class })
+    public ResponseEntity<ProblemDetail> handleBusinessException(InvalidObjectException e) {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Malformed object, check your input");
         problemDetail.setProperties(Map.of(
                 "reason", e.getMessage(),
+                "timestamp", Instant.now().toString(),
+                "uuid", UUID.randomUUID().toString()
+        ));
+        return ResponseEntity.badRequest().body(problemDetail);
+    }
+
+    @ExceptionHandler({ Exception.class, Exception.class })
+    public ResponseEntity<ProblemDetail> handleException(Exception e) {
+        LOGGER.error("Error caught", e);
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        problemDetail.setProperties(Map.of(
                 "timestamp", Instant.now().toString(),
                 "uuid", UUID.randomUUID().toString()
         ));

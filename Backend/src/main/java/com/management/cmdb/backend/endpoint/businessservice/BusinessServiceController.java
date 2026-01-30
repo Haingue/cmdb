@@ -1,12 +1,12 @@
-package com.management.cmdb.backend.controller.businessservice;
+package com.management.cmdb.backend.endpoint.businessservice;
 
+import com.management.cmdb.backend.endpoint.businessservice.dto.BusinessServiceDto;
+import com.management.cmdb.backend.endpoint.businessservice.mapper.BusinessServiceMapper;
 import com.management.cmdb.backend.services.inventory.InventoryServiceClient;
 import com.management.cmdb.backend.services.inventory.dto.AttributeDto;
 import com.management.cmdb.backend.services.inventory.dto.ItemDto;
 import com.management.cmdb.backend.services.inventory.dto.ItemTypeDto;
 import com.management.cmdb.core.models.business.project.BusinessService;
-import com.management.cmdb.core.models.business.project.Project;
-import com.management.cmdb.core.models.business.request.ProjectCreationRequest;
 import org.slf4j.Logger;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,17 +28,18 @@ public class BusinessServiceController {
     }
 
     @PostMapping
-    public ResponseEntity<ItemDto> createProject(@RequestBody BusinessService newBusinessService) {
+    public ResponseEntity<ItemDto> createProject(@RequestBody BusinessServiceDto newBusinessService) {
         LOGGER.info("New business service: {}", newBusinessService);
-        newBusinessService.checkIntegrity();
+        BusinessService coreModel = BusinessServiceMapper.INSTANCE.toCoreModel(newBusinessService);
+        coreModel.checkIntegrity();
         ItemTypeDto businessServiceItemType = inventoryServiceClient.searchItemTypes(BUSINESS_SERVICE, 0, 1).content().getFirst();
         ItemDto businessServiceItem = new ItemDto(
                 null,
-                newBusinessService.name(),
+                coreModel.name(),
                 "Need to add description field",
                 businessServiceItemType,
                 Set.of(
-                        new AttributeDto(null, "abbreviation", null, newBusinessService.abbreviation(), null, null, null, null)
+                        new AttributeDto(null, "abbreviation", null, coreModel.abbreviation(), null, null, null, null)
                 ),
                 Set.of(), Set.of(), null, null, null, null);
         Optional<ItemDto> result = inventoryServiceClient.createItem(businessServiceItem);

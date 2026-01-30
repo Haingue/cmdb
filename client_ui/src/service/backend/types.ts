@@ -31,17 +31,30 @@ export type BusinessService = {
 
 export type Project = {
   uuid: UUID
-  name: string
-  description: string
-  fullname: string
-  shortname: string
-  version: string
-  businessService: BusinessService
-  owners: string
-  maintainers: string
+  name?: string
+  description?: string
+  fullname?: string
+  shortname?: string
+  version?: string
+  businessService?: BusinessService
+  owners?: string
+  maintainers?: string
+  environments?: Environment[]
 }
 
 export type ProjectCreationRequest = Request & {
   project: Project
   businessService: BusinessService
+}
+
+export type Environment = {
+  uuid: UUID
+  projectUuid?: UUID
+  name?: string
+  description?: string
+  type?: string
+  status?: string
+  version?: string
+  jiraTicket?: string
+  location?: string
 }

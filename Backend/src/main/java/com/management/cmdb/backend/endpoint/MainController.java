@@ -1,4 +1,4 @@
-package com.management.cmdb.backend.controller;
+package com.management.cmdb.backend.endpoint;
 
 import jakarta.annotation.Resource;
 import org.springdoc.core.properties.SwaggerUiConfigProperties;
@@ -7,8 +7,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
-
-import java.io.IOException;
 
 @RestController
 public class MainController {
