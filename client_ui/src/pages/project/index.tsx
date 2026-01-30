@@ -6,15 +6,17 @@ import TextInput from "../../components/form/TextInput"
 import VersionInput from "../../components/form/VersionInput"
 import PageTitle from "../../components/PageTitle"
 import type { AppDispatch } from "../../store"
-import { useEffect, useState } from "react"
+import { useEffect, useState, type ReactElement, type ReactNode } from "react"
 import { createProject, searchBusinessService } from "../../service/backend/BackendSync"
 import { addAlert } from "../../store/alert.slice"
 import { type BusinessService } from "../../service/backend/types"
 import SimpleTable from "../../components/table-simple"
 import type { ItemDto, ItemTypeDto } from "../../service/inventory/types"
 import { searchItems, searchItemTypes } from "../../service/inventory/InventorySync"
+import { useNavigate } from "react-router"
 
 const ProjectIndexPage = () => {
+  const navigate = useNavigate()
   const dispatch = useDispatch<AppDispatch>()
   const [businessServices, setBusinessServices] = useState<BusinessService[]>([])
   const [projects, setProjects] = useState<ItemDto[]>([])
@@ -111,6 +113,17 @@ const ProjectIndexPage = () => {
     });
   }
 
+  const handleEditProject = (projectUuid: string) => {
+    console.debug("Edit Project clicked for UUID:", projectUuid)
+    // Navigate to Project Details page
+    navigate(`/project-details?projectUuid=${projectUuid}`)
+  }
+  const createEditButton = (projectUuid: string): ReactNode => {
+    return (
+      <ButtonInput key={`editBtn-${projectUuid}`} name={`edit-project-${projectUuid}`} label="Edit" onClick={() => handleEditProject(projectUuid)} />
+    )
+  }
+
   return (
     <>
       <PageTitle title="Projects" />
@@ -139,6 +152,7 @@ const ProjectIndexPage = () => {
             { name: 'description', label: 'description' },
             ...(projectItemType && projectItemType?.attributes?.map(attr => ({ name: attr.label, label: attr.label }))) || [],
             { name: 'lastModifiedDate', label: 'lastModifiedDate' },
+            { name: 'actions', label: 'Actions' },
           ]}
           rows={projects?.map(item => ({
             uuid: {content: item.uuid},
@@ -146,6 +160,7 @@ const ProjectIndexPage = () => {
             description: {content: item.description},
             ...item.attributes && { ...item.attributes.reduce((acc, attr) => ({ ...acc, [attr.label]: { content: attr.value } }), {}) },
             lastModifiedDate: {content: item.lastModifiedDate},
+            actions: {content: createEditButton(item.uuid!)}
           })) || []}
           isCollapsed={false}
         />

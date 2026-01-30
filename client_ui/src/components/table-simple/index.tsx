@@ -1,7 +1,7 @@
-import React from 'react'
+import { type ReactNode } from 'react'
 
 type Cell = {
-    content?: undefined | string | number | React.ReactNode
+    content?: undefined | string | number | ReactNode
 }
 
 type Row = {
