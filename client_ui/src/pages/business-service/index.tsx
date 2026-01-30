@@ -1,5 +1,4 @@
-import { useState } from "react"
-import ComingSoonComponent from "../../components/ComingSoonComponent"
+import { useEffect, useState } from "react"
 import ButtonInput from "../../components/form/ButtonInput"
 import FormSection from "../../components/form/FormSection"
 import TextInput from "../../components/form/TextInput"
@@ -8,12 +7,39 @@ import { createBusinessService } from "../../service/backend/BackendSync"
 import { useDispatch } from "react-redux"
 import type { AppDispatch } from "../../store"
 import { addAlert } from "../../store/alert.slice"
+import SimpleTable from "../../components/table-simple"
+import { type ItemDto, type ItemTypeDto } from "../../service/inventory/types"
+import { searchItems, searchItemTypes } from "../../service/inventory/InventorySync"
 
 const BusinessServiceIndexPage = () => {
   const dispatch = useDispatch<AppDispatch>()
+  const [businessServiceItemType, setBusinessServiceItemType] = useState<ItemTypeDto>({} as ItemTypeDto)
+  const [businessServices, setBusinessServices] = useState<ItemDto[]>([])
+
   const [abbreviation, setAbbreviation] = useState("")
   const [name, setName] = useState("")
   const [description, setDescription] = useState("")
+
+  useEffect(() => {
+    searchItemTypes("BusinessService")
+      .then((_itemTypes) => {
+        console.debug("BusinessService Item Type fetched:", _itemTypes)
+        setBusinessServiceItemType(_itemTypes.content[0])
+      })
+      .catch((error) => {
+        console.error("Error fetching BusinessService Item Type:", error);
+        dispatch(addAlert({ type: "error", message: "Failed to fetch BusinessService Item Type.", details: error }))
+      })
+      searchItems(undefined, "BusinessService")
+      .then((_businessServices) => {
+        console.debug("BusinessServices fetched:", _businessServices);
+        setBusinessServices(_businessServices.content)
+      })
+      .catch((error) => {
+        console.error("Error fetching BusinessServices:", error);
+        dispatch(addAlert({ type: "error", message: "Failed to fetch BusinessServices.", details: error }))
+      })
+  }, [])
 
   const clearForm = () => {
     setAbbreviation("")
@@ -46,7 +72,24 @@ const BusinessServiceIndexPage = () => {
         </FormSection>
         <ButtonInput name="create-business-service" label="Create Business Service" onClick={validForm} />
       </section>
-      <ComingSoonComponent />
+      <section className="mt-4">
+        <h3 className="text-xl-heading font-medium mb-2">Existing Projects</h3>
+        <SimpleTable
+          columns={[
+            { name: 'uuid', label: 'uuid' },
+            { name: 'name', label: 'name' },
+            ...(businessServiceItemType && businessServiceItemType?.attributes?.map(attr => ({ name: attr.label, label: attr.label }))) || [],
+            { name: 'lastModifiedDate', label: 'lastModifiedDate' },
+          ]}
+          rows={businessServices?.map(item => ({
+            uuid: {content: item.uuid},
+            name: {content: item.name},
+            ...item.attributes && { ...item.attributes.reduce((acc, attr) => ({ ...acc, [attr.label]: { content: attr.value } }), {}) },
+            lastModifiedDate: {content: item.lastModifiedDate},
+          })) || []}
+          isCollapsed={false}
+        />
+      </section>
     </>
   )
 }

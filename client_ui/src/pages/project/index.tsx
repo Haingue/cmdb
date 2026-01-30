@@ -11,10 +11,15 @@ import { useEffect, useState } from "react"
 import { createProject, searchBusinessService } from "../../service/backend/BackendSync"
 import { addAlert } from "../../store/alert.slice"
 import { type BusinessService } from "../../service/backend/types"
+import SimpleTable from "../../components/table-simple"
+import type { ItemDto, ItemTypeDto } from "../../service/inventory/types"
+import { searchItems, searchItemTypes } from "../../service/inventory/InventorySync"
 
 const ProjectIndexPage = () => {
   const dispatch = useDispatch<AppDispatch>()
   const [businessServices, setBusinessServices] = useState<BusinessService[]>([])
+  const [projects, setProjects] = useState<ItemDto[]>([])
+  const [projectItemType, setProjectItemType] = useState<ItemTypeDto>({} as ItemTypeDto)
 
   const [name, setName] = useState("")
   const [description, setDescription] = useState("")
@@ -26,6 +31,24 @@ const ProjectIndexPage = () => {
   const [maintainers, setMaintainers] = useState("")
   
   useEffect(() => {
+    searchItemTypes("Project")
+    .then((_itemTypes) => {
+      console.debug("Project Item Type fetched:", _itemTypes)
+      setProjectItemType(_itemTypes.content[0])
+    })
+    .catch((error) => {
+      console.error("Error fetching Project Item Type:", error);
+      dispatch(addAlert({ type: "error", message: "Failed to fetch Project Item Type.", details: error }))
+    })
+    searchItems(undefined, "Project")
+    .then((_projects) => {
+      console.debug("Projects fetched:", _projects);
+      setProjects(_projects.content)
+    })
+    .catch((error) => {
+      console.error("Error fetching Projects:", error);
+      dispatch(addAlert({ type: "error", message: "Failed to fetch Projects.", details: error }))
+    })
     searchBusinessService()
     .then((_businessServices) => {
       console.debug("Business Services fetched:", _businessServices);
@@ -108,7 +131,26 @@ const ProjectIndexPage = () => {
         </FormSection>
         <ButtonInput name="create-project" label="Create Project" onClick={validForm} />
       </section>
-      <ComingSoonComponent />
+      <section className="mt-4">
+        <h3 className="text-xl-heading font-medium mb-2">Existing Projects</h3>
+        <SimpleTable
+          columns={[
+            { name: 'uuid', label: 'uuid' },
+            { name: 'name', label: 'name' },
+            { name: 'description', label: 'description' },
+            ...(projectItemType && projectItemType?.attributes?.map(attr => ({ name: attr.label, label: attr.label }))) || [],
+            { name: 'lastModifiedDate', label: 'lastModifiedDate' },
+          ]}
+          rows={projects?.map(item => ({
+            uuid: {content: item.uuid},
+            name: {content: item.name},
+            description: {content: item.description},
+            ...item.attributes && { ...item.attributes.reduce((acc, attr) => ({ ...acc, [attr.label]: { content: attr.value } }), {}) },
+            lastModifiedDate: {content: item.lastModifiedDate},
+          })) || []}
+          isCollapsed={false}
+        />
+      </section>
     </>
   )
 }
