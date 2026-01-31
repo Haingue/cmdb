@@ -6,7 +6,7 @@ import TextInput from "../../components/form/TextInput"
 import VersionInput from "../../components/form/VersionInput"
 import PageTitle from "../../components/PageTitle"
 import type { AppDispatch } from "../../store"
-import { useEffect, useState, type ReactElement, type ReactNode } from "react"
+import { useEffect, useState, type ReactNode } from "react"
 import { createProject, searchBusinessService } from "../../service/backend/BackendSync"
 import { addAlert } from "../../store/alert.slice"
 import { type BusinessService } from "../../service/backend/types"
@@ -128,20 +128,7 @@ const ProjectIndexPage = () => {
     <>
       <PageTitle title="Projects" />
       <section className="mt-4">
-        <h3 className="text-lg font-medium mb-2">Project creation</h3>
-        <FormSection title="Identifiers">
-          <TextInput label="Name" name="name" value={name} placeholder="Name of the software" onChange={(e) => setName(e.target.value)} />
-          <TextInput label="Description" name="description" value={description} placeholder="Description of the software" onChange={(e) => setDescription(e.target.value)} />
-        </FormSection>
-        <FormSection title="Attributes">
-          <TextInput label="Full name" name="fullname" value={fullname} placeholder="Full name of the project" onChange={(e) => setFullname(e.target.value)} />
-          <TextInput label="Short name" name="shortname" value={shortname} placeholder="Short name of the project, used to prefix component" onChange={(e) => setShortname(e.target.value)} />
-          <VersionInput label="Version" name="version" value={version} placeholder="Version of the business service" onChange={() => {}} />
-          <SelectInput label="Business Service" name="business_service" value={business_service} placeholder="Select a business service" onChange={(e) => setBusiness_service(e.target.value)} options={businessServices.map((bs) => ({ label: bs.name, value: `${bs.uuid}` }))} />
-          <SelectInput label="Owners" name="owners" value={owners} placeholder="Select an group of the project owners" onChange={() => {}} options={[]} />
-          <SelectInput label="Maintainers" name="maintainers" value={maintainers} placeholder="Select an group of the project maintainers" onChange={() => {}} options={[]} />
-        </FormSection>
-        <ButtonInput name="create-project" label="Create Project" onClick={validForm} />
+        <ButtonInput name="create-new-project" label="Create New Project" onClick={() => navigate('/project-details')} />
       </section>
       <section className="mt-4">
         <h3 className="text-xl-heading font-medium mb-2">Existing Projects</h3>

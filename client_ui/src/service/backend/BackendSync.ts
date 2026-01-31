@@ -11,9 +11,9 @@ export async function getServerInfo(): Promise<BackendServerInfo> {
 
 /** Business Service **/
 export async function searchBusinessService(name?: string): Promise<PaginatedResponseDto<ItemDto>> {
-  const queryParams = new URLSearchParams({ type: "BusinessService" });
+  const queryParams = new URLSearchParams({ itemType: "BusinessService" });
   if (name) {
-    queryParams.append("name", name);
+    queryParams.append("itemName", name);
   }
   const response = await fetch(`${BACKEND_BASE_URL}/service/item?${queryParams.toString()}`);
   if (!response.ok) return Promise.reject(await response.json() as ApiProblem);
@@ -33,6 +33,16 @@ export async function createBusinessService(businessService: BusinessService): P
 }
 
 /** Project **/
+export async function searchProject(name?: string): Promise<PaginatedResponseDto<ItemDto>> {
+  const queryParams = new URLSearchParams({ itemType: "Project" });
+  if (name) {
+    queryParams.append("itemName", name);
+  }
+  const response = await fetch(`${BACKEND_BASE_URL}/service/item?${queryParams.toString()}`);
+  if (!response.ok) return Promise.reject(await response.json() as ApiProblem);
+  return response.json();
+}
+
 export async function createProject(project: ProjectCreationRequest): Promise<ItemDto> {
   const response = await fetch(`${BACKEND_BASE_URL}/service/project`, {
     method: "POST",

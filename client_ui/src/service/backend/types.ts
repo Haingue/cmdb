@@ -17,6 +17,21 @@ export type ApiProblem = {
   properties: object[]
 }
 
+export type User = {
+  uuid?: UUID
+  username?: string
+  email?: string
+  userGroups?: UserGroup[]
+}
+
+export type UserGroup = {
+  name?: string
+  email?: string
+  description?: string
+  owner?: UserGroup | null
+  members?: User[]
+}
+
 export type Request = {
   uuid: UUID
   requestor: UUID
@@ -33,12 +48,12 @@ export type Project = {
   uuid: UUID
   name?: string
   description?: string
-  fullname?: string
-  shortname?: string
+  fullName?: string
+  shortName?: string
   version?: string
-  businessService?: BusinessService
-  owners?: string
-  maintainers?: string
+  businessServiceName?: string
+  owners?: UserGroup
+  maintainers?: UserGroup
   environments?: Environment[]
 }
 

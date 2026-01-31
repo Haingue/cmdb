@@ -243,7 +243,8 @@ public class ItemServiceImpl implements ItemService {
     public PaginatedResponseDto<ItemDto> searchItemByNameOrType(String itemName, String itemTypeLabel, int page, int pageSize, UserDetail userDetail) {
         // TODO check user details
         if (ObjectUtils.isEmpty(itemName)) itemName = "";
-        Page<ItemEntity> result = this.itemRepository.searchAllByNameContainingIgnoreCaseOrTypeLabel(
+        if (ObjectUtils.isEmpty(itemTypeLabel)) itemTypeLabel = "";
+        Page<ItemEntity> result = this.itemRepository.searchAllByNameContainingIgnoreCaseAndTypeLabelContainingIgnoreCase(
                 itemName,
                 itemTypeLabel,
                 PageRequest.of(page, pageSize).withSort(Sort.by("name").ascending()));

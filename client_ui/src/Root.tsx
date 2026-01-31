@@ -22,6 +22,7 @@ import HostIndexPage from './pages/component/host'
 import SoftwareIndexPage from './pages/component/software'
 import AlertSection from './components/alert/AlertSection'
 import ProjectDetailsPage from './pages/project/ProjectDetails'
+import EnvironmentDetaillsPage from './pages/environment/EnvironmentDetaills'
 
 const Root = () => {
   return (
@@ -41,6 +42,7 @@ const Root = () => {
               <Route path="/project-details" Component={ProjectDetailsPage} />
               <Route path="/business-service" Component={BusinessServiceIndexPage} />
               <Route path="/environment" Component={EnvironmentIndexPage} />
+              <Route path="/environment-details" Component={EnvironmentDetaillsPage} />
               <Route path="/component" Component={ComponentIndexPage} />
               <Route path="/component/host" Component={HostIndexPage} />
               <Route path="/component/software" Component={SoftwareIndexPage} />

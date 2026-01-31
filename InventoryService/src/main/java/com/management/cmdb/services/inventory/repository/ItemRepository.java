@@ -15,7 +15,7 @@ public interface ItemRepository extends JpaRepository<ItemEntity, UUID> {
 
     boolean existsByNameAndTypeLabel(String name, String typeLabel);
 
-    Page<ItemEntity> searchAllByNameContainingIgnoreCaseOrTypeLabel(String nameRegex, String typeLabel, Pageable page);
+    Page<ItemEntity> searchAllByNameContainingIgnoreCaseAndTypeLabelContainingIgnoreCase(String nameRegex, String typeLabel, Pageable page);
 
     List<ItemEntity> searchAllByTypeLabelLike(String typeLabel);
 

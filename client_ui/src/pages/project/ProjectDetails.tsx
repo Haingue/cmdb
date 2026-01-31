@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { useDispatch } from "react-redux"
-import { useParams } from "react-router"
+import { useNavigate, useSearchParams } from "react-router"
+import ComingSoonComponent from "../../components/ComingSoonComponent"
 import ButtonInput from "../../components/form/ButtonInput"
 import FormSection from "../../components/form/FormSection"
 import SelectInput from "../../components/form/SelectInput"
@@ -8,56 +9,32 @@ import TextInput from "../../components/form/TextInput"
 import VersionInput from "../../components/form/VersionInput"
 import PageTitle from "../../components/PageTitle"
 import { createProject, searchBusinessService } from "../../service/backend/BackendSync"
-import { type BusinessService } from "../../service/backend/types"
-import { getItemById, searchItems, searchItemTypes } from "../../service/inventory/InventorySync"
-import type { ItemDto, ItemTypeDto, UUID } from "../../service/inventory/types"
+import { type UserGroup, type BusinessService, type Project, type ProjectCreationRequest } from "../../service/backend/types"
+import { getItemById, searchItemTypes } from "../../service/inventory/InventorySync"
+import type { ItemTypeDto, UUID } from "../../service/inventory/types"
 import type { AppDispatch } from "../../store"
 import { addAlert } from "../../store/alert.slice"
-import ComingSoonComponent from "../../components/ComingSoonComponent"
 
 const ProjectDetailsPage = () => {
-  const params = useParams();
-  const projectUuid = params.projectUuid as UUID | undefined
+  const navigate = useNavigate()
+  const [searchParams] = useSearchParams();
+  const projectUuid = searchParams.get("projectUuid") as UUID | undefined
   const isNewProject = !projectUuid
 
   const dispatch = useDispatch<AppDispatch>()
   const [businessServices, setBusinessServices] = useState<BusinessService[]>([])
-  const [projects, setProjects] = useState<ItemDto[]>([])
   const [projectItemType, setProjectItemType] = useState<ItemTypeDto>({} as ItemTypeDto)
 
   const [name, setName] = useState("")
   const [description, setDescription] = useState("")
-  const [fullname, setFullname] = useState("")
-  const [shortname, setShortname] = useState("")
+  const [fullName, setFullName] = useState("")
+  const [shortName, setShortName] = useState("")
   const [version, setVersion] = useState("")
-  const [business_service, setBusiness_service] = useState("")
-  const [owners, setOwners] = useState("")
-  const [maintainers, setMaintainers] = useState("")
+  const [businessServiceName, setBusinessServiceName] = useState<string | undefined>(undefined)
+  const [owners, setOwners] = useState<UserGroup | undefined>(undefined)
+  const [maintainers, setMaintainers] = useState<UserGroup | undefined>(undefined)
   
   useEffect(() => {
-    if (projectUuid) {
-      console.debug("Displaying project details for UUID:", projectUuid);
-      getItemById(projectUuid)
-      .then((item) => {
-        console.debug("Project fetched by UUID:", item)
-        // TODO set inputs
-        setName(item.name || "")
-        setDescription(item.description || "")
-        setFullname(item.attributes?.find(attr => attr.label === "fullname")?.value as string || "")
-        setShortname(item.attributes?.find(attr => attr.label === "shortname")?.value as string || "")
-        setVersion(item.attributes?.find(attr => attr.label === "version")?.value as string || "")
-        setBusiness_service(item.attributes?.find(attr => attr.label === "businessServiceUuid")?.value as string || "")
-        setOwners(item.attributes?.find(attr => attr.label === "owners")?.value as string || "")
-        setMaintainers(item.attributes?.find(attr => attr.label === "maintainers")?.value as string || "")
-      })
-      .catch((error) => {
-        console.error("Error fetching Project by UUID:", error);
-        dispatch(addAlert({ type: "error", message: "Failed to fetch Project by UUID.", details: error }))
-      })
-    } else {
-      console.debug("No project UUID provided, displaying project creation form.");
-    }
-
     searchItemTypes("Project")
     .then((_itemTypes) => {
       console.debug("Project Item Type fetched:", _itemTypes)
@@ -66,15 +43,6 @@ const ProjectDetailsPage = () => {
     .catch((error) => {
       console.error("Error fetching Project Item Type:", error);
       dispatch(addAlert({ type: "error", message: "Failed to fetch Project Item Type.", details: error }))
-    })
-    searchItems(undefined, "Project")
-    .then((_projects) => {
-      console.debug("Projects fetched:", _projects);
-      setProjects(_projects.content)
-    })
-    .catch((error) => {
-      console.error("Error fetching Projects:", error);
-      dispatch(addAlert({ type: "error", message: "Failed to fetch Projects.", details: error }))
     })
     searchBusinessService()
     .then((_businessServices) => {
@@ -85,6 +53,9 @@ const ProjectDetailsPage = () => {
         abbreviation: item.attributes?.find(attr => attr.label === "abbreviation")?.value as string || "N/A"
       })))
     })
+    .then(() => {
+      console.debug("Business Services set in state:", businessServices);
+    })
     .catch((error) => {
       console.error("Error fetching Business Services:", error);
       dispatch(addAlert({ type: "error", message: "Failed to fetch Business Services.", details: error }))
@@ -93,41 +64,67 @@ const ProjectDetailsPage = () => {
     // TODO: fetch owners and maintainers groups
   }, [])
 
+  useEffect(() => {
+    if (projectUuid) {
+      console.debug("Displaying project details for UUID:", projectUuid);
+      getItemById(projectUuid)
+      .then((item) => {
+        console.debug("Project fetched by UUID:", item)
+        // TODO set inputs
+        setName(item.name || "")
+        setDescription(item.description || "")
+        setFullName(item.attributes?.find(attr => attr.label === "FullName")?.value as string || "")
+        setShortName(item.attributes?.find(attr => attr.label === "ShortName")?.value as string || "")
+        setVersion(item.attributes?.find(attr => attr.label === "version")?.value as string || "")
+        setBusinessServiceName(businessServices.find(bs => bs.uuid === item.attributes?.find(attr => attr.label === "businessServiceUuid")?.value)?.name || undefined)
+        setOwners(item.attributes?.find(attr => attr.label === "owners")?.value as UserGroup || undefined)
+        setMaintainers(item.attributes?.find(attr => attr.label === "maintainers")?.value as UserGroup || undefined)
+      })
+      .catch((error) => {
+        console.error("Error fetching Project by UUID:", error);
+        dispatch(addAlert({ type: "error", message: "Failed to fetch Project by UUID.", details: error }))
+      })
+    } else {
+      console.debug("No project UUID provided, displaying project creation form.");
+    }
+  }, [projectUuid])
+
   const clearForm = () => {
     setName("")
     setDescription("")
-    setFullname("")
-    setShortname("")
+    setFullName("")
+    setShortName("")
     setVersion("")
-    setBusiness_service("")
-    setOwners("")
-    setMaintainers("")
+    setBusinessServiceName(undefined)
+    setOwners(undefined)
+    setMaintainers(undefined)
   }
 
   const validForm = () => {
-    const businessService = businessServices.find(bs => bs.uuid === business_service)
+    const businessService = businessServices.find(bs => bs.name === businessServiceName)
     if (!businessService) {
       dispatch(addAlert({ type: "error", message: "Invalid Business Service selected." }))
       return
     }
-    const project = {
+    const project: Project = {
       uuid: projectUuid || null,
       name,
       description,
-      fullname,
-      shortname,
+      fullName: fullName,
+      shortName: shortName,
       version,
-      businessService,
+      businessServiceName: businessService.name,
       owners,
-      maintainers
+      maintainers,
     }
-    createProject({
+    const projectCreationRequest: ProjectCreationRequest = {
       uuid: null,
       requestor: null,
       requestTimestamp: new Date().toISOString(),
       project,
       businessService
-    })
+    }
+    createProject(projectCreationRequest)
     .then((item) => {
       console.debug("Project created:", item);
       clearForm()
@@ -149,18 +146,19 @@ const ProjectDetailsPage = () => {
           <TextInput label="Description" name="description" value={description} placeholder="Description of the software" onChange={(e) => setDescription(e.target.value)} />
         </FormSection>
         <FormSection title="Attributes">
-          <TextInput label="Full name" name="fullname" value={fullname} placeholder="Full name of the project" onChange={(e) => setFullname(e.target.value)} />
-          <TextInput label="Short name" name="shortname" value={shortname} placeholder="Short name of the project, used to prefix component" onChange={(e) => setShortname(e.target.value)} />
+          <TextInput label="Full name" name="fullname" value={fullName} placeholder="Full name of the project" onChange={(e) => setFullName(e.target.value)} />
+          <TextInput label="Short name" name="shortname" value={shortName} placeholder="Short name of the project, used to prefix component" onChange={(e) => setShortName(e.target.value)} />
           <VersionInput label="Version" name="version" value={version} placeholder="Version of the business service" onChange={() => {}} />
-          <SelectInput label="Business Service" name="business_service" value={business_service} placeholder="Select a business service" onChange={(e) => setBusiness_service(e.target.value)} options={businessServices.map((bs) => ({ label: bs.name, value: `${bs.uuid}` }))} />
-          <SelectInput label="Owners" name="owners" value={owners} placeholder="Select an group of the project owners" onChange={() => {}} options={[]} />
-          <SelectInput label="Maintainers" name="maintainers" value={maintainers} placeholder="Select an group of the project maintainers" onChange={() => {}} options={[]} />
+          <SelectInput label="Business Service" name="business_service" value={businessServiceName} placeholder="Select a business service" onChange={(e) => setBusinessServiceName(e.target.value)} options={businessServices.map((bs) => ({ label: bs.name, value: `${bs.name}` }))} />
+          <SelectInput label="Owners" name="owners" value={owners?.name} placeholder="Select an group of the project owners" onChange={() => {}} options={[]} />
+          <SelectInput label="Maintainers" name="maintainers" value={maintainers?.name} placeholder="Select an group of the project maintainers" onChange={() => {}} options={[]} />
         </FormSection>
         { isNewProject && <ButtonInput name="create-project" label="Create Project" onClick={validForm} /> }
         { !isNewProject && <ButtonInput name="update-project" label="Update Project" onClick={validForm} /> }
       </section>
       <section className="mt-4">
         <h3 className="text-xl-heading font-medium mb-2">Childs</h3>
+        <ButtonInput name="add-new-environment" label="Add new Environment" onClick={() => navigate("/environment-details")} />
         <ComingSoonComponent />
       </section>
       <section className="mt-4">
