@@ -15,12 +15,12 @@ import java.util.UUID;
 @Getter
 public class ProjectCreationRequest extends Request {
     private final Project project;
-    private final BusinessService businessService;
+    private final String businessServiceName;
 
-    public ProjectCreationRequest(UUID uuid, User requestor, Instant requestTimestamp, Project project, BusinessService businessService) {
+    public ProjectCreationRequest(UUID uuid, User requestor, Instant requestTimestamp, Project project, String businessServiceName) {
         super(uuid, requestor, requestTimestamp);
         this.project = project;
-        this.businessService = businessService;
+        this.businessServiceName = businessServiceName;
     }
 
     @Override
@@ -28,7 +28,7 @@ public class ProjectCreationRequest extends Request {
         return "ProjectCreationRequest{" +
                 "uuid=" + getUuid() +
                 ", requestor=" + getRequestor() +
-                ", businessService=" + businessService +
+                ", businessServiceName=" + businessServiceName +
                 '}';
     }
 }

@@ -69,6 +69,6 @@ public class ProjectController {
         );
         Optional<ItemDto> result = inventoryServiceClient.createItem(projectItem);
         return result.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.badRequest().build());
-    }   
+    }
 
 }

@@ -5,6 +5,7 @@ import com.management.cmdb.core.models.business.constant.ComponentType;
 import com.management.cmdb.core.models.business.constant.NetworkArea;
 import com.management.cmdb.core.models.business.technology.Technology;
 import com.management.cmdb.core.models.business.technology.Version;
+import com.management.cmdb.core.models.technical.ComponentVisitor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -45,6 +46,11 @@ public class Host extends Component {
 
     public Host(Component source, String dns, String macAddress, InetAddress ipAddress, String vlan, DayOfWeek patchingDay, ActiveDirectoryDomainName domain, NetworkArea networkArea) {
         super(source, source.getName(), source.getDescription(), source.getType(), source.getVersion(), source.getCertificate(), source.getTechnology());
+    }
+
+    @Override
+    public <T> T accept(ComponentVisitor<T> visitor) {
+        return visitor.accept(this);
     }
 
     @Override

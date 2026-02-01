@@ -12,9 +12,9 @@ import java.util.UUID;
 @Getter
 public class EnvironmentCreationRequest extends Request {
     private final UUID projectId;
-    private final List<Environment> environment;
+    private final Environment environment;
 
-    public EnvironmentCreationRequest(UUID uuid, User requestor, Instant requestTimestamp, UUID projectId, List<Environment> environment) {
+    public EnvironmentCreationRequest(UUID uuid, User requestor, Instant requestTimestamp, UUID projectId, Environment environment) {
         super(uuid, requestor, requestTimestamp);
         this.projectId = projectId;
         this.environment = environment;

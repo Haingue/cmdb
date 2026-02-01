@@ -3,6 +3,7 @@ package com.management.cmdb.core.models.business.component;
 import com.management.cmdb.core.models.business.constant.ComponentType;
 import com.management.cmdb.core.models.business.technology.Technology;
 import com.management.cmdb.core.models.business.technology.Version;
+import com.management.cmdb.core.models.technical.ComponentVisitor;
 import com.management.cmdb.core.models.technical.Event;
 import lombok.NonNull;
 
@@ -23,6 +24,11 @@ public class Software extends Component {
     public Software(Component source, Host host) {
         super(source);
         this.host = host;
+    }
+
+    @Override
+    public <T> T accept(ComponentVisitor<T> visitor) {
+        return visitor.accept(this);
     }
 
     public Host getHost() {

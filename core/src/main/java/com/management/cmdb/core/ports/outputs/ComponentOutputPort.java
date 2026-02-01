@@ -7,8 +7,7 @@ import java.util.UUID;
 
 public interface ComponentOutputPort {
 
-    Optional<Component> findOne (UUID componentId);
+    Optional<Component> findOne (UUID uuid);
     Optional<Component> findOneByName (String name);
-    Component save (Component component);
-    void delete (Component componentId);
+    void delete (Component component);
 }

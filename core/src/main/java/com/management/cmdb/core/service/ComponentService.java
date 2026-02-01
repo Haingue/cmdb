@@ -4,7 +4,7 @@ import com.management.cmdb.core.models.business.component.Component;
 import com.management.cmdb.core.models.business.identity.User;
 import com.management.cmdb.core.models.exceptions.InvalidObjectException;
 import com.management.cmdb.core.models.exceptions.NotFoundException;
-import com.management.cmdb.core.models.exceptions.NotImplemented;
+import com.management.cmdb.core.models.technical.ComponentVisitor;
 import com.management.cmdb.core.ports.inputs.ComponentInputPort;
 import com.management.cmdb.core.ports.outputs.ComponentOutputPort;
 
@@ -15,9 +15,11 @@ import java.util.UUID;
 public class ComponentService implements ComponentInputPort {
 
     private final ComponentOutputPort componentOutputPort;
+    private final ComponentVisitor<Component> persistentOutputPort;
 
-    public ComponentService(ComponentOutputPort componentOutputPort) {
+    public ComponentService(ComponentOutputPort componentOutputPort, ComponentVisitor<Component> persistentOutputPort) {
         this.componentOutputPort = componentOutputPort;
+        this.persistentOutputPort = persistentOutputPort;
     }
 
     @Override
@@ -35,7 +37,7 @@ public class ComponentService implements ComponentInputPort {
         if (existingComponent.isPresent()) {
             throw new InvalidObjectException("Component with name " + component.getName() + " already exists", component);
         }
-        return this.componentOutputPort.save(component);
+        return this.persistentOutputPort.accept(component);
     }
 
     @Override
@@ -46,7 +48,7 @@ public class ComponentService implements ComponentInputPort {
         Component existingComponent = this.componentOutputPort.findOne(component.getUuid())
                 .orElseThrow(() -> new NotFoundException("Component with uuid " + component.getUuid() + " not found"));
         existingComponent = existingComponent.updateFrom(component);
-        return this.componentOutputPort.save(existingComponent);
+        return this.persistentOutputPort.accept(existingComponent);
     }
 
     @Override
@@ -55,7 +57,7 @@ public class ComponentService implements ComponentInputPort {
         Component existingComponent = this.componentOutputPort.findOne(uuid)
                 .orElseThrow(() -> new NotFoundException("Component with uuid " + uuid + " not found"));
         existingComponent.setArchiveDatetime(LocalDateTime.now());
-        this.componentOutputPort.save(existingComponent);
+        this.persistentOutputPort.accept(existingComponent);
     }
 
     @Override

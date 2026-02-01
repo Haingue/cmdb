@@ -9,4 +9,5 @@ public record User(
         String email,
         Set<UserGroup> userGroups
 ) {
+    public static User UNKNONW = new User(UUID.fromString("00000000-0000-0000-0000-000000000000"), "Unknown", null, Set.of());
 }

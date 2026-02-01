@@ -6,8 +6,11 @@ import com.management.cmdb.core.models.business.identity.UserGroup;
 import com.management.cmdb.core.models.business.project.BusinessService;
 import com.management.cmdb.core.models.business.project.Environment;
 import com.management.cmdb.core.models.business.project.Project;
+import com.management.cmdb.core.models.business.request.EnvironmentCreationRequest;
+import com.management.cmdb.core.models.business.request.ProjectCreationRequest;
 import com.management.cmdb.core.models.exceptions.CoreException;
 import com.management.cmdb.core.models.exceptions.NotFoundException;
+import com.management.cmdb.core.models.exceptions.NotImplemented;
 import com.management.cmdb.core.ports.inputs.ProjectInputPort;
 import com.management.cmdb.core.ports.outputs.ProjectOutputPort;
 
@@ -35,20 +38,18 @@ public class ProjectService implements ProjectInputPort {
     }
 
     @Override
-    public Project findOneByUuid(UUID uuid, User initiator) {
-        // TODO check initiator permissions
-        return this.findOne(uuid, initiator);
-    }
-
-    @Override
     public Project findOneByShortName(String shortName, User initiator) {
         // TODO check initiator permissions
         return this.projectOutputPort.findOneByShortName(shortName)
                 .orElseThrow(() -> new NotFoundException(shortName));
     }
 
-    @Override
     public Project create(String fullName, String shortName, String description, BusinessService businessService, UserGroup maintainers, UserGroup owners, Set<Environment> environments, User initiator) {
+        /* TODO check user authority and user group validation
+        boolean requestMemberOfGroup = projectCreationRequest.getRequestor().userGroups().stream()
+                .anyMatch(g -> g.name().equalsIgnoreCase(projectCreationRequest.getProject().getMaintainers().name()));
+        */
+
         Project project = new Project(fullName, shortName, description, businessService, maintainers, owners);
         project.checkIntegrity();
 
@@ -72,6 +73,35 @@ public class ProjectService implements ProjectInputPort {
     @Override
     public Project create(Project newEntity, User initiator) {
         return this.create(newEntity.getFullName(), newEntity.getShortName(), newEntity.getDescription(), newEntity.getBusinessService(), newEntity.getMaintainers(), newEntity.getOwners(), newEntity.getEnvironments(), initiator);
+    }
+
+    @Override
+    public Project handleProjectCreationRequest(ProjectCreationRequest projectCreationRequest) {
+        assert projectCreationRequest != null;
+        assert projectCreationRequest.getProject() != null;
+        assert projectCreationRequest.getRequestor() != null;
+
+        if (projectCreationRequest.getBusinessServiceName() != null) {
+            BusinessService businessService = businessServiceService.findOne(projectCreationRequest.getBusinessServiceName(), projectCreationRequest.getRequestor());
+            projectCreationRequest.getProject().setBusinessService(businessService);
+        }
+        return this.create(projectCreationRequest.getProject(), projectCreationRequest.getRequestor());
+    }
+
+    @Override
+    public Environment handleAddEnvironmentRequest (EnvironmentCreationRequest environmentCreationRequest) {
+        assert environmentCreationRequest != null;
+        assert environmentCreationRequest.getProjectId() != null;
+        assert environmentCreationRequest.getEnvironment() != null;
+
+        Project project = projectOutputPort.findOne(environmentCreationRequest.getProjectId())
+                .orElseThrow(() -> new NotFoundException(environmentCreationRequest.getProjectId()));
+
+        Environment environment = environmentCreationRequest.getEnvironment();
+        project.addEnvironment(environment);
+        environment = environmentService.create(environment, environmentCreationRequest.getRequestor());
+        this.update(project, environmentCreationRequest.getRequestor());
+        return environment;
     }
 
     @Override

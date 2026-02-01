@@ -1,9 +1,11 @@
 package com.management.cmdb.core.service;
 
+import com.management.cmdb.core.models.business.component.Component;
 import com.management.cmdb.core.models.business.constant.EnvironmentType;
 import com.management.cmdb.core.models.business.constant.GlobalStaticParameter;
 import com.management.cmdb.core.models.business.identity.User;
 import com.management.cmdb.core.models.business.project.Environment;
+import com.management.cmdb.core.models.business.request.ComponentCreationRequest;
 import com.management.cmdb.core.models.exceptions.CoreException;
 import com.management.cmdb.core.models.exceptions.InvalidObjectException;
 import com.management.cmdb.core.models.exceptions.NotFoundException;
@@ -51,6 +53,20 @@ public class EnvironmentService implements EnvironmentInputPort {
         // TODO notify maintainer
 
         return environmentOutputPort.save(newEntity);
+    }
+
+    public Component handleAddComponentRequest (ComponentCreationRequest componentCreationRequest) {
+        assert componentCreationRequest != null;
+        assert componentCreationRequest.getEnvironmentUuid() != null;
+        assert componentCreationRequest.getComponent() != null;
+
+        Environment environment = environmentOutputPort.findOne(componentCreationRequest.getEnvironmentUuid())
+                .orElseThrow(() -> new NotFoundException(componentCreationRequest.getEnvironmentUuid()));
+
+        Component component = componentService.create(componentCreationRequest.getComponent(), componentCreationRequest.getRequestor());
+        environment.getComponents().add(component);
+        this.update(environment, componentCreationRequest.getRequestor());
+        return component;
     }
 
     @Override

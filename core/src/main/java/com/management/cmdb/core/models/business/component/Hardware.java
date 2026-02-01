@@ -1,5 +1,7 @@
 package com.management.cmdb.core.models.business.component;
 
+import com.management.cmdb.core.models.technical.ComponentVisitor;
+
 public class Hardware extends Host {
 
     private String location;
@@ -7,6 +9,11 @@ public class Hardware extends Host {
     public Hardware(Host source, String location) {
         super(source, source.getDns(), source.getMacAddress(), source.getIpAddress(), source.getVlan(), source.getPatchingDay(), source.getDomain(), source.getNetworkArea());
         this.location = location;
+    }
+
+    @Override
+    public <T> T accept(ComponentVisitor<T> visitor) {
+        return visitor.accept(this);
     }
 
     public String getLocation() {

@@ -4,6 +4,7 @@ import com.management.cmdb.core.models.business.constant.ComponentType;
 import com.management.cmdb.core.models.business.technology.Technology;
 import com.management.cmdb.core.models.business.technology.Version;
 import com.management.cmdb.core.models.exceptions.InvalidObjectException;
+import com.management.cmdb.core.models.technical.ComponentVisitor;
 import com.management.cmdb.core.models.technical.Event;
 import com.management.cmdb.core.models.technical.VersionedSavedEntity;
 import lombok.Data;
@@ -20,9 +21,9 @@ public class Component extends VersionedSavedEntity {
     private String name;
     private String description;
     private ComponentType type;
-    private Version version;
     private String certificate;
     private Technology technology;
+    private Version version;
 
     public Component(String name, String description, ComponentType type, Version version, String certificate, Technology technology) {
         super();
@@ -58,6 +59,10 @@ public class Component extends VersionedSavedEntity {
 
     public Component (Component source) {
         this(source, source.getName(), source.getDescription(), source.getType(), source.getVersion(), source.getCertificate(), source.getTechnology());
+    }
+
+    public <T> T accept(ComponentVisitor<T> visitor) {
+        return visitor.accept(this);
     }
 
     public boolean needsUpdate()
