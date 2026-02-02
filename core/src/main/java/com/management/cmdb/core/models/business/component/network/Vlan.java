@@ -5,16 +5,17 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@SuperBuilder
 public class Vlan {
 
-    String number;
-    String description;
-    Host firewall;
-    String ipRange; // TODO should use something else
+    private int number;
+    private String description;
+    private Host firewall;
+    private String ipRange;
 
 }
