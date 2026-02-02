@@ -44,7 +44,7 @@ public abstract class Component extends VersionedSavedEntity implements Serializ
 
     public Component updateFrom(Component component) {
         this.description = component.getDescription();
-        this.type = Objects.requireNonNullElse(type, ComponentType.UNKNOWN);
+        this.type = Objects.requireNonNullElse(type, ComponentType.HOST);
         this.version = Objects.requireNonNullElse(component.version, this.version);
         this.certificate = Objects.requireNonNullElse(component.certificate, this.certificate);
         this.technology = Objects.requireNonNullElse(component.technology, this.technology);

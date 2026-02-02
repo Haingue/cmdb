@@ -56,7 +56,7 @@ public class ProjectController {
                 Set.of(
                     new AttributeDto(null, "FullName", null, projectDto.fullName(), null, null, null, null),
                     new AttributeDto(null, "ShortName", null, projectDto.shortName(), null, null, null, null),
-                    new AttributeDto(null, "BusinessService", null, businessService.name(), null, null, null, null),
+                    new AttributeDto(null, "BusinessService", null, businessService.getName(), null, null, null, null),
                     new AttributeDto(null, "Owners", null, ownerUserGroups, null, null, null, null),
                     new AttributeDto(null, "Maintainers", null, maintainerUserGroups, null, null, null, null)
                 ),

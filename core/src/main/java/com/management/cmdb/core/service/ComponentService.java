@@ -24,6 +24,7 @@ public class ComponentService implements ComponentInputPort {
 
     @Override
     public Component findOne(UUID uuid, User initiator) {
+        // TODO check initiator permissions
         return componentOutputPort.findOne(uuid)
                 .orElseThrow(() -> new NotFoundException("Component with id " + uuid.toString() + " not found"));
     }

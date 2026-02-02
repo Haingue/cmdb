@@ -37,7 +37,7 @@ public class ComponentPersistentAdapter implements ComponentVisitor<Component> {
         Set<AttributeDto> attributes = Set.of(
                 AttributeDto.builder().label("Type").value(component.getType().name()).build(),
                 AttributeDto.builder().label("Certificate").value(component.getCertificate()).build(),
-                AttributeDto.builder().label("Technology").value(component.getTechnology().name()).build(),
+                AttributeDto.builder().label("Technology").value(component.getTechnology().getName()).build(),
                 AttributeDto.builder().label("Version").value(component.getVersion().toString()).build()
         );
         LocalDateTime createdDate = component.getCreationDatetime();
@@ -72,7 +72,7 @@ public class ComponentPersistentAdapter implements ComponentVisitor<Component> {
         ItemDto itemDto = componentToItemDto(host);
         itemDto.attributes().addAll(Set.of(
                 AttributeDto.builder().label("Dns").value(host.getDns()).build(),
-                AttributeDto.builder().label("Vlan").value(host.getVlan().getNumber()).build(),
+                AttributeDto.builder().label("Vlan").value(String.valueOf(host.getVlan().getNumber())).build(),
                 AttributeDto.builder().label("MacAddress").value(host.getMacAddress()).build(),
                 AttributeDto.builder().label("IpAddress").value(host.getIpAddress().toString()).build(),
                 AttributeDto.builder().label("Domain").value(host.getDomain().name()).build(),
@@ -87,7 +87,7 @@ public class ComponentPersistentAdapter implements ComponentVisitor<Component> {
         ItemDto itemDto = componentToItemDto(hardware);
         itemDto.attributes().addAll(Set.of(
                 AttributeDto.builder().label("Dns").value(hardware.getDns()).build(),
-                AttributeDto.builder().label("Vlan").value(hardware.getVlan().getNumber()).build(),
+                AttributeDto.builder().label("Vlan").value(String.valueOf(hardware.getVlan().getNumber())).build(),
                 AttributeDto.builder().label("MacAddress").value(hardware.getMacAddress()).build(),
                 AttributeDto.builder().label("IpAddress").value(hardware.getIpAddress().toString()).build(),
                 AttributeDto.builder().label("Domain").value(hardware.getDomain().name()).build(),
@@ -112,7 +112,7 @@ public class ComponentPersistentAdapter implements ComponentVisitor<Component> {
     public Component accept(VirtualMachine virtualMachine) {
         ItemDto itemDto = componentToItemDto(virtualMachine);
         itemDto.attributes().addAll(Set.of(
-                AttributeDto.builder().label("Vlan").value(virtualMachine.getVlan().getNumber()).build(),
+                AttributeDto.builder().label("Vlan").value(String.valueOf(virtualMachine.getVlan().getNumber())).build(),
                 AttributeDto.builder().label("MacAddress").value(virtualMachine.getMacAddress()).build(),
                 AttributeDto.builder().label("IpAddress").value(virtualMachine.getIpAddress().toString()).build(),
                 AttributeDto.builder().label("Domain").value(virtualMachine.getDomain().name()).build(),

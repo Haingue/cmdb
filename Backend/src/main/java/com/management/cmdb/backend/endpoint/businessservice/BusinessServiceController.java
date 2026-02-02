@@ -35,11 +35,11 @@ public class BusinessServiceController {
         ItemTypeDto businessServiceItemType = inventoryServiceClient.searchItemTypes(BUSINESS_SERVICE, 0, 1).content().getFirst();
         ItemDto businessServiceItem = new ItemDto(
                 null,
-                coreModel.name(),
+                coreModel.getName(),
                 "Need to add description field",
                 businessServiceItemType,
                 Set.of(
-                        new AttributeDto(null, "abbreviation", null, coreModel.abbreviation(), null, null, null, null)
+                        new AttributeDto(null, "abbreviation", null, coreModel.getAbbreviation(), null, null, null, null)
                 ),
                 Set.of(), Set.of(), null, null, null, null);
         Optional<ItemDto> result = inventoryServiceClient.createItem(businessServiceItem);

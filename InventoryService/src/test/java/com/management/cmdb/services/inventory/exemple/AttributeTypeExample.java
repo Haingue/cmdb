@@ -9,7 +9,7 @@ public enum AttributeTypeExample {
     DOMAIN("Name of the active directory domain", Set.of("COMMON", "MANUFACTURING")),
     ENV_TYPE("Type of environment", Set.of("dev", "acc", "prod")),
     STATUS("Status of the component", Set.of("REQUESTED", "IN_PROGRESS", "READY", "DEPLOYED", "STOPPED", "DECOMMISSIONED")),
-    HOST_TYPE("Type of the host", Set.of("UNKNOWN", "HARDWARE", "SOFTWARE", "IOT", "PLC", "PHYSICAL_MACHINE", "VIRTUAL_MACHINE")),
+    HOST_TYPE("Type of the host", Set.of("HOST", "HARDWARE", "SOFTWARE", "IOT", "PLC", "PHYSICAL_MACHINE", "VIRTUAL_MACHINE")),
     ;
     
     public final AttributeTypeEntity attributeTypeEntity;

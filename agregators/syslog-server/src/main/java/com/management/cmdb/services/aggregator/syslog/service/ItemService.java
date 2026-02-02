@@ -71,9 +71,9 @@ public class ItemService {
     private ItemDto createNewItemDto(String traffic, String newItemTypeIpAddressAttribute, String newItemTypeHostnameAttribute, String newItemDescription) {
         String hostName = resolveHostname(traffic);
         AttributeDto ipHostAttribute = new AttributeDto(null, newItemTypeIpAddressAttribute, null, traffic, null, null, null, null);
-        AttributeDto hostNameAttribute = new AttributeDto(null, newItemTypeHostnameAttribute, null, hostName, null, null, null, null);
+//        AttributeDto hostNameAttribute = new AttributeDto(null, newItemTypeHostnameAttribute, null, hostName, null, null, null, null);
 
-        ItemDto newItemDto = new ItemDto(null, hostName, newItemDescription, hostItemType, Set.of(ipHostAttribute, hostNameAttribute), new HashSet<>(), new HashSet<>(), null, null, null, null);
+        ItemDto newItemDto = new ItemDto(null, hostName, newItemDescription, hostItemType, Set.of(ipHostAttribute), new HashSet<>(), new HashSet<>(), null, null, null, null);
         ResponseEntity<ItemDto> response = inventoryServiceClient.createItem(newItemDto, ipHostAttribute.label(), ipHostAttribute.value());
         if (response.getStatusCode().is4xxClientError()) {
             LOGGER.error("Failed to create new item in inventory: {}", response.getBody());
