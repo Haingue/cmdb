@@ -1,52 +1,28 @@
 package com.management.cmdb.core.models.technical;
 
 import com.management.cmdb.core.models.business.identity.User;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
 @Data
-public class VersionedSavedEntity extends UniqueEntity {
+@NoArgsConstructor
+@AllArgsConstructor
+@SuperBuilder
+public class VersionedSavedEntity extends UniqueEntity implements Serializable {
 
     protected long revision;
     protected List<Event> events;
     protected LocalDateTime creationDatetime;
     protected LocalDateTime archiveDatetime;
-
-    public static VersionedSavedEntity reload(UUID uuid, long version, List<Event> events, LocalDateTime creationDatetime, LocalDateTime archiveDatetime) {
-        return new VersionedSavedEntity(
-                uuid,
-                version,
-                Objects.requireNonNullElseGet(events, ArrayList::new),
-                creationDatetime,
-                archiveDatetime
-        );
-    }
-
-    public VersionedSavedEntity() {
-        super();
-        this.revision = 1L;
-        this.events = new ArrayList<>();
-        this.creationDatetime = LocalDateTime.now();
-    }
-
-    // @Builder(buildMethodName = "reload")
-    public VersionedSavedEntity(UUID uuid, long revision, List<Event> events, LocalDateTime creationDatetime, LocalDateTime archiveDatetime) {
-        super(new UniqueEntity(uuid));
-        assert revision > 0;
-        this.revision = revision;
-        this.events = events;
-        this.creationDatetime = creationDatetime;
-        this.archiveDatetime = archiveDatetime;
-    }
-
-    public VersionedSavedEntity(VersionedSavedEntity source) {
-        this(source.getUuid(), source.revision, source.events, source.creationDatetime, source.archiveDatetime);
-    }
 
     protected void increaseVersion() {
         this.revision++;

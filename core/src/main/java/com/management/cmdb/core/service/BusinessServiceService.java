@@ -20,7 +20,7 @@ public class BusinessServiceService implements BusinessServiceInputPort {
     private void isUniqueAbbreviation(String abbreviation) {
         businessServiceOutputPort.findByAbbreviation(abbreviation)
                 .ifPresent(existingBusinessService -> {
-                    throw new InvalidObjectException("Abbreviation " + abbreviation + " already used by " + existingBusinessService.name());
+                    throw new InvalidObjectException("Abbreviation " + abbreviation + " already used by " + existingBusinessService.getName());
                 });
     }
 
@@ -37,7 +37,7 @@ public class BusinessServiceService implements BusinessServiceInputPort {
         if (businessService == null) throw new InvalidObjectException("Business service cannot be null");
         businessService.checkIntegrity();
 
-        isUniqueAbbreviation(businessService.abbreviation());
+        isUniqueAbbreviation(businessService.getAbbreviation());
 
         return businessServiceOutputPort.save(businessService);
     }
@@ -48,9 +48,9 @@ public class BusinessServiceService implements BusinessServiceInputPort {
         if (businessService == null) throw new InvalidObjectException("Business service cannot be null");
         businessService.checkIntegrity();
 
-        businessServiceOutputPort.findByAbbreviation(businessService.abbreviation())
-                .orElseThrow(() -> new NotFoundException(businessService.name()));
-        isUniqueAbbreviation(businessService.abbreviation());
+        businessServiceOutputPort.findByAbbreviation(businessService.getAbbreviation())
+                .orElseThrow(() -> new NotFoundException(businessService.getName()));
+        isUniqueAbbreviation(businessService.getAbbreviation());
 
         return businessServiceOutputPort.save(businessService);
     }

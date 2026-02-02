@@ -15,6 +15,7 @@ import com.management.cmdb.core.ports.inputs.ProjectInputPort;
 import com.management.cmdb.core.ports.outputs.ProjectOutputPort;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -50,10 +51,17 @@ public class ProjectService implements ProjectInputPort {
                 .anyMatch(g -> g.name().equalsIgnoreCase(projectCreationRequest.getProject().getMaintainers().name()));
         */
 
-        Project project = new Project(fullName, shortName, description, businessService, maintainers, owners);
+        Project project = Project.builder()
+                .fullName(fullName)
+                .shortName(shortName)
+                .description(description)
+                .businessService(businessService)
+                .maintainers(maintainers)
+                .owners(owners)
+                .build();
         project.checkIntegrity();
 
-        BusinessService savedBusinessService = this.businessServiceService.findOne(project.getBusinessService().name(), initiator);
+        BusinessService savedBusinessService = this.businessServiceService.findOne(project.getBusinessService().getName(), initiator);
         project.setBusinessService(savedBusinessService);
         project = this.projectOutputPort.save(project);
 
@@ -118,7 +126,7 @@ public class ProjectService implements ProjectInputPort {
         existingProject.setMaintainers(project.getMaintainers());
         // TODO notify new/previous maintainer
 
-        BusinessService businessService = this.businessServiceService.findOne(project.getBusinessService().name(), initiator);
+        BusinessService businessService = this.businessServiceService.findOne(project.getBusinessService().getName(), initiator);
         existingProject.setBusinessService(businessService);
 
         project.getEnvironments()

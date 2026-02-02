@@ -5,26 +5,22 @@ import com.management.cmdb.core.models.business.technology.Technology;
 import com.management.cmdb.core.models.business.technology.Version;
 import com.management.cmdb.core.models.technical.ComponentVisitor;
 import com.management.cmdb.core.models.technical.Event;
-import lombok.NonNull;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
-public class Software extends Component {
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@SuperBuilder
+public class Software extends Component implements Serializable {
 
     private Host host;
-
-    public Software(@NonNull UUID uuid, long revision, List<Event> events, LocalDateTime creationDatetime, LocalDateTime archiveDatetime,
-                    String name, String description, ComponentType type, Version version, String certificate, Technology technology,
-                    Host host) {
-        super(uuid, revision, events, creationDatetime, archiveDatetime, name, description, type, version, certificate, technology);
-        this.host = host;
-    }
-    public Software(Component source, Host host) {
-        super(source);
-        this.host = host;
-    }
 
     @Override
     public <T> T accept(ComponentVisitor<T> visitor) {
@@ -47,6 +43,18 @@ public class Software extends Component {
             this.host = softwareSource.host; // TODO clone object ?
         }
         return this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Software software)) return false;
+        if (!super.equals(o)) return false;
+        return Objects.equals(host, software.host);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), host);
     }
 
     @Override

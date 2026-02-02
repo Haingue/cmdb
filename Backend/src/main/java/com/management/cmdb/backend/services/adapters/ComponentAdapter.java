@@ -6,7 +6,10 @@ import com.management.cmdb.backend.services.inventory.dto.ItemDto;
 import com.management.cmdb.backend.services.inventory.dto.ItemTypeDto;
 import com.management.cmdb.backend.services.inventory.dto.wrapper.PaginatedResponseDto;
 import com.management.cmdb.core.models.business.component.*;
+import com.management.cmdb.core.models.business.component.network.Vlan;
+import com.management.cmdb.core.models.business.constant.ActiveDirectoryDomainName;
 import com.management.cmdb.core.models.business.constant.ComponentType;
+import com.management.cmdb.core.models.business.constant.NetworkArea;
 import com.management.cmdb.core.models.business.constant.TechnologyType;
 import com.management.cmdb.core.models.business.technology.Technology;
 import com.management.cmdb.core.models.business.technology.Version;
@@ -17,6 +20,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.configurationprocessor.metadata.ItemMetadata;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.time.DayOfWeek;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -39,29 +45,65 @@ public class ComponentAdapter implements ComponentOutputPort {
                 .orElseThrow(() -> new NotFoundException(uuid));
 
         Map<String, String> attributes = itemDto.attributes().stream().collect(Collectors.toMap(
-                AttributeDto::label,
-                AttributeDto::value
+                AttributeDto::getLabel,
+                AttributeDto::getValue
         ));
         switch (itemDto.type().label()){
             case "Host":
-//                ItemDto technology = inventoryServiceClient.getOneItem(UUID.fromString(attributes.get("technology")))
-//                        .map(technologyDto -> {
-//                            TechnologyType.valueOf(technologyDto.attributes().)
-//                            return new Technology(technologyDto.name(), technologyDto.description(), );
-//                        })
-//                        .orElseThrow(() -> new NotFoundException(String.format("Not able to find component technology [uuid=%s]", uuid)));
-//
-//                return new Host(
-//                        itemDto.name(),
-//                        itemDto.description(),
-//                        ComponentType.valueOf(itemDto.type().label()),
-//                        Version.fromString(attributes.get("version")),
-//                        attributes.get("certificate"),
-//                        new Technology(attributes.get("technology"), )
-//                );
+                Host.builder()
+                        .uuid(uuid)
+                        .name(itemDto.name())
+                        .description(itemDto.description())
+                        .type(ComponentType.valueOf(attributes.get("type")))
+                        .version(Version.fromString(attributes.get("version")))
+                        .technology(Technology.builder().name(attributes.get("technology")).build())
+                        .certificate(attributes.get("certificate"))
+                        .build();
+            case "Software":
+                Software.builder()
+                        .uuid(uuid)
+                        .name(itemDto.name())
+                        .description(itemDto.description())
+                        .type(ComponentType.valueOf(attributes.get("type")))
+                        .version(Version.fromString(attributes.get("version")))
+                        .technology(Technology.builder().name(attributes.get("technology")).build())
+                        .certificate(attributes.get("certificate"))
+                        .host(Host.builder().name(attributes.get("host")).build())
+                        .build();
+            case "Hardware":
+                try {
+                    Hardware.builder()
+                            .uuid(uuid)
+                            .name(itemDto.name())
+                            .description(itemDto.description())
+                            .type(ComponentType.valueOf(attributes.get("type")))
+                            .version(Version.fromString(attributes.get("version")))
+                            .technology(Technology.builder().name(attributes.get("technology")).build())
+                            .certificate(attributes.get("certificate"))
+                            .location(attributes.get("location"))
+                            .dns(attributes.get("dns"))
+                            .macAddress(attributes.get("macAddress"))
+                            .ipAddress(InetAddress.getByAddress(attributes.get("ipAddress").getBytes()))
+                            .vlan(Vlan.builder().number(attributes.get("vlan")).build())
+                            .domain(ActiveDirectoryDomainName.valueOf(attributes.get("domain")))
+                            .networkArea(NetworkArea.valueOf(attributes.get("networkArea")))
+                            .patchingDay(DayOfWeek.valueOf(attributes.get("patchingDay")))
+                            .build();
+                } catch (UnknownHostException e) {
+                    throw new RuntimeException(e);
+                }
             default:
-                throw new CoreException("Unsupported component type: " + itemDto.type().label());
+                GenericComponent.builder()
+                        .uuid(uuid)
+                        .name(itemDto.name())
+                        .description(itemDto.description())
+                        .type(ComponentType.valueOf(attributes.get("type")))
+                        .version(Version.fromString(attributes.get("version")))
+                        .technology(Technology.builder().name(attributes.get("technology")).build())
+                        .certificate(attributes.get("certificate"))
+                        .build();
         }
+        return Optional.empty();
     }
 
     @Override

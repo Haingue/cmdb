@@ -1,15 +1,20 @@
 package com.management.cmdb.core.models.business.component;
 
 import com.management.cmdb.core.models.technical.ComponentVisitor;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
+import java.util.Objects;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@SuperBuilder
 public class Hardware extends Host {
 
     private String location;
-
-    public Hardware(Host source, String location) {
-        super(source, source.getDns(), source.getMacAddress(), source.getIpAddress(), source.getVlan(), source.getPatchingDay(), source.getDomain(), source.getNetworkArea());
-        this.location = location;
-    }
 
     @Override
     public <T> T accept(ComponentVisitor<T> visitor) {
@@ -27,6 +32,18 @@ public class Hardware extends Host {
             this.location = hardwareSource.location;
         }
         return this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Hardware hardware)) return false;
+        if (!super.equals(o)) return false;
+        return Objects.equals(location, hardware.location);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), location);
     }
 
     @Override

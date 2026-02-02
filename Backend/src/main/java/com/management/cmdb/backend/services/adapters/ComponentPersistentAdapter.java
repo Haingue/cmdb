@@ -4,16 +4,16 @@ import com.management.cmdb.backend.services.inventory.InventoryServiceClient;
 import com.management.cmdb.backend.services.inventory.dto.AttributeDto;
 import com.management.cmdb.backend.services.inventory.dto.ItemDto;
 import com.management.cmdb.backend.services.inventory.dto.ItemTypeDto;
+import com.management.cmdb.backend.services.inventory.dto.LinkDto;
 import com.management.cmdb.core.models.business.component.*;
+import com.management.cmdb.core.models.business.identity.User;
 import com.management.cmdb.core.models.technical.ComponentVisitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.time.LocalDateTime;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ComponentPersistentAdapter implements ComponentVisitor<Component> {
@@ -26,48 +26,101 @@ public class ComponentPersistentAdapter implements ComponentVisitor<Component> {
         this.inventoryServiceClient = inventoryServiceClient;
     }
 
+    private ItemDto componentToItemDto(Component component) {
+        ItemTypeDto itemTypeDto = inventoryServiceClient.searchItemTypes("Component", 0, 1)
+                .content()
+                .getFirst();
+        UUID uuid = component.getUuid();
+        String name = component.getName();
+        String description = component.getDescription();
+        ItemTypeDto type = itemTypeDto;
+        Set<AttributeDto> attributes = Set.of(
+                AttributeDto.builder().label("Type").value(component.getType().name()).build(),
+                AttributeDto.builder().label("Certificate").value(component.getCertificate()).build(),
+                AttributeDto.builder().label("Technology").value(component.getTechnology().name()).build(),
+                AttributeDto.builder().label("Version").value(component.getVersion().toString()).build()
+        );
+        LocalDateTime createdDate = component.getCreationDatetime();
+        UUID createdBy = User.UNKNONW.uuid();
+        LocalDateTime lastModifiedDate = component.getCreationDatetime(); //TODO add modification datetime
+        UUID lastModifiedBy = User.UNKNONW.uuid();
+
+        return new ItemDto(
+                uuid,
+                name,
+                description,
+                type,
+                attributes,
+                null,
+                null,
+                createdDate,
+                createdBy,
+                lastModifiedBy,
+                lastModifiedDate
+        );
+    }
+
     @Override
     public Component accept(Component component) {
-        return component.accept(this);
+        ItemDto itemDto = componentToItemDto(component);
+        inventoryServiceClient.createItem(itemDto);
+        return component;
     }
 
     @Override
     public Component accept(Host host) {
-        return null;
+        ItemDto itemDto = componentToItemDto(host);
+        itemDto.attributes().addAll(Set.of(
+                AttributeDto.builder().label("Dns").value(host.getDns()).build(),
+                AttributeDto.builder().label("Vlan").value(host.getVlan().getNumber()).build(),
+                AttributeDto.builder().label("MacAddress").value(host.getMacAddress()).build(),
+                AttributeDto.builder().label("IpAddress").value(host.getIpAddress().toString()).build(),
+                AttributeDto.builder().label("Domain").value(host.getDomain().name()).build(),
+                AttributeDto.builder().label("NetworkArea").value(host.getNetworkArea().name()).build()
+        ));
+        inventoryServiceClient.createItem(itemDto);
+        return host;
     }
 
     @Override
     public Component accept(Hardware hardware) {
-        return null;
+        ItemDto itemDto = componentToItemDto(hardware);
+        itemDto.attributes().addAll(Set.of(
+                AttributeDto.builder().label("Dns").value(hardware.getDns()).build(),
+                AttributeDto.builder().label("Vlan").value(hardware.getVlan().getNumber()).build(),
+                AttributeDto.builder().label("MacAddress").value(hardware.getMacAddress()).build(),
+                AttributeDto.builder().label("IpAddress").value(hardware.getIpAddress().toString()).build(),
+                AttributeDto.builder().label("Domain").value(hardware.getDomain().name()).build(),
+                AttributeDto.builder().label("NetworkArea").value(hardware.getNetworkArea().name()).build(),
+                AttributeDto.builder().label("Location").value(hardware.getLocation()).build()
+        ));
+        inventoryServiceClient.createItem(itemDto);
+        return hardware;
     }
 
     @Override
     public Component accept(Software software) {
-        return null;
+        ItemDto itemDto = componentToItemDto(software);
+        itemDto.attributes().addAll(Set.of(
+                AttributeDto.builder().label("Host").value(software.getHost().getName()).build()
+        ));
+        inventoryServiceClient.createItem(itemDto);
+        return software;
     }
 
     @Override
     public Component accept(VirtualMachine virtualMachine) {
-        ItemTypeDto virtualMachineItemType = inventoryServiceClient.searchItemTypes("Virtual machine", 0, 1)
-                .content()
-                .getFirst();
-        ItemDto reloadItem = Optional.of(inventoryServiceClient.searchItems(virtualMachine.getName(), virtualMachineItemType.label(), 0, 1)
-                .content()
-                .getFirst())
-                .orElseGet(() -> inventoryServiceClient.createItem(
-                                new ItemDto(null, virtualMachine.getName(), virtualMachine.getDescription(), virtualMachineItemType, Set.of(), Set.of(), Set.of(), null, null, null, null)
-                        ).get());
-
-        ItemDto itemDto = modelToItemDto(virtualMachine, reloadItem, virtualMachineItemType);
-        inventoryServiceClient.updateItem(itemDto);
-//        Set<AttributeDto> attributes = virtualMachineItemType.attributes()
-//                .stream().map(attributeTypeDto -> {
-//                    virtualMachine.accept(this);
-//                });
-//        inventoryServiceClient.getOneItem(virtualMachine.getUuid())
-//                .orElse(new ItemDto(virtualMachine.getUuid(), virtualMachine.getName(), virtualMachine.getDescription(),
-//                        virtualMachineItemType, ));
-        return null;
+        ItemDto itemDto = componentToItemDto(virtualMachine);
+        itemDto.attributes().addAll(Set.of(
+                AttributeDto.builder().label("Vlan").value(virtualMachine.getVlan().getNumber()).build(),
+                AttributeDto.builder().label("MacAddress").value(virtualMachine.getMacAddress()).build(),
+                AttributeDto.builder().label("IpAddress").value(virtualMachine.getIpAddress().toString()).build(),
+                AttributeDto.builder().label("Domain").value(virtualMachine.getDomain().name()).build(),
+                AttributeDto.builder().label("NetworkArea").value(virtualMachine.getNetworkArea().name()).build(),
+                AttributeDto.builder().label("Esx").value(virtualMachine.getEsx().getName()).build()
+        ));
+        inventoryServiceClient.createItem(itemDto);
+        return virtualMachine;
     }
 
     private static <Model extends Component> ItemDto modelToItemDto (Model model, ItemDto previousItemDto, ItemTypeDto itemTypeDto) {
@@ -112,9 +165,9 @@ public class ComponentPersistentAdapter implements ComponentVisitor<Component> {
                 attributes.entrySet().stream()
                         .map(attribute -> previousItemDto.attributes().stream()
                                 .filter(
-                                        previousAttributeDto -> attribute.getKey().equalsIgnoreCase(previousAttributeDto.label()))
+                                        previousAttributeDto -> attribute.getKey().equalsIgnoreCase(previousAttributeDto.getLabel()))
                                 .findFirst()
-                                .map(previousAttributeDto -> new AttributeDto(previousAttributeDto.uuid(), previousAttributeDto.label(), previousAttributeDto.attributeTypeId(), attribute.getValue(), previousAttributeDto.createdDate(), previousAttributeDto.createdBy(), previousAttributeDto.lastModifiedBy(), previousAttributeDto.lastModifiedDate()))
+                                .map(previousAttributeDto -> new AttributeDto(previousAttributeDto.getUuid(), previousAttributeDto.getLabel(), previousAttributeDto.getAttributeTypeId(), attribute.getValue(), previousAttributeDto.getCreatedDate(), previousAttributeDto.getCreatedBy(), previousAttributeDto.getLastModifiedBy(), previousAttributeDto.getLastModifiedDate()))
                                 .orElse(new AttributeDto(null, attribute.getKey(), null, attribute.getValue(), null, null, null, null)))
                         .collect(Collectors.toSet()),
                 Set.of(),

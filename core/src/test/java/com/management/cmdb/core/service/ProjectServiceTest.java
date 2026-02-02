@@ -18,6 +18,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -80,19 +81,19 @@ class ProjectServiceTest {
 
     // Environnements fictifs
     private final Set<Environment> environments = Set.of(
-            new Environment("Location 1", EnvironmentType.ACC, "JIRA-1"),
-            new Environment("Location 2", EnvironmentType.PROD, "JIRA-2")
+            Environment.builder().location("Location 1").type(EnvironmentType.ACC).jiraTracker("JIRA-1").build(),
+            Environment.builder().location("Location 2").type(EnvironmentType.PROD).jiraTracker("JIRA-2").build()
     );
 
     // Projet fictif
-    private final Project project = new Project(
-            "Test Project",
-            "TP",
-            "Description",
-            businessService,
-            maintainers,
-            owners
-    );
+    private final Project project = Project.builder()
+            .fullName("Test Project")
+            .shortName("TP")
+            .description("Description")
+            .businessService(businessService)
+            .maintainers(maintainers)
+            .owners(owners)
+            .build();
 
     @Test
     void findOne_ShouldReturnProject_WhenProjectExists() {
@@ -147,7 +148,7 @@ class ProjectServiceTest {
     @Test
     void create_ShouldSaveProject_WhenAllParametersAreValid() {
         // Given
-        given(businessServiceService.findOne(businessService.name(), initiator)).willReturn(businessService);
+        given(businessServiceService.findOne(businessService.getName(), initiator)).willReturn(businessService);
         given(projectOutputPort.save(any(Project.class))).willAnswer(invocation -> invocation.getArgument(0));
 
         // When
@@ -171,7 +172,7 @@ class ProjectServiceTest {
     @Test
     void create_ShouldRollback_WhenEnvironmentCreationFails() {
         // Given
-        given(businessServiceService.findOne(businessService.name(), initiator)).willReturn(businessService);
+        given(businessServiceService.findOne(businessService.getName(), initiator)).willReturn(businessService);
         given(projectOutputPort.save(any(Project.class))).willAnswer(invocation -> invocation.getArgument(0));
         willThrow(new CoreException("Environment creation failed")).given(environmentService).create(anyString(), EnvironmentType.TEST, anyString(), any(User.class));
 
@@ -195,18 +196,18 @@ class ProjectServiceTest {
         // Given
         UUID projectUuid = UUID.randomUUID();
         given(projectOutputPort.findOne(projectUuid)).willReturn(Optional.of(project));
-        given(businessServiceService.findOne(businessService.name(), initiator)).willReturn(businessService);
+        given(businessServiceService.findOne(businessService.getName(), initiator)).willReturn(businessService);
         given(projectOutputPort.save(any(Project.class))).willAnswer(invocation -> invocation.getArgument(0));
 
         // When
-        Project updatedProject = new Project(
-                "Updated Project",
-                "UP",
-                "Updated Description",
-                businessService,
-                maintainers,
-                owners
-        );
+        Project updatedProject = Project.builder()
+                .fullName("Updated Project")
+                .shortName("UP")
+                .description("Updated Description")
+                .businessService(businessService)
+                .maintainers(maintainers)
+                .owners(owners)
+                .build();
         Project result = projectService.update(updatedProject, initiator);
 
         // Then
@@ -233,7 +234,7 @@ class ProjectServiceTest {
     void delete_ShouldArchiveProjectAndDeleteEnvironments_WhenProjectExists() {
         // Given
         UUID projectUuid = UUID.randomUUID();
-        project.addEnvironment(new Environment("Location 1", EnvironmentType.TEST, "JIRA-1"));
+        project.addEnvironment(Environment.builder().location("Location 1").type(EnvironmentType.TEST).jiraTracker("JIRA-1").build());
         given(projectOutputPort.findOne(projectUuid)).willReturn(Optional.of(project));
         given(projectOutputPort.save(any(Project.class))).willAnswer(invocation -> invocation.getArgument(0));
         willDoNothing().given(environmentService).delete(any(UUID.class), any(User.class));

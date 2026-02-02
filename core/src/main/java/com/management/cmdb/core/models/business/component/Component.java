@@ -5,18 +5,21 @@ import com.management.cmdb.core.models.business.technology.Technology;
 import com.management.cmdb.core.models.business.technology.Version;
 import com.management.cmdb.core.models.exceptions.InvalidObjectException;
 import com.management.cmdb.core.models.technical.ComponentVisitor;
-import com.management.cmdb.core.models.technical.Event;
 import com.management.cmdb.core.models.technical.VersionedSavedEntity;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import org.apache.commons.lang3.StringUtils;
 
-import java.time.LocalDateTime;
-import java.util.List;
+import java.io.Serializable;
 import java.util.Objects;
-import java.util.UUID;
 
 @Data
-public class Component extends VersionedSavedEntity {
+@NoArgsConstructor
+@AllArgsConstructor
+@SuperBuilder
+public abstract class Component extends VersionedSavedEntity implements Serializable {
 
     private String name;
     private String description;
@@ -25,45 +28,7 @@ public class Component extends VersionedSavedEntity {
     private Technology technology;
     private Version version;
 
-    public Component(String name, String description, ComponentType type, Version version, String certificate, Technology technology) {
-        super();
-        this.name = name;
-        this.description = description;
-        this.type = Objects.requireNonNullElse(type, ComponentType.UNKNOWN);
-        this.version = version;
-        this.certificate = certificate;
-        this.technology = technology;
-    }
-
-    public Component (UUID uuid, long revision, List<Event> events, LocalDateTime creationDatetime, LocalDateTime archiveDatetime,
-                       String name, String description, ComponentType type, Version version, String certificate, Technology technology)
-    {
-        super(VersionedSavedEntity.reload(uuid, revision, events, creationDatetime, archiveDatetime));
-        this.name = name;
-        this.description = description;
-        this.type = Objects.requireNonNullElse(type, ComponentType.UNKNOWN);
-        this.version = version;
-        this.certificate = certificate;
-        this.technology = technology;
-    }
-
-    public Component (VersionedSavedEntity source, String name, String description, ComponentType type, Version version, String certificate, Technology technology) {
-        super(source);
-        this.name = name;
-        this.description = description;
-        this.type = Objects.requireNonNullElse(type, ComponentType.UNKNOWN);
-        this.version = version;
-        this.certificate = certificate;
-        this.technology = technology;
-    }
-
-    public Component (Component source) {
-        this(source, source.getName(), source.getDescription(), source.getType(), source.getVersion(), source.getCertificate(), source.getTechnology());
-    }
-
-    public <T> T accept(ComponentVisitor<T> visitor) {
-        return visitor.accept(this);
-    }
+    public abstract <T> T accept(ComponentVisitor<T> visitor);
 
     public boolean needsUpdate()
     {

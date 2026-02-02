@@ -1,22 +1,27 @@
 package com.management.cmdb.core.models.business.component;
 
+import com.management.cmdb.core.models.business.component.network.Vlan;
 import com.management.cmdb.core.models.business.constant.ActiveDirectoryDomainName;
 import com.management.cmdb.core.models.business.constant.ComponentType;
 import com.management.cmdb.core.models.business.constant.NetworkArea;
 import com.management.cmdb.core.models.business.technology.Technology;
 import com.management.cmdb.core.models.business.technology.Version;
 import com.management.cmdb.core.models.technical.ComponentVisitor;
-import lombok.Getter;
-import lombok.Setter;
+import com.management.cmdb.core.models.technical.Event;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
+import java.io.Serializable;
 import java.net.InetAddress;
 import java.time.DayOfWeek;
-import java.util.HashSet;
-import java.util.Set;
+import java.time.LocalDateTime;
+import java.util.*;
 
-@Getter
-@Setter
-public class Host extends Component {
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@SuperBuilder
+public class Host extends Component implements Serializable {
 
     private String dns;
 
@@ -25,28 +30,12 @@ public class Host extends Component {
 
     private String macAddress;
     private InetAddress ipAddress;
-    private String vlan;
+    private Vlan vlan;
 
     private DayOfWeek patchingDay;
 
-    private Set<Host> communicatesWith;
-
-    public Host(String name, String description, ComponentType type, Version version, String certificate, Technology operatingSystem,
-                String dns, String macAddress, InetAddress ipAddress, String vlan, DayOfWeek patchingDay, ActiveDirectoryDomainName domain, NetworkArea networkArea) {
-        super(name, description, type, version, certificate, operatingSystem);
-        this.dns = dns;
-        this.domain = domain;
-        this.networkArea = networkArea;
-        this.macAddress = macAddress;
-        this.ipAddress = ipAddress;
-        this.vlan = vlan;
-        this.patchingDay = patchingDay;
-        this.communicatesWith = new HashSet<>();
-    }
-
-    public Host(Component source, String dns, String macAddress, InetAddress ipAddress, String vlan, DayOfWeek patchingDay, ActiveDirectoryDomainName domain, NetworkArea networkArea) {
-        super(source, source.getName(), source.getDescription(), source.getType(), source.getVersion(), source.getCertificate(), source.getTechnology());
-    }
+    @Builder.Default
+    private Set<Host> communicatesWith = new HashSet<>();
 
     @Override
     public <T> T accept(ComponentVisitor<T> visitor) {
@@ -63,6 +52,18 @@ public class Host extends Component {
             this.patchingDay = hostSource.patchingDay;
         }
         return this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Host host)) return false;
+        if (!super.equals(o)) return false;
+        return Objects.equals(ipAddress, host.ipAddress);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), ipAddress);
     }
 
     @Override

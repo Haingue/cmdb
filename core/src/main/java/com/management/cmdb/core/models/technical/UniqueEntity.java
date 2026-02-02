@@ -1,29 +1,19 @@
 package com.management.cmdb.core.models.technical;
 
-import lombok.Data;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.UUID;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@SuperBuilder
 public class UniqueEntity implements Serializable {
 
-    private final UUID uuid;
-
-    protected UniqueEntity() {
-        this.uuid = UUID.randomUUID();
-    }
-
-    // @Builder(buildMethodName = "reload")
-    public UniqueEntity(UUID uuid) {
-        assert uuid != null;
-        this.uuid = uuid;
-    }
-
-    public UniqueEntity(UniqueEntity source) {
-        this.uuid = source.uuid;
-    }
+    private UUID uuid;
 
     @Override
     public boolean equals(Object o) {

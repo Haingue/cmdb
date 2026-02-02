@@ -33,7 +33,11 @@ public class EnvironmentService implements EnvironmentInputPort {
 
     @Override
     public Environment create(String location, EnvironmentType type, String jiraTracker, User initiator) {
-        Environment environment = new Environment(location, type, jiraTracker);
+        Environment environment = Environment.builder()
+                .location(location)
+                .type(type)
+                .jiraTracker(jiraTracker)
+                .build();
         return this.create(environment, initiator);
     }
 
