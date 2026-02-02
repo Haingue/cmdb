@@ -84,7 +84,7 @@ public class ComponentAdapter implements ComponentOutputPort {
                             .dns(attributes.get("dns"))
                             .macAddress(attributes.get("macAddress"))
                             .ipAddress(InetAddress.getByAddress(attributes.get("ipAddress").getBytes()))
-                            .vlan(Vlan.builder().number(attributes.get("vlan")).build())
+                            .vlan(Vlan.builder().number(Integer.parseInt(attributes.get("vlan"))).build())
                             .domain(ActiveDirectoryDomainName.valueOf(attributes.get("domain")))
                             .networkArea(NetworkArea.valueOf(attributes.get("networkArea")))
                             .patchingDay(DayOfWeek.valueOf(attributes.get("patchingDay")))
