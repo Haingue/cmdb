@@ -58,7 +58,8 @@ public class ItemService {
         }
         traffic.setSourceUuid(sourceItem.uuid());
         traffic.setDestinationUuid(destinationItem.uuid());
-        LinkDto linkDto = new LinkDto(communicateWithLinkType, sourceItem.uuid(), destinationItem.uuid(), traffic.toString());
+        String linkDescription = String.format("TRAFFIC [port=%s, app=%s, protocol=%s, rule=%s]", traffic.getDestinationPort(), traffic.getApplication(), traffic.getProtocol(), traffic.getRuleName());
+        LinkDto linkDto = new LinkDto(communicateWithLinkType, sourceItem.uuid(), destinationItem.uuid(), linkDescription);
         sourceItem.outgoingLinks().add(linkDto);
 
         inventoryServiceClient.updateItem(sourceItem, newItemTypeIpAddressAttribute, traffic.getSourceIp());

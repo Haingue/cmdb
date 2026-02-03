@@ -24,12 +24,10 @@ public class SyslogServerHandler extends SimpleChannelInboundHandler<Object> {
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, Object message) throws Exception {
         String logMessage;
-        if (message instanceof DatagramPacket datagramPacket) {
-            logMessage = datagramPacket.content().toString(java.nio.charset.StandardCharsets.UTF_8);
-        } else if (message instanceof String messageStr) {
-            logMessage = messageStr;
-        } else {
-            logMessage = message.toString();
+        switch (message) {
+            case DatagramPacket datagramPacket -> logMessage = datagramPacket.content().toString(java.nio.charset.StandardCharsets.UTF_8);
+            case String messageStr -> logMessage = messageStr;
+            default -> logMessage = message.toString();
         }
         syslogService.syslogAnalysis(logMessage);
     }

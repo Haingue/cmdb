@@ -15,6 +15,8 @@ public class SyslogServerProperties {
     private boolean tcpEnable = false;
     private int tcpPort = 601;
     private List<String> focusedHost = new ArrayList<>();
+    private String exportRawMessageFilePath = null;
+    private String exportMessageCsvPath = null;
 
     public boolean isUdpEnable() {
         return udpEnable;
@@ -54,5 +56,21 @@ public class SyslogServerProperties {
 
     public void setFocusedHost(List<String> focusedHost) {
         this.focusedHost = focusedHost;
+    }
+
+    public String getExportRawMessageFilePath() {
+        return exportRawMessageFilePath;
+    }
+
+    public void setExportRawMessageFilePath(String exportRawMessageFilePath) {
+        this.exportRawMessageFilePath = exportRawMessageFilePath;
+    }
+
+    public String getExportMessageCsvPath() {
+        return exportMessageCsvPath;
+    }
+
+    public void setExportMessageCsvPath(String exportMessageCsvPath) {
+        this.exportMessageCsvPath = exportMessageCsvPath;
     }
 }

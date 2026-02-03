@@ -2,7 +2,7 @@ import type { ItemDto } from "../service/inventory/types"
 
 export default class Host {
     uuid?: string;
-    hostname?: string;
+    name?: string;
     vlan?: string;
     operatingSystem?: string;
     creationTimeStamp?: string;
@@ -24,7 +24,7 @@ export default class Host {
         for (const attibute of item.attributes) {
             switch (attibute.label) {
                 case 'Hostname':
-                    this.hostname = attibute.value as string
+                    this.name = attibute.value as string
                     break
                 case 'Uuid':
                     this.uuid = attibute.value as string

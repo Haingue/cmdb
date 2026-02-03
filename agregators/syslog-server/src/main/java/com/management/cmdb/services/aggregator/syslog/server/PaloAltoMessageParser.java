@@ -80,8 +80,8 @@ public class PaloAltoMessageParser {
         // Skip unknown value (timestamp)
         if (fields.length > 21) message.setSessionid(fields[21]);
         if (fields.length > 22) message.setRepeatcnt(fields[22]);
-        if (fields.length > 23) message.setSport(fields[23]);
-        if (fields.length > 24) message.setDport(fields[24]);
+        if (fields.length > 23) message.setSport(Integer.parseUnsignedInt(fields[23]));
+        if (fields.length > 24) message.setDport(Integer.parseUnsignedInt(fields[24]));
         if (fields.length > 25) message.setNatsport(fields[25]);
         if (fields.length > 26) message.setNatdport(fields[26]);
         if (fields.length > 27) message.setFlags(fields[27]);

@@ -5,6 +5,7 @@ import NodeTypeHost from '../../components/ReactFlow/NodeTypeHost'
 import type { ItemDto, LinkDto } from '../../service/inventory/types'
 import Host from '../../models/Host'
 import { graphlib, layout } from 'dagre'
+import TrafficEdge from '../../components/ReactFlow/TrafficEdge'
 
 const TrafficMap = ({items}: {items: ItemDto[]}) => {
   const flowRef = useRef(null)
@@ -34,6 +35,7 @@ const TrafficMap = ({items}: {items: ItemDto[]}) => {
       source: link.sourceItemId as string,
       target: link.targetItemId as string,
       label: link.linkType.label,
+      type: 'traffic',
       data: link
     }
     setEdges((eds) => eds.concat(edge))
@@ -123,6 +125,7 @@ const TrafficMap = ({items}: {items: ItemDto[]}) => {
           nodes={nodes}
           edges={edges}
           nodeTypes={{host: NodeTypeHost}}
+          edgeTypes={{traffic: TrafficEdge}}
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           ref={flowRef}

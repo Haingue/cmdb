@@ -36,8 +36,8 @@ public class PaloAltoSyslogMessage {
     private String logset;
     private String sessionid;
     private String repeatcnt;
-    private String sport;
-    private String dport;
+    private int sport;
+    private int dport;
     private String natsport;
     private String natdport;
     private String flags;

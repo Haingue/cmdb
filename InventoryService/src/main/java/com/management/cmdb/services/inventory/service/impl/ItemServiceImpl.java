@@ -164,6 +164,7 @@ public class ItemServiceImpl implements ItemService {
 
                 linkEntity.setSourceItem(existingItem);
                 linkEntity.setTargetItem(targetItem);
+                linkEntity.setDescription(linkDto.description());
                 existingItem.getOutgoingLinks().add(linkEntity);
             }
         }
@@ -184,6 +185,7 @@ public class ItemServiceImpl implements ItemService {
 
                 linkEntity.setSourceItem(sourceItem);
                 linkEntity.setTargetItem(existingItem);
+                linkEntity.setDescription(linkDto.description());
                 existingItem.getIncomingLinks().add(linkEntity);
             }
         }
