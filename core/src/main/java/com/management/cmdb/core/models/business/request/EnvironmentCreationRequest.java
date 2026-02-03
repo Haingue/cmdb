@@ -3,10 +3,8 @@ package com.management.cmdb.core.models.business.request;
 import com.management.cmdb.core.models.business.identity.User;
 import com.management.cmdb.core.models.business.project.Environment;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.time.Instant;
-import java.util.List;
 import java.util.UUID;
 
 @Getter

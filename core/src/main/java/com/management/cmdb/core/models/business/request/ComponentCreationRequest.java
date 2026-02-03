@@ -1,9 +1,7 @@
 package com.management.cmdb.core.models.business.request;
 
 import com.management.cmdb.core.models.business.component.Component;
-import com.management.cmdb.core.models.business.constant.ComponentType;
 import com.management.cmdb.core.models.business.identity.User;
-import com.management.cmdb.core.models.business.technology.Version;
 import com.management.cmdb.core.models.technical.ComponentVisitor;
 import lombok.Getter;
 

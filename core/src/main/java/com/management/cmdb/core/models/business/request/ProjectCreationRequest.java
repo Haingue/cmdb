@@ -1,15 +1,10 @@
 package com.management.cmdb.core.models.business.request;
 
 import com.management.cmdb.core.models.business.identity.User;
-import com.management.cmdb.core.models.business.project.BusinessService;
 import com.management.cmdb.core.models.business.project.Project;
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.time.Instant;
-import java.util.Objects;
 import java.util.UUID;
 
 @Getter

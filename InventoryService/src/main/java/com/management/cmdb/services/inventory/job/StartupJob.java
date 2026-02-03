@@ -59,7 +59,9 @@ public class StartupJob implements CommandLineRunner {
                 com.management.cmdb.core.models.business.component.Software.class,
                 com.management.cmdb.core.models.business.component.Hardware.class,
                 com.management.cmdb.core.models.business.component.Host.class,
-                com.management.cmdb.core.models.business.component.VirtualMachine.class
+                com.management.cmdb.core.models.business.component.VirtualMachine.class,
+                com.management.cmdb.core.models.business.component.network.Vlan.class,
+                com.management.cmdb.core.models.business.component.network.Traffic.class
         );
         List<ItemTypeEntity> modelEntities = new ArrayList<>();
         for (Class coreModel : coreModels) {

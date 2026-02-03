@@ -5,6 +5,7 @@ import com.management.cmdb.core.models.business.technology.Technology;
 import com.management.cmdb.core.models.business.technology.Version;
 
 import java.util.List;
+import java.util.Map;
 
 public record AbstractComponentDto(
     String name,
@@ -13,6 +14,6 @@ public record AbstractComponentDto(
     String certificate,
     Technology technology,
     Version version,
-    List<Object> attributes
+    Map<String, Object> attributes
 ){
 }

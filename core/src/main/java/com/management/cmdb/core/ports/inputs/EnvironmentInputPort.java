@@ -5,7 +5,6 @@ import com.management.cmdb.core.models.business.constant.EnvironmentType;
 import com.management.cmdb.core.models.business.identity.User;
 import com.management.cmdb.core.models.business.project.Environment;
 import com.management.cmdb.core.models.business.request.ComponentCreationRequest;
-import com.management.cmdb.core.models.business.request.EnvironmentCreationRequest;
 import com.management.cmdb.core.ports.inputs.technical.CrudOperation;
 
 import java.util.UUID;

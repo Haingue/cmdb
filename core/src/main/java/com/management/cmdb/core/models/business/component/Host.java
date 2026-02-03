@@ -2,20 +2,20 @@ package com.management.cmdb.core.models.business.component;
 
 import com.management.cmdb.core.models.business.component.network.Vlan;
 import com.management.cmdb.core.models.business.constant.ActiveDirectoryDomainName;
-import com.management.cmdb.core.models.business.constant.ComponentType;
 import com.management.cmdb.core.models.business.constant.NetworkArea;
-import com.management.cmdb.core.models.business.technology.Technology;
-import com.management.cmdb.core.models.business.technology.Version;
 import com.management.cmdb.core.models.technical.ComponentVisitor;
-import com.management.cmdb.core.models.technical.Event;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
 import java.net.InetAddress;
 import java.time.DayOfWeek;
-import java.time.LocalDateTime;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor

@@ -10,12 +10,14 @@ import com.management.cmdb.core.models.business.identity.User;
 import com.management.cmdb.core.models.technical.ComponentVisitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Service
 public class ComponentPersistentAdapter implements ComponentVisitor<Component> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ComponentAdapter.class);
@@ -27,19 +29,19 @@ public class ComponentPersistentAdapter implements ComponentVisitor<Component> {
     }
 
     private ItemDto componentToItemDto(Component component) {
-        ItemTypeDto itemTypeDto = inventoryServiceClient.searchItemTypes("Component", 0, 1)
+        ItemTypeDto itemTypeDto = inventoryServiceClient.searchItemTypes(component.getType().name(), 0, 1)
                 .content()
                 .getFirst();
         UUID uuid = component.getUuid();
         String name = component.getName();
         String description = component.getDescription();
         ItemTypeDto type = itemTypeDto;
-        Set<AttributeDto> attributes = Set.of(
+        Set<AttributeDto> attributes = new HashSet<>(Set.of(
                 AttributeDto.builder().label("Type").value(component.getType().name()).build(),
                 AttributeDto.builder().label("Certificate").value(component.getCertificate()).build(),
                 AttributeDto.builder().label("Technology").value(component.getTechnology().getName()).build(),
                 AttributeDto.builder().label("Version").value(component.getVersion().toString()).build()
-        );
+        ));
         LocalDateTime createdDate = component.getCreationDatetime();
         UUID createdBy = User.UNKNONW.uuid();
         LocalDateTime lastModifiedDate = component.getCreationDatetime(); //TODO add modification datetime
@@ -68,7 +70,7 @@ public class ComponentPersistentAdapter implements ComponentVisitor<Component> {
     }
 
     @Override
-    public Component accept(Host host) {
+    public Host accept(Host host) {
         ItemDto itemDto = componentToItemDto(host);
         itemDto.attributes().addAll(Set.of(
                 AttributeDto.builder().label("Dns").value(host.getDns()).build(),
@@ -83,7 +85,7 @@ public class ComponentPersistentAdapter implements ComponentVisitor<Component> {
     }
 
     @Override
-    public Component accept(Hardware hardware) {
+    public Hardware accept(Hardware hardware) {
         ItemDto itemDto = componentToItemDto(hardware);
         itemDto.attributes().addAll(Set.of(
                 AttributeDto.builder().label("Dns").value(hardware.getDns()).build(),
@@ -99,7 +101,7 @@ public class ComponentPersistentAdapter implements ComponentVisitor<Component> {
     }
 
     @Override
-    public Component accept(Software software) {
+    public Software accept(Software software) {
         ItemDto itemDto = componentToItemDto(software);
         itemDto.attributes().addAll(Set.of(
                 AttributeDto.builder().label("Host").value(software.getHost().getName()).build()
@@ -109,7 +111,7 @@ public class ComponentPersistentAdapter implements ComponentVisitor<Component> {
     }
 
     @Override
-    public Component accept(VirtualMachine virtualMachine) {
+    public VirtualMachine accept(VirtualMachine virtualMachine) {
         ItemDto itemDto = componentToItemDto(virtualMachine);
         itemDto.attributes().addAll(Set.of(
                 AttributeDto.builder().label("Vlan").value(String.valueOf(virtualMachine.getVlan().getNumber())).build(),

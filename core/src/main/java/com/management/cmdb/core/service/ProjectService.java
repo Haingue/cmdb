@@ -10,12 +10,10 @@ import com.management.cmdb.core.models.business.request.EnvironmentCreationReque
 import com.management.cmdb.core.models.business.request.ProjectCreationRequest;
 import com.management.cmdb.core.models.exceptions.CoreException;
 import com.management.cmdb.core.models.exceptions.NotFoundException;
-import com.management.cmdb.core.models.exceptions.NotImplemented;
 import com.management.cmdb.core.ports.inputs.ProjectInputPort;
 import com.management.cmdb.core.ports.outputs.ProjectOutputPort;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 

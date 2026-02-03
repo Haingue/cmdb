@@ -1,8 +1,6 @@
 package com.management.cmdb.core.models.business.technology;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.util.Objects;
