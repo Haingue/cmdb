@@ -9,16 +9,6 @@ import org.springframework.stereotype.Controller;
 
 @Controller
 @EnableReactiveMongoRepositories
-public class DatasourceConfiguration extends AbstractReactiveMongoConfiguration {
-
-    @Bean
-    public MongoClient mongoClient() {
-        return MongoClients.create();
-    }
-
-    @Override
-    protected String getDatabaseName() {
-        return "reactive";
-    }
+public class DatasourceConfiguration {
 
 }

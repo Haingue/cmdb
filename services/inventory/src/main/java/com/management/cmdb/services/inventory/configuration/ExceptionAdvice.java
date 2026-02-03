@@ -37,8 +37,6 @@ public class ExceptionAdvice {
             BadRequestException.class,
             HttpClientErrorException.class,
             TransactionSystemException.class,
-            ItemNotValid.class,
-            LinkTypeNotValid.class
     })
     public ResponseEntity<ProblemDetail> handleClientException(RuntimeException ex) {
         return ResponseEntity.badRequest().body(generateProblemDetail(HttpStatus.BAD_REQUEST, ex));
@@ -46,8 +44,6 @@ public class ExceptionAdvice {
 
     /** Catch business exception for not found entities **/
     @ExceptionHandler({
-            ItemTypeNotExist.class,
-            ItemNotExist.class
     })
     public ResponseEntity<ProblemDetail> handleNotFoundException(RuntimeException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(generateProblemDetail(HttpStatus.NOT_FOUND, ex));
