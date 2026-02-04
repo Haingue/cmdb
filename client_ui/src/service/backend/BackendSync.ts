@@ -11,7 +11,7 @@ export async function getServerInfo(): Promise<BackendServerInfo> {
 
 /** Business Service **/
 export async function searchBusinessService(name?: string): Promise<PaginatedResponseDto<ItemDto>> {
-  const queryParams = new URLSearchParams({ itemType: "BusinessService" });
+  const queryParams = new URLSearchParams({ itemTypeLabel: "BusinessService" });
   if (name) {
     queryParams.append("itemName", name);
   }

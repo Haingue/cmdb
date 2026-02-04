@@ -14,13 +14,11 @@ import com.management.cmdb.core.models.business.project.Project;
 import com.management.cmdb.core.service.ProjectService;
 import org.slf4j.Logger;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/service/project")
@@ -32,6 +30,11 @@ public class ProjectController {
 
     public ProjectController(InventoryServiceClient inventoryServiceClient) {
         this.inventoryServiceClient = inventoryServiceClient;
+    }
+
+    @GetMapping("/{uuid}")
+    public ResponseEntity<Project> getProject(@PathVariable UUID uuid) {
+        return ResponseEntity.ok(inventoryServiceClient.getOneProjectItem(uuid));
     }
 
     @PostMapping

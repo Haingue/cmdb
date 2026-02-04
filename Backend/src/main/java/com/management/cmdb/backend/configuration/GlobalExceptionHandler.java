@@ -58,7 +58,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(problemDetail);
     }
 
-    @ExceptionHandler({ Exception.class, Exception.class })
+    @ExceptionHandler({ Exception.class, RuntimeException.class })
     public ResponseEntity<ProblemDetail> handleException(Exception e) {
         LOGGER.error("Error caught", e);
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());

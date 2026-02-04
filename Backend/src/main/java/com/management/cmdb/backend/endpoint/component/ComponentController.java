@@ -40,8 +40,8 @@ public class ComponentController {
 
     @GetMapping("/project/{uuid}")
     public ResponseEntity<Host> getHost(@PathVariable UUID uuid) {
-        Optional<Host> result = inventoryServiceClient.getOneHostItem(uuid);
-        return result.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.noContent().build());
+        Host result = inventoryServiceClient.getOneHostItem(uuid);
+        return ResponseEntity.ok(result);
     }
 
     @PostMapping
