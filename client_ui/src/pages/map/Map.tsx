@@ -28,6 +28,13 @@ const nodeTypes = {
 };
 
 const Map = () => {
+    const itemTypes = [
+      {label: "Business Service", icon: "⚙️", counter: 12, color: "bg-blue-100"},
+      {label: "Environment", icon: "🌐", counter: 5, color: "bg-green-100"},
+      {label: "Host", icon: "🖥️", counter: 20, color: "bg-yellow-100"},
+      {label: "Software", icon: "📦", counter: 8, color: "bg-purple-100"}
+    ]
+
     const [nodes, setNodes, onNodesChange] = useNodesState([]);
     const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   
@@ -64,7 +71,24 @@ const Map = () => {
         <div>
             <button onClick={loadProjects}>Load project</button>
         </div>
-        <div className="h-[80vh] border border-gray-300 rounded-lg mt-4">
+        <div className="mb-4 mt-2 p-4 bg-neutral-100 border border-neutral-300 rounded">
+          <input type="text" placeholder="Search..." className="w-full p-2 border border-gray-300 rounded" />
+          <label>Categories</label>
+          <div>
+            {itemTypes.map((category) => (
+              <div key={category.label} className={`inline-block mr-4 mb-2 px-3 py-1 ${category.color} border border-gray-300 rounded cursor-pointer`}>
+                {category.icon} {category.label} ({category.counter})
+              </div>
+            ))}
+          </div>
+          <div>
+            <label>Filters actifs</label>
+            <div className="inline-block ml-2 px-3 py-1 bg-blue-100 border border-gray-300 rounded cursor-pointer">
+              <span>⚙️ Business Service</span>
+            </div>
+          </div>
+        </div>
+        <div className="h-[70vh] border border-gray-300 rounded-lg mt-4">
             <ReactFlow
                 nodes={nodes}
                 edges={edges}

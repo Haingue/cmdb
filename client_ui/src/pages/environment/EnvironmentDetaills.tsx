@@ -12,9 +12,12 @@ import { useDispatch } from "react-redux"
 import { addAlert } from "../../store/alert.slice"
 import SimpleTable from "../../components/table-simple"
 import type { ItemDto, ItemTypeDto } from "../../service/inventory/types"
+import type { Project } from "../../service/backend/types"
+import { searchProject } from "../../service/backend/BackendSync"
 
 const EnvironmentDetaillsPage = () => {
   const dispatch = useDispatch<AppDispatch>()
+  const [projects, setProjects] = useState<Project[]>([])
   const [environmentItemType, setEnvironmentItemType] = useState<ItemTypeDto>({})
   const [environments, setEnvironments] = useState<ItemDto[]>([])
 
@@ -27,23 +30,40 @@ const EnvironmentDetaillsPage = () => {
 
   useEffect(() => {
     searchItemTypes("Environment")
-      .then((_itemTypes) => {
-        console.debug("Environment Item Type fetched:", _itemTypes)
-        setEnvironmentItemType(_itemTypes.content[0])
-      })
-      .catch((error) => {
-        console.error("Error fetching Environment Item Type:", error);
-        dispatch(addAlert({ type: "error", message: "Failed to fetch Environment Item Type.", details: error }))
-      })
-      searchItems(undefined, "Environment")
-      .then((_environments) => {
-        console.debug("Environments fetched:", _environments);
-        setEnvironments(_environments.content)
-      })
-      .catch((error) => {
-        console.error("Error fetching Environments:", error);
-        dispatch(addAlert({ type: "error", message: "Failed to fetch Environments.", details: error }))
-      })
+    .then((_itemTypes) => {
+      console.debug("Environment Item Type fetched:", _itemTypes)
+      setEnvironmentItemType(_itemTypes.content[0])
+    })
+    .catch((error) => {
+      console.error("Error fetching Environment Item Type:", error);
+      dispatch(addAlert({ type: "error", message: "Failed to fetch Environment Item Type.", details: error }))
+    })
+    searchItems(undefined, "Environment")
+    .then((_environments) => {
+      console.debug("Environments fetched:", _environments);
+      setEnvironments(_environments.content)
+    })
+    .catch((error) => {
+      console.error("Error fetching Environments:", error);
+      dispatch(addAlert({ type: "error", message: "Failed to fetch Environments.", details: error }))
+    })
+
+    searchProject()
+    .then((_projects) => {
+      console.debug("Projects fetched:", _projects);
+      setProjects(_projects.content.filter(item => item?.uuid !== null).map((item) => ({
+        uuid: item.uuid || "",
+        name: item.name || "Unnamed Project",
+        abbreviation: item.attributes?.find(attr => attr.label === "abbreviation")?.value as string || "N/A"
+      })))
+    })
+    .then(() => {
+      console.debug("Projects set in state:", projects);
+    })
+    .catch((error) => {
+      console.error("Error fetching Projects:", error);
+      dispatch(addAlert({ type: "error", message: "Failed to fetch Projects.", details: error }))
+    });
   }, [])
 
   return (
@@ -52,7 +72,7 @@ const EnvironmentDetaillsPage = () => {
       <section className="mt-4">
         <h3 className="text-lg font-medium mb-2">Environment creation</h3>
         <FormSection title="Parent">
-          <SelectInput label="Project" name="project" value="" placeholder="Select a project" onChange={(e) => setProject({uuid: e.target.value, shortname: ''})} options={[]} />
+          <SelectInput label="Project" name="project" value={project.uuid} placeholder="Select a project" onChange={(e) => setProject({uuid: e.target.value, shortname: projects.find(p => p.uuid === e.target.value)?.shortName || ''})} options={projects.map(p => ({label: p.name!, value: `${p.uuid}`}))} />
         </FormSection>
         <FormSection title="Identifiers">
           <TextInput label="Name" name="name" value={name} placeholder="Name of the environment" onChange={() => {}} readonly />

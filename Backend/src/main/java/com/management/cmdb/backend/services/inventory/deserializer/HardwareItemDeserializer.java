@@ -1,4 +1,4 @@
-package com.management.cmdb.backend.endpoint.component.deserializer;
+package com.management.cmdb.backend.services.inventory.deserializer;
 
 import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonParser;
@@ -9,8 +9,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.deser.ContextualDeserializer;
 import com.management.cmdb.backend.services.inventory.dto.AttributeDto;
 import com.management.cmdb.backend.services.inventory.dto.ItemDto;
-import com.management.cmdb.core.models.business.component.GenericComponent;
-import com.management.cmdb.core.models.business.component.Host;
+import com.management.cmdb.core.models.business.component.Hardware;
 import com.management.cmdb.core.models.business.component.network.Vlan;
 import com.management.cmdb.core.models.business.constant.ActiveDirectoryDomainName;
 import com.management.cmdb.core.models.business.constant.ComponentType;
@@ -26,21 +25,23 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class HostDeserializer extends JsonDeserializer<Host> implements ContextualDeserializer {
+public class HardwareItemDeserializer extends JsonDeserializer<Hardware> implements ContextualDeserializer {
 
     @Override
     public JsonDeserializer<?> createContextual(DeserializationContext deserializationContext, BeanProperty beanProperty) throws JsonMappingException {
-        return new HostDeserializer();
+        return new HardwareItemDeserializer();
     }
 
     @Override
-    public Host deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JacksonException {
+    public Hardware deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JacksonException {
         ItemDto itemDto = deserializationContext.readValue(jsonParser, ItemDto.class);
 
-        Map<String, String> attributes = itemDto.attributes().stream().collect(Collectors.toMap(
+        Map<String, String> attributes = itemDto.attributes().stream()
+            .filter(attributeDto -> attributeDto.getValue() != null)
+            .collect(Collectors.toMap(
                 AttributeDto::getLabel,
                 AttributeDto::getValue
-        ));
+            ));
         ComponentType componentType = ComponentType.valueOfOrDefault(itemDto.type().label());
         UUID uuid = itemDto.uuid();
         String name = itemDto.name();
@@ -54,7 +55,7 @@ public class HostDeserializer extends JsonDeserializer<Host> implements Contextu
         String networkArea = attributes.get("NetworkArea");
         String patchingDay = attributes.get("PatchingDay");
 
-        Host.HostBuilder<?, ?> component = Host.builder()
+        Hardware.HardwareBuilder<?, ?> component = Hardware.builder()
                 .uuid(uuid)
                 .name(name)
                 .description(description)
@@ -62,6 +63,7 @@ public class HostDeserializer extends JsonDeserializer<Host> implements Contextu
                 .certificate(certificate)
                 .dns(attributes.get("Dns"))
                 .macAddress(attributes.get("MacAddress"))
+                .location(attributes.get("Location"))
                 .creationDatetime(itemDto.createdDate());
         if (version != null) {
             component.version(Version.fromString(version));

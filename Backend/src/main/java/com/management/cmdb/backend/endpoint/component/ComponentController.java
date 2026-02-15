@@ -46,6 +46,7 @@ public class ComponentController {
 
     @PostMapping
     public ResponseEntity<Host> createHost(@RequestBody Host host) {
+        // TODO
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(host);
     }

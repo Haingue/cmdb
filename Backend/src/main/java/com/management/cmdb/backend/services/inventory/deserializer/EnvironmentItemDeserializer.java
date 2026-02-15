@@ -1,4 +1,4 @@
-package com.management.cmdb.backend.endpoint.component.deserializer;
+package com.management.cmdb.backend.services.inventory.deserializer;
 
 import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonParser;
@@ -9,11 +9,8 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.deser.ContextualDeserializer;
 import com.management.cmdb.backend.services.inventory.dto.AttributeDto;
 import com.management.cmdb.backend.services.inventory.dto.ItemDto;
-import com.management.cmdb.core.models.business.component.Host;
-import com.management.cmdb.core.models.business.component.network.Vlan;
 import com.management.cmdb.core.models.business.constant.EnvironmentStatus;
 import com.management.cmdb.core.models.business.constant.EnvironmentType;
-import com.management.cmdb.core.models.business.constant.NetworkArea;
 import com.management.cmdb.core.models.business.project.Environment;
 
 import java.io.IOException;
@@ -32,10 +29,12 @@ public class EnvironmentItemDeserializer extends JsonDeserializer<Environment> i
     public Environment deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JacksonException {
         ItemDto itemDto = deserializationContext.readValue(jsonParser, ItemDto.class);
 
-        Map<String, String> attributes = itemDto.attributes().stream().collect(Collectors.toMap(
+        Map<String, String> attributes = itemDto.attributes().stream()
+            .filter(attributeDto -> attributeDto.getValue() != null)
+            .collect(Collectors.toMap(
                 AttributeDto::getLabel,
                 AttributeDto::getValue
-        ));
+            ));
 
         UUID uuid = itemDto.uuid();
         String status = attributes.get("status");

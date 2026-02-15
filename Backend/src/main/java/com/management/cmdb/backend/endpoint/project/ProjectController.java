@@ -38,40 +38,13 @@ public class ProjectController {
     }
 
     @PostMapping
-    public ResponseEntity<ItemDto> createProject(@RequestBody ProjectCreationRequest request) {
+    public ResponseEntity<ProjectDto> createProject(@RequestBody ProjectCreationRequest request) {
         LOGGER.info("New project creation request: {}", request);
-        ProjectDto projectDto = request.getProject();
-        BusinessService businessService = BusinessServiceMapper.INSTANCE.toCoreModel(request.getBusinessService());
-        ItemTypeDto projectItemType = inventoryServiceClient.searchItemTypes("Project", 0, 1).content().getFirst();
-        String ownerUserGroups = null;
-        if (projectDto.owners() != null) {
-            ownerUserGroups = projectDto.owners().name();
-        }
-        String maintainerUserGroups = null;
-        if (projectDto.maintainers() != null) {
-            maintainerUserGroups = projectDto.maintainers().name();
-        }
-        ItemDto projectItem = new ItemDto(
-                null,
-                projectDto.fullName(),
-                projectDto.description(),
-                projectItemType,
-                Set.of(
-                    new AttributeDto(null, "FullName", null, projectDto.fullName(), null, null, null, null),
-                    new AttributeDto(null, "ShortName", null, projectDto.shortName(), null, null, null, null),
-                    new AttributeDto(null, "BusinessService", null, businessService.getName(), null, null, null, null),
-                    new AttributeDto(null, "Owners", null, ownerUserGroups, null, null, null, null),
-                    new AttributeDto(null, "Maintainers", null, maintainerUserGroups, null, null, null, null)
-                ),
-                Set.of(),
-                Set.of(),
-                null,
-                null,
-                null,
-                null
-        );
-        Optional<ItemDto> result = inventoryServiceClient.createItem(projectItem);
-        return result.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.badRequest().build());
+        Project project = ProjectMapper.INSTANCE.toCoreModel(request.getProject());
+        project.setBusinessService(BusinessServiceMapper.INSTANCE.toCoreModel(request.getBusinessService()));
+        //project.checkIntegrity();
+        Optional<Project> result = inventoryServiceClient.createItem(project);
+        return result.map(ProjectMapper.INSTANCE::toDto).map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.badRequest().build());
     }
 
 }

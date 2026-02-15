@@ -28,21 +28,11 @@ public class BusinessServiceController {
     }
 
     @PostMapping
-    public ResponseEntity<ItemDto> createProject(@RequestBody BusinessServiceDto newBusinessService) {
+    public ResponseEntity<BusinessService> createProject(@RequestBody BusinessServiceDto newBusinessService) {
         LOGGER.info("New business service: {}", newBusinessService);
         BusinessService coreModel = BusinessServiceMapper.INSTANCE.toCoreModel(newBusinessService);
         coreModel.checkIntegrity();
-        ItemTypeDto businessServiceItemType = inventoryServiceClient.searchItemTypes(BUSINESS_SERVICE, 0, 1).content().getFirst();
-        ItemDto businessServiceItem = new ItemDto(
-                null,
-                coreModel.getName(),
-                "Need to add description field",
-                businessServiceItemType,
-                Set.of(
-                        new AttributeDto(null, "abbreviation", null, coreModel.getAbbreviation(), null, null, null, null)
-                ),
-                Set.of(), Set.of(), null, null, null, null);
-        Optional<ItemDto> result = inventoryServiceClient.createItem(businessServiceItem);
+        Optional<BusinessService> result = inventoryServiceClient.createItem(coreModel);
         return result.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.badRequest().build());
     }
 
