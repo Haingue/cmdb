@@ -73,3 +73,17 @@ export type Environment = {
   jiraTicket?: string
   location?: string
 }
+
+export type Component = {
+  uuid: UUID
+  environmentUuid?: UUID
+  name?: string
+  description?: string
+  type?: string
+  status?: string
+  version?: string
+}
+export type Host = Component & {
+}
+export type Software = Component & {
+}

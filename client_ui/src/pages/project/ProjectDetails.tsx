@@ -19,7 +19,7 @@ const ProjectDetailsPage = () => {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams();
   const projectUuid = searchParams.get("projectUuid") as UUID | undefined
-  const isNewProject = !projectUuid
+  const isNewProject: boolean = !projectUuid
 
   const dispatch = useDispatch<AppDispatch>()
   const [businessServices, setBusinessServices] = useState<BusinessService[]>([])
@@ -50,7 +50,7 @@ const ProjectDetailsPage = () => {
       setBusinessServices(_businessServices.content.filter(item => item?.uuid !== null).map((item) => ({
         uuid: item.uuid || "",
         name: item.name || "Unnamed Business Service",
-        abbreviation: item.attributes?.find(attr => attr.label === "abbreviation")?.value as string || "N/A"
+        abbreviation: item.attributes?.find(attr => attr.label === "Abbreviation")?.value as string || "N/A"
       })))
     })
     .then(() => {
@@ -158,7 +158,7 @@ const ProjectDetailsPage = () => {
       </section>
       <section className="mt-4">
         <h3 className="text-xl-heading font-medium mb-2">Childs</h3>
-        <ButtonInput name="add-new-environment" label="Add new Environment" onClick={() => navigate("/environment-details")} />
+        <ButtonInput name="add-new-environment" label="Add new Environment" onClick={() => navigate(`/environment-details?projectUuid=${projectUuid}`)} />
         <ComingSoonComponent />
       </section>
       <section className="mt-4">

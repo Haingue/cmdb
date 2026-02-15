@@ -1,6 +1,6 @@
 import { BACKEND_BASE_URL } from "../../configuration";
 import type { ItemDto, PaginatedResponseDto } from "../inventory/types";
-import type { BackendServerInfo, BusinessService, ApiProblem, Project, ProjectCreationRequest } from "./types";
+import type { BackendServerInfo, BusinessService, ApiProblem, ProjectCreationRequest, Environment, Host, Software } from "./types";
 
 /** Server **/
 export async function getServerInfo(): Promise<BackendServerInfo> {
@@ -34,7 +34,7 @@ export async function createBusinessService(businessService: BusinessService): P
 
 /** Project **/
 export async function searchProject(name?: string): Promise<PaginatedResponseDto<ItemDto>> {
-  const queryParams = new URLSearchParams({ itemType: "Project" });
+  const queryParams = new URLSearchParams({ itemTypeLabel: "Project" });
   if (name) {
     queryParams.append("itemName", name);
   }
@@ -55,4 +55,73 @@ export async function createProject(project: ProjectCreationRequest): Promise<It
   return response.json();
 }
 
-export default {getServerInfo, createBusinessService}
+/** Environment **/
+export async function searchEnvironment(name?: string): Promise<PaginatedResponseDto<ItemDto>> {
+  const queryParams = new URLSearchParams({ itemTypeLabel: "Environment" });
+  if (name) {
+    queryParams.append("itemName", name);
+  }
+  const response = await fetch(`${BACKEND_BASE_URL}/service/item?${queryParams.toString()}`);
+  if (!response.ok) return Promise.reject(await response.json() as ApiProblem);
+  return response.json();
+}
+
+export async function createEnvironment(environment: Environment): Promise<ItemDto> {
+  const response = await fetch(`${BACKEND_BASE_URL}/service/environment`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(environment),
+  });
+  if (!response.ok) return Promise.reject(await response.json() as ApiProblem);
+  return response.json();
+}
+
+/** Host **/
+export async function searchHost(name?: string): Promise<PaginatedResponseDto<ItemDto>> {
+  const queryParams = new URLSearchParams({ itemTypeLabel: "Host" });
+  if (name) {
+    queryParams.append("itemName", name);
+  }
+  const response = await fetch(`${BACKEND_BASE_URL}/service/item?${queryParams.toString()}`);
+  if (!response.ok) return Promise.reject(await response.json() as ApiProblem);
+  return response.json();
+}
+
+export async function createHost(host: Host): Promise<ItemDto> {
+  const response = await fetch(`${BACKEND_BASE_URL}/service/host`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(host),
+  });
+  if (!response.ok) return Promise.reject(await response.json() as ApiProblem);
+  return response.json();
+}
+
+/** Software **/
+export async function searchSoftware(name?: string): Promise<PaginatedResponseDto<ItemDto>> {
+  const queryParams = new URLSearchParams({ itemTypeLabel: "Software" });
+  if (name) {
+    queryParams.append("itemName", name);
+  }
+  const response = await fetch(`${BACKEND_BASE_URL}/service/item?${queryParams.toString()}`);
+  if (!response.ok) return Promise.reject(await response.json() as ApiProblem);
+  return response.json();
+}
+
+export async function createSoftware(project: Software): Promise<ItemDto> {
+  const response = await fetch(`${BACKEND_BASE_URL}/service/software`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(project),
+  });
+  if (!response.ok) return Promise.reject(await response.json() as ApiProblem);
+  return response.json();
+}
+
+export default {getServerInfo, createBusinessService, createProject, createEnvironment, createHost, createSoftware}

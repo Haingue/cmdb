@@ -5,26 +5,20 @@ import com.management.cmdb.backend.endpoint.project.dto.ProjectCreationRequest;
 import com.management.cmdb.backend.endpoint.project.dto.ProjectDto;
 import com.management.cmdb.backend.endpoint.project.mapper.ProjectMapper;
 import com.management.cmdb.backend.services.inventory.InventoryServiceClient;
-import com.management.cmdb.backend.services.inventory.dto.AttributeDto;
-import com.management.cmdb.backend.services.inventory.dto.ItemDto;
-import com.management.cmdb.backend.services.inventory.dto.ItemTypeDto;
-import com.management.cmdb.backend.services.inventory.dto.wrapper.PaginatedResponseDto;
-import com.management.cmdb.core.models.business.project.BusinessService;
 import com.management.cmdb.core.models.business.project.Project;
-import com.management.cmdb.core.service.ProjectService;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/service/project")
 public class ProjectController {
 
-    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ProjectController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProjectController.class);
 
     private final InventoryServiceClient inventoryServiceClient;
 
@@ -42,7 +36,8 @@ public class ProjectController {
         LOGGER.info("New project creation request: {}", request);
         Project project = ProjectMapper.INSTANCE.toCoreModel(request.getProject());
         project.setBusinessService(BusinessServiceMapper.INSTANCE.toCoreModel(request.getBusinessService()));
-        //project.checkIntegrity();
+        // project.checkIntegrity();
+        // TODO enable groups creation
         Optional<Project> result = inventoryServiceClient.createItem(project);
         return result.map(ProjectMapper.INSTANCE::toDto).map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.badRequest().build());
     }

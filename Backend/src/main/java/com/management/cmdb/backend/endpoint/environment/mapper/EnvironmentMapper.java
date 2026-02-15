@@ -11,5 +11,5 @@ public interface EnvironmentMapper {
     EnvironmentMapper INSTANCE = Mappers.getMapper(EnvironmentMapper.class);
 
     EnvironmentDto toDto(Environment coreModel);
-    // TODO: Environment toCoreModel(EnvironmentDto dto);
+    Environment toCoreModel(EnvironmentDto dto);
 }
