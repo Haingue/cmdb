@@ -27,6 +27,8 @@ import java.util.stream.Collectors;
 @Service
 public class ComponentAdapter implements ComponentOutputPort {
 
+    public static final String ITEM_TYPE_LABEL = "Component";
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ComponentAdapter.class);
 
     private final InventoryServiceClient inventoryServiceClient;
@@ -174,9 +176,10 @@ public class ComponentAdapter implements ComponentOutputPort {
     }
 
     @Override
-    public Optional<Component> findOneByName(String s) {
-
-        return Optional.empty();
+    public Optional<Component> findOneByName(String name) {
+        Optional<ItemDto> item = inventoryServiceClient.searchItems(name, ITEM_TYPE_LABEL, 0, 1)
+                .content().stream().findFirst();
+        return item.flatMap(itemDto -> findOne(itemDto.uuid()));
     }
 
     @Override

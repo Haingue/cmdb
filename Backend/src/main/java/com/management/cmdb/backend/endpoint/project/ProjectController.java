@@ -27,8 +27,11 @@ public class ProjectController {
     }
 
     @GetMapping("/{uuid}")
-    public ResponseEntity<Project> getProject(@PathVariable UUID uuid) {
-        return ResponseEntity.ok(inventoryServiceClient.getOneProjectItem(uuid));
+    public ResponseEntity<ProjectDto> getProject(@PathVariable UUID uuid) {
+        return inventoryServiceClient.getOneProjectItem(uuid)
+                .map(ProjectMapper.INSTANCE::toDto)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.badRequest().build());
     }
 
     @PostMapping
@@ -39,6 +42,16 @@ public class ProjectController {
         // project.checkIntegrity();
         // TODO enable groups creation
         Optional<Project> result = inventoryServiceClient.createItem(project);
+        return result.map(ProjectMapper.INSTANCE::toDto).map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.badRequest().build());
+    }
+
+    @PutMapping
+    public ResponseEntity<ProjectDto> updateProject(@RequestBody ProjectCreationRequest request) {
+        LOGGER.info("Update project creation request: {}", request);
+        Project project = ProjectMapper.INSTANCE.toCoreModel(request.getProject());
+        project.setBusinessService(BusinessServiceMapper.INSTANCE.toCoreModel(request.getBusinessService()));
+        project.checkIntegrity();
+        Optional<Project> result = inventoryServiceClient.updateItem(project);
         return result.map(ProjectMapper.INSTANCE::toDto).map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.badRequest().build());
     }
 

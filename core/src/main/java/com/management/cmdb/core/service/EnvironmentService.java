@@ -48,6 +48,7 @@ public class EnvironmentService implements EnvironmentInputPort {
 
         // Create component
         try {
+            // TODO save manually environment instead of save project (implicit -> explicit, no JPA/Hibernate)
             newEntity.getComponents().forEach(component -> componentService.create(component, initiator));
         } catch (CoreException e) {
             environmentOutputPort.delete(newEntity);

@@ -65,6 +65,7 @@ public class ProjectService implements ProjectInputPort {
 
         if (environments != null && !environments.isEmpty()) {
             try {
+                // TODO save manually environment instead of save project (implicit -> explicit, no JPA/Hibernate)
                 environments.stream()
                         .peek(environment -> environmentService.create(environment.getLocation(), environment.getType(), environment.getJiraTracker(), initiator))
                         .forEach(project::addEnvironment);

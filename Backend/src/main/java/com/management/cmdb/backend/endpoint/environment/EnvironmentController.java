@@ -33,8 +33,10 @@ public class EnvironmentController {
 
     @GetMapping("/{uuid}")
     public ResponseEntity<EnvironmentDto> getProject(@PathVariable UUID uuid) {
-        Environment oneEnvironmentItem = inventoryServiceClient.getOneEnvironmentItem(uuid);
-        return ResponseEntity.ok(EnvironmentMapper.INSTANCE.toDto(oneEnvironmentItem));
+        return inventoryServiceClient.getOneEnvironmentItem(uuid)
+                .map(EnvironmentMapper.INSTANCE::toDto)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.badRequest().build());
     }
 
     @PostMapping
@@ -43,6 +45,15 @@ public class EnvironmentController {
         Environment environment = EnvironmentMapper.INSTANCE.toCoreModel(environmentDto);
         environment.checkIntegrity();
         Optional<Environment> result = inventoryServiceClient.createItem(environment);
+        return result.map(EnvironmentMapper.INSTANCE::toDto).map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.badRequest().build());
+    }
+
+    @PutMapping
+    public ResponseEntity<EnvironmentDto> updateProject(@RequestBody EnvironmentDto environmentDto) {
+        LOGGER.info("Update environment creation request: {}", environmentDto);
+        Environment environment = EnvironmentMapper.INSTANCE.toCoreModel(environmentDto);
+        environment.checkIntegrity();
+        Optional<Environment> result = inventoryServiceClient.updateItem(environment);
         return result.map(EnvironmentMapper.INSTANCE::toDto).map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.badRequest().build());
     }
 }

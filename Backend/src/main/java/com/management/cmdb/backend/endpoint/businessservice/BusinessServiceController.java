@@ -7,10 +7,7 @@ import com.management.cmdb.core.models.business.project.BusinessService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
@@ -19,7 +16,6 @@ import java.util.Optional;
 public class BusinessServiceController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BusinessServiceController.class);
-    public static final String BUSINESS_SERVICE = "BusinessService";
 
     private final InventoryServiceClient inventoryServiceClient;
 
@@ -28,12 +24,27 @@ public class BusinessServiceController {
     }
 
     @PostMapping
-    public ResponseEntity<BusinessService> createProject(@RequestBody BusinessServiceDto newBusinessService) {
+    public ResponseEntity<BusinessServiceDto> createProject(@RequestBody BusinessServiceDto newBusinessService) {
         LOGGER.info("New business service: {}", newBusinessService);
         BusinessService coreModel = BusinessServiceMapper.INSTANCE.toCoreModel(newBusinessService);
         coreModel.checkIntegrity();
         Optional<BusinessService> result = inventoryServiceClient.createItem(coreModel);
-        return result.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.badRequest().build());
+        return result
+                .map(BusinessServiceMapper.INSTANCE::toDto)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.badRequest().build());
+    }
+
+    @PutMapping
+    public ResponseEntity<BusinessServiceDto> updateProject(@RequestBody BusinessServiceDto newBusinessService) {
+        LOGGER.info("Update business service: {}", newBusinessService);
+        BusinessService coreModel = BusinessServiceMapper.INSTANCE.toCoreModel(newBusinessService);
+        coreModel.checkIntegrity();
+        Optional<BusinessService> result = inventoryServiceClient.updateItem(coreModel);
+        return result
+                .map(BusinessServiceMapper.INSTANCE::toDto)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.badRequest().build());
     }
 
 }
