@@ -6,9 +6,11 @@ import com.management.cmdb.core.models.business.project.BusinessService;
 import com.management.cmdb.core.models.business.project.Project;
 import com.management.cmdb.core.models.exceptions.NotImplemented;
 import com.management.cmdb.core.ports.outputs.BusinessServiceOutputPort;
+import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+@Service
 public class BusinessServiceAdapter implements BusinessServiceOutputPort {
 
     public static final String ITEM_TYPE_LABEL = "BusinessService";
@@ -21,7 +23,7 @@ public class BusinessServiceAdapter implements BusinessServiceOutputPort {
 
     @Override
     public Optional<BusinessService> findOne(String name) {
-        return inventoryServiceClient.getOneBusinessServiceItem(name);
+        return inventoryServiceClient.getOneBusinessServiceItem(name, BusinessServiceAdapter.ITEM_TYPE_LABEL);
     }
 
     @Override

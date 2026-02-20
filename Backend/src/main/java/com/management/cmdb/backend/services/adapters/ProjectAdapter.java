@@ -11,10 +11,12 @@ import com.management.cmdb.core.models.business.project.Environment;
 import com.management.cmdb.core.models.business.project.Project;
 import com.management.cmdb.core.models.exceptions.NotImplemented;
 import com.management.cmdb.core.ports.outputs.ProjectOutputPort;
+import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 import java.util.UUID;
 
+@Service
 public class ProjectAdapter implements ProjectOutputPort {
 
     public static final String ITEM_TYPE_LABEL = "Project";

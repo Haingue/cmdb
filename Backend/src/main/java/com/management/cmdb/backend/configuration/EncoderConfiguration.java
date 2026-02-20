@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.management.cmdb.backend.services.inventory.deserializer.*;
+import com.management.cmdb.backend.services.inventory.dto.wrapper.PaginatedResponseDto;
 import com.management.cmdb.backend.services.inventory.serializer.BusinessServiceItemSerializer;
 import com.management.cmdb.backend.services.inventory.serializer.ProjectItemSerializer;
 import com.management.cmdb.core.models.business.component.Component;
@@ -40,7 +41,6 @@ public class EncoderConfiguration {
         return new HttpMessageConverters(new MappingJackson2HttpMessageConverter());
     }
 
-    @Bean
     public Module module () {
         SimpleModule module = new SimpleModule();
         module.addDeserializer(LocalDateTime.class, LocalDateTimeDeserializer.INSTANCE);

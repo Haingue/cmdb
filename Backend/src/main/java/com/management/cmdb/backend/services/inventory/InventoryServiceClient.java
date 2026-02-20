@@ -18,8 +18,8 @@ import java.util.UUID;
 //@CircuitBreaker(name = "microservice", fallbackMethod = "fallback")
 public interface InventoryServiceClient {
 
-    @GetMapping("/item/{uuid}")
-    Optional<BusinessService> getOneBusinessServiceItem(@PathVariable String name);
+    @GetMapping("/item")
+    Optional<BusinessService> getOneBusinessServiceItem(@RequestParam String itemName, @RequestParam() String itemType);
     @GetMapping("/item/{uuid}")
     Optional<Project> getOneProjectItem(@PathVariable UUID uuid);
     @GetMapping("/item/{uuid}")

@@ -2,10 +2,7 @@ package com.management.cmdb.backend.services.inventory.deserializer;
 
 import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.BeanProperty;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.deser.ContextualDeserializer;
 import com.management.cmdb.backend.services.inventory.dto.AttributeDto;
 import com.management.cmdb.backend.services.inventory.dto.ItemDto;
@@ -24,7 +21,14 @@ public class BusinessServiceItemDeserializer extends JsonDeserializer<BusinessSe
 
     @Override
     public BusinessService deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JacksonException {
-        ItemDto itemDto = deserializationContext.readValue(jsonParser, ItemDto.class);
+        JsonNode jsonNode = deserializationContext.readTree(jsonParser);
+        ItemDto itemDto;
+        if (jsonNode.has("content") && jsonNode.get("totalElements").intValue() > 0) {
+            /// TODO bug here
+            itemDto = deserializationContext.readValue(jsonNode.get("content").get(0).traverse(jsonParser.getCodec()), ItemDto.class);
+        } else {
+            itemDto = deserializationContext.readValue(jsonNode.traverse(), ItemDto.class);
+        }
 
         Map<String, String> attributes = itemDto.attributes().stream()
             .filter(attributeDto -> attributeDto.getValue() != null)

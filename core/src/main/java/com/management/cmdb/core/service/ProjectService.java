@@ -10,6 +10,8 @@ import com.management.cmdb.core.models.business.request.EnvironmentCreationReque
 import com.management.cmdb.core.models.business.request.ProjectCreationRequest;
 import com.management.cmdb.core.models.exceptions.CoreException;
 import com.management.cmdb.core.models.exceptions.NotFoundException;
+import com.management.cmdb.core.ports.inputs.BusinessServiceInputPort;
+import com.management.cmdb.core.ports.inputs.EnvironmentInputPort;
 import com.management.cmdb.core.ports.inputs.ProjectInputPort;
 import com.management.cmdb.core.ports.outputs.ProjectOutputPort;
 
@@ -20,13 +22,13 @@ import java.util.UUID;
 public class ProjectService implements ProjectInputPort {
 
     private final ProjectOutputPort projectOutputPort;
-    private final BusinessServiceService businessServiceService;
-    private final EnvironmentService environmentService;
+    private final BusinessServiceInputPort businessServiceService;
+    private final EnvironmentInputPort environmentService;
 
-    public ProjectService(ProjectOutputPort projectOutputPort, BusinessServiceService businessServiceService, EnvironmentService environmentService) {
+    public ProjectService(ProjectOutputPort projectOutputPort, BusinessServiceInputPort businessServiceInputPort, EnvironmentInputPort environmentInputPort) {
         this.projectOutputPort = projectOutputPort;
-        this.businessServiceService = businessServiceService;
-        this.environmentService = environmentService;
+        this.businessServiceService = businessServiceInputPort;
+        this.environmentService = environmentInputPort;
     }
 
     @Override

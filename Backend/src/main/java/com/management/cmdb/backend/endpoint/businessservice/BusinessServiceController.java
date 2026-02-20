@@ -24,7 +24,7 @@ public class BusinessServiceController {
     }
 
     @PostMapping
-    public ResponseEntity<BusinessServiceDto> createProject(@RequestBody BusinessServiceDto newBusinessService) {
+    public ResponseEntity<BusinessServiceDto> create(@RequestBody BusinessServiceDto newBusinessService) {
         LOGGER.info("New business service: {}", newBusinessService);
         BusinessService coreModel = BusinessServiceMapper.INSTANCE.toCoreModel(newBusinessService);
         coreModel.checkIntegrity();
@@ -36,7 +36,7 @@ public class BusinessServiceController {
     }
 
     @PutMapping
-    public ResponseEntity<BusinessServiceDto> updateProject(@RequestBody BusinessServiceDto newBusinessService) {
+    public ResponseEntity<BusinessServiceDto> update(@RequestBody BusinessServiceDto newBusinessService) {
         LOGGER.info("Update business service: {}", newBusinessService);
         BusinessService coreModel = BusinessServiceMapper.INSTANCE.toCoreModel(newBusinessService);
         coreModel.checkIntegrity();
