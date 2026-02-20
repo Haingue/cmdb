@@ -19,7 +19,7 @@ import java.util.UUID;
 public interface InventoryServiceClient {
 
     @GetMapping("/item")
-    Optional<BusinessService> getOneBusinessServiceItem(@RequestParam String itemName, @RequestParam() String itemType);
+    PaginatedResponseDto<BusinessService> getOneBusinessServiceItem(@RequestParam String itemName, @RequestParam() String itemType);
     @GetMapping("/item/{uuid}")
     Optional<Project> getOneProjectItem(@PathVariable UUID uuid);
     @GetMapping("/item/{uuid}")

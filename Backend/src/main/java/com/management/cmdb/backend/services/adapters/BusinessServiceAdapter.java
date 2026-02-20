@@ -2,6 +2,7 @@ package com.management.cmdb.backend.services.adapters;
 
 import com.management.cmdb.backend.exceptions.AdapterException;
 import com.management.cmdb.backend.services.inventory.InventoryServiceClient;
+import com.management.cmdb.backend.services.inventory.dto.wrapper.PaginatedResponseDto;
 import com.management.cmdb.core.models.business.project.BusinessService;
 import com.management.cmdb.core.models.business.project.Project;
 import com.management.cmdb.core.models.exceptions.NotImplemented;
@@ -23,7 +24,8 @@ public class BusinessServiceAdapter implements BusinessServiceOutputPort {
 
     @Override
     public Optional<BusinessService> findOne(String name) {
-        return inventoryServiceClient.getOneBusinessServiceItem(name, BusinessServiceAdapter.ITEM_TYPE_LABEL);
+        PaginatedResponseDto<BusinessService> paginatedResponseDto = inventoryServiceClient.getOneBusinessServiceItem(name, BusinessServiceAdapter.ITEM_TYPE_LABEL);
+        return paginatedResponseDto.content().stream().findFirst();
     }
 
     @Override

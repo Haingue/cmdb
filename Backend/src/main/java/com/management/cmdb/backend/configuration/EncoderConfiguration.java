@@ -44,6 +44,7 @@ public class EncoderConfiguration {
     public Module module () {
         SimpleModule module = new SimpleModule();
         module.addDeserializer(LocalDateTime.class, LocalDateTimeDeserializer.INSTANCE);
+        module.addDeserializer(PaginatedResponseDto.class, new PaginatedResponseItemDeserializer());
         module.addDeserializer(BusinessService.class, new BusinessServiceItemDeserializer());
         module.addDeserializer(Project.class, new ProjectItemDeserializer());
         module.addDeserializer(Environment.class, new EnvironmentItemDeserializer());
