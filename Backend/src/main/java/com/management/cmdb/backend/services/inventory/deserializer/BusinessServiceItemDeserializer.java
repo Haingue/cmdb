@@ -26,7 +26,6 @@ public class BusinessServiceItemDeserializer extends JsonDeserializer<BusinessSe
         JsonNode jsonNode = deserializationContext.readTree(jsonParser);
         ItemDto itemDto;
         if (jsonNode.has("content") && jsonNode.get("totalElements").intValue() > 0) {
-            /// TODO bug here
             itemDto = deserializationContext.readValue(jsonNode.get("content").get(0).traverse(jsonParser.getCodec()), ItemDto.class);
         } else {
             itemDto = deserializationContext.readValue(jsonNode.traverse(), ItemDto.class);

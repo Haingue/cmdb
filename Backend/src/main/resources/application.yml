@@ -101,5 +101,6 @@ logging:
     org.springframework.web.reactive: info
     reactor.ipc.netty: WARN
     reactor.netty: WARN
+    com.fasterxml.jackson: DEBUG
 
-    com.management.cmdb.gateway: DEBUG
+    com.management.cmdb.gateway: TRACE

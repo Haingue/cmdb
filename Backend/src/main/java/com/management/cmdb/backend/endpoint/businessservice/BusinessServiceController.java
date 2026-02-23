@@ -2,7 +2,9 @@ package com.management.cmdb.backend.endpoint.businessservice;
 
 import com.management.cmdb.backend.endpoint.businessservice.dto.BusinessServiceDto;
 import com.management.cmdb.backend.endpoint.businessservice.mapper.BusinessServiceMapper;
+import com.management.cmdb.backend.services.adapters.BusinessServiceAdapter;
 import com.management.cmdb.backend.services.inventory.InventoryServiceClient;
+import com.management.cmdb.backend.services.inventory.dto.wrapper.PaginatedResponseDto;
 import com.management.cmdb.core.models.business.project.BusinessService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +23,15 @@ public class BusinessServiceController {
 
     public BusinessServiceController(InventoryServiceClient inventoryServiceClient) {
         this.inventoryServiceClient = inventoryServiceClient;
+    }
+
+    @GetMapping("/{abbreviation}")
+    public ResponseEntity<BusinessServiceDto> findOne(@PathVariable String abbreviation) {
+        LOGGER.trace("Find one business service: {}", abbreviation);
+        PaginatedResponseDto<BusinessService> paginatedResponseDto = inventoryServiceClient.getOneBusinessServiceItem(abbreviation, BusinessServiceAdapter.ITEM_TYPE_LABEL);
+        if (paginatedResponseDto == null) return ResponseEntity.notFound().build();
+        BusinessService firstResult = paginatedResponseDto.content().getFirst();
+        return ResponseEntity.ok(BusinessServiceMapper.INSTANCE.toDto(firstResult));
     }
 
     @PostMapping
