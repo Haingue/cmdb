@@ -5,7 +5,9 @@ import com.management.cmdb.backend.endpoint.businessservice.mapper.BusinessServi
 import com.management.cmdb.backend.services.adapters.BusinessServiceAdapter;
 import com.management.cmdb.backend.services.inventory.InventoryServiceClient;
 import com.management.cmdb.backend.services.inventory.dto.wrapper.PaginatedResponseDto;
+import com.management.cmdb.core.models.business.identity.User;
 import com.management.cmdb.core.models.business.project.BusinessService;
+import com.management.cmdb.core.ports.inputs.BusinessServiceInputPort;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -19,17 +21,19 @@ public class BusinessServiceController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BusinessServiceController.class);
 
+    private final BusinessServiceInputPort businessServiceInputPort;
     private final InventoryServiceClient inventoryServiceClient;
 
-    public BusinessServiceController(InventoryServiceClient inventoryServiceClient) {
+    public BusinessServiceController(BusinessServiceInputPort businessServiceInputPort, InventoryServiceClient inventoryServiceClient) {
+        this.businessServiceInputPort = businessServiceInputPort;
         this.inventoryServiceClient = inventoryServiceClient;
     }
 
     @GetMapping("/{abbreviation}")
     public ResponseEntity<BusinessServiceDto> findOne(@PathVariable String abbreviation) {
         LOGGER.trace("Find one business service: {}", abbreviation);
-        PaginatedResponseDto<BusinessService> paginatedResponseDto = inventoryServiceClient.getOneBusinessServiceItem(abbreviation, BusinessServiceAdapter.ITEM_TYPE_LABEL);
-        if (paginatedResponseDto == null) return ResponseEntity.notFound().build();
+        PaginatedResponseDto<BusinessService> paginatedResponseDto = inventoryServiceClient.searchBusinessServiceByAttributeValue(BusinessServiceAdapter.ABBREVIATION_LABEL, abbreviation, BusinessServiceAdapter.ITEM_TYPE_LABEL);
+        if (paginatedResponseDto == null || paginatedResponseDto.isEmpty()) return ResponseEntity.notFound().build();
         BusinessService firstResult = paginatedResponseDto.content().getFirst();
         return ResponseEntity.ok(BusinessServiceMapper.INSTANCE.toDto(firstResult));
     }
@@ -51,8 +55,10 @@ public class BusinessServiceController {
         LOGGER.info("Update business service: {}", newBusinessService);
         BusinessService coreModel = BusinessServiceMapper.INSTANCE.toCoreModel(newBusinessService);
         coreModel.checkIntegrity();
-        Optional<BusinessService> result = inventoryServiceClient.updateItem(coreModel);
-        return result
+        BusinessService businessService = businessServiceInputPort.update(coreModel, User.UNKNONW);
+
+        return Optional
+                .of(businessService)
                 .map(BusinessServiceMapper.INSTANCE::toDto)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.badRequest().build());

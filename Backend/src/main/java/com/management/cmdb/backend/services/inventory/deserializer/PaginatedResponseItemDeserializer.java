@@ -6,6 +6,7 @@ import com.fasterxml.jackson.core.TreeNode;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.deser.ContextualDeserializer;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.management.cmdb.backend.services.inventory.dto.wrapper.PaginatedResponseDto;
 
 import java.io.IOException;
@@ -37,18 +38,13 @@ public class PaginatedResponseItemDeserializer extends JsonDeserializer<Paginate
 
     @Override
     public PaginatedResponseDto<?> deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JacksonException {
-        TreeNode treeNode = jsonParser.readValueAsTree();
-        ArrayNode contentParser = (ArrayNode) treeNode.get("content");
-        List<?> content = new ArrayList<>();
-        for (JsonNode node : contentParser) {
-            content.add(deserializationContext.readValue(node.traverse(jsonParser.getCodec()), contentType));
-        }
-
-        Integer pageNumber = treeNode.get("pageNumber").traverse(jsonParser.getCodec()).readValueAs(Integer.class);
-        Integer pageSize = treeNode.get("pageSize").traverse(jsonParser.getCodec()).readValueAs(Integer.class);
-        Long totalElements = treeNode.get("totalElements").traverse(jsonParser.getCodec()).readValueAs(Long.class);
-        Integer totalPages = treeNode.get("totalPages").traverse(jsonParser.getCodec()).readValueAs(Integer.class);
-        Boolean last = treeNode.get("last").traverse(jsonParser.getCodec()).readValueAs(Boolean.class);
+        JsonNode node = jsonParser.getCodec().readTree(jsonParser);
+        Integer pageNumber = deserializationContext.readTreeAsValue(node.get("pageNumber"), Integer.class);
+        Integer pageSize = deserializationContext.readTreeAsValue(node.get("pageSize"), Integer.class);
+        Long totalElements = deserializationContext.readTreeAsValue(node.get("totalElements"), Long.class);
+        Integer totalPages = deserializationContext.readTreeAsValue(node.get("totalPages"), Integer.class);
+        Boolean last = deserializationContext.readTreeAsValue(node.get("last"), Boolean.class);
+        List<?> content = deserializationContext.readTreeAsValue(node.get("content"), TypeFactory.defaultInstance().constructParametricType(ArrayList.class, contentType));
         return new PaginatedResponseDto<>(
                 content,
                 pageNumber,

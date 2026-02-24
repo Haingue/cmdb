@@ -48,11 +48,13 @@ public class BusinessServiceService implements BusinessServiceInputPort {
         if (businessService == null) throw new InvalidObjectException("Business service cannot be null");
         businessService.checkIntegrity();
 
-        businessServiceOutputPort.findByAbbreviation(businessService.getAbbreviation())
+        BusinessService previousValue = businessServiceOutputPort.findOne(businessService.getName())
                 .orElseThrow(() -> new NotFoundException(businessService.getName()));
         isUniqueAbbreviation(businessService.getAbbreviation());
+        // previousValue.setName(businessService.getName());
+        previousValue.setAbbreviation(businessService.getAbbreviation());
 
-        return businessServiceOutputPort.save(businessService);
+        return businessServiceOutputPort.save(previousValue);
     }
 
     @Override

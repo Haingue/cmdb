@@ -24,12 +24,7 @@ public class BusinessServiceItemDeserializer extends JsonDeserializer<BusinessSe
     @Override
     public BusinessService deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JacksonException {
         JsonNode jsonNode = deserializationContext.readTree(jsonParser);
-        ItemDto itemDto;
-        if (jsonNode.has("content") && jsonNode.get("totalElements").intValue() > 0) {
-            itemDto = deserializationContext.readValue(jsonNode.get("content").get(0).traverse(jsonParser.getCodec()), ItemDto.class);
-        } else {
-            itemDto = deserializationContext.readValue(jsonNode.traverse(), ItemDto.class);
-        }
+        ItemDto itemDto = deserializationContext.readTreeAsValue(jsonNode, ItemDto.class);
 
         Map<String, String> attributes = itemDto.attributes().stream()
             .filter(attributeDto -> attributeDto.getValue() != null)
@@ -38,12 +33,11 @@ public class BusinessServiceItemDeserializer extends JsonDeserializer<BusinessSe
                 AttributeDto::getValue
             ));
 
-        String fullName = attributes.get("fullName");
-        String shortName = attributes.get("shortName");
-
-        BusinessService.BusinessServiceBuilder businessServiceBuilder = BusinessService.builder()
-                .abbreviation(fullName)
-                .name(shortName);
-        return businessServiceBuilder.build();
+        String name = itemDto.name();
+        String abbreviation = attributes.get("Abbreviation");
+        return BusinessService.builder()
+                .name(name)
+                .abbreviation(abbreviation)
+                .build();
     }
 }

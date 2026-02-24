@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.management.cmdb.backend.services.inventory.deserializer.*;
+import com.management.cmdb.backend.services.inventory.dto.ItemDto;
 import com.management.cmdb.backend.services.inventory.dto.wrapper.PaginatedResponseDto;
 import com.management.cmdb.backend.services.inventory.serializer.BusinessServiceItemSerializer;
 import com.management.cmdb.backend.services.inventory.serializer.ProjectItemSerializer;
@@ -16,6 +17,7 @@ import com.management.cmdb.core.models.business.component.Hardware;
 import com.management.cmdb.core.models.business.component.Host;
 import com.management.cmdb.core.models.business.component.Software;
 import com.management.cmdb.core.models.business.component.network.Vlan;
+import com.management.cmdb.core.models.business.identity.UserGroup;
 import com.management.cmdb.core.models.business.project.BusinessService;
 import com.management.cmdb.core.models.business.project.Environment;
 import com.management.cmdb.core.models.business.project.Project;
@@ -45,8 +47,11 @@ public class EncoderConfiguration {
     public Module module () {
         SimpleModule module = new SimpleModule();
         module.addDeserializer(LocalDateTime.class, LocalDateTimeDeserializer.INSTANCE);
+        // utiliser un object par défaut pour gérer un ItemDto
+        // module.addDeserializer(ItemDto.class, new ????());
         module.addDeserializer(PaginatedResponseDto.class, new PaginatedResponseItemDeserializer());
         module.addDeserializer(BusinessService.class, new BusinessServiceItemDeserializer());
+        module.addDeserializer(UserGroup.class, new UserGroupItemDeserializer());
         module.addDeserializer(Project.class, new ProjectItemDeserializer());
         module.addDeserializer(Environment.class, new EnvironmentItemDeserializer());
         module.addDeserializer(Component.class, new ComponentItemDeserializer());

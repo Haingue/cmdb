@@ -28,6 +28,7 @@ public class StartupJob implements CommandLineRunner {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StartupJob.class);
     public static LinkTypeEntity communicate_with = new LinkTypeEntity("Communicate with");
+    public static LinkTypeEntity UNDEFINED = new LinkTypeEntity("Undefined");
 
     private final Environment env;
 

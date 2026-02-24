@@ -19,7 +19,9 @@ import java.util.UUID;
 public interface InventoryServiceClient {
 
     @GetMapping("/item")
-    PaginatedResponseDto<BusinessService> getOneBusinessServiceItem(@RequestParam String itemName, @RequestParam() String itemType);
+    PaginatedResponseDto<BusinessService> searchBusinessServiceByName(@RequestParam String itemName, @RequestParam() String itemType);
+    @GetMapping("/item/any/{attributeLabel}/{attributeValue}")
+    PaginatedResponseDto<BusinessService> searchBusinessServiceByAttributeValue(@PathVariable String attributeLabel, @PathVariable String attributeValue, @RequestParam() String itemType);
     @GetMapping("/item/{uuid}")
     Optional<Project> getOneProjectItem(@PathVariable UUID uuid);
     @GetMapping("/item/{uuid}")

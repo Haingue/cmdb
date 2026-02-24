@@ -29,7 +29,7 @@ public class BusinessServiceItemSerializer extends JsonSerializer<BusinessServic
                 "Need to add description field",
                 businessServiceItemType,
                 Set.of(
-                        new AttributeDto(null, "abbreviation", null, businessService.getAbbreviation(), null, null, null, null)
+                        new AttributeDto(null, BusinessServiceAdapter.ABBREVIATION_LABEL, null, businessService.getAbbreviation(), null, null, null, null)
                 ),
                 Set.of(), Set.of(), null, null, null, null);
         jsonGenerator.writeObject(businessServiceItem);
