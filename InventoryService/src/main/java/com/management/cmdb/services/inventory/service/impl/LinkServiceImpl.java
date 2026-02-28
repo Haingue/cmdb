@@ -51,6 +51,8 @@ public class LinkServiceImpl implements LinkService {
         linkEntity.setTargetItem(itemTarget);
         linkEntity.setDescription(itemDescription);
 
+        linkEntity = linkRepository.save(linkEntity);
+
         return Optional.of(linkEntity);
     }
 

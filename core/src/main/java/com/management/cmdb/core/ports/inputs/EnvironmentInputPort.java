@@ -11,7 +11,7 @@ import java.util.UUID;
 
 public interface EnvironmentInputPort extends CrudOperation<Environment, UUID> {
 
-    Environment create (String location, EnvironmentType type, String jiraTracker, User initiator);
+    Environment create (UUID projectUuid, String location, EnvironmentType type, String jiraTracker, User initiator);
 
     Component handleAddComponentRequest (ComponentCreationRequest componentCreationRequest);
 

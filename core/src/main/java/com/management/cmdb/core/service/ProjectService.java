@@ -64,18 +64,18 @@ public class ProjectService implements ProjectInputPort {
         BusinessService savedBusinessService = this.businessServiceService.findOne(project.getBusinessService().getName(), initiator);
         project.setBusinessService(savedBusinessService);
         project = this.projectOutputPort.save(project);
-
-        if (environments != null && !environments.isEmpty()) {
-            try {
-                // TODO save manually environment instead of save project (implicit -> explicit, no JPA/Hibernate)
-                environments.stream()
-                        .peek(environment -> environmentService.create(environment.getLocation(), environment.getType(), environment.getJiraTracker(), initiator))
-                        .forEach(project::addEnvironment);
-            } catch (CoreException e) {
-                this.projectOutputPort.delete(project.getUuid());
-                throw e;
-            }
-        }
+// TODO remove this part ? (link create by children)
+//        if (environments != null && !environments.isEmpty()) {
+//            try {
+//                // TODO save manually environment instead of save project (implicit -> explicit, no JPA/Hibernate)
+//                environments.stream()
+//                        .peek(environment -> environmentService.create(project.getUuid(), environment.getLocation(), environment.getType(), environment.getJiraTracker(), initiator))
+//                        .forEach(project::addEnvironment);
+//            } catch (CoreException e) {
+//                this.projectOutputPort.delete(project.getUuid());
+//                throw e;
+//            }
+//        }
         return this.projectOutputPort.save(project);
     }
 

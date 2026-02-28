@@ -5,6 +5,7 @@ import com.management.cmdb.backend.endpoint.project.dto.ProjectCreationRequest;
 import com.management.cmdb.backend.endpoint.project.dto.ProjectDto;
 import com.management.cmdb.backend.endpoint.project.mapper.ProjectMapper;
 import com.management.cmdb.backend.services.inventory.InventoryServiceClient;
+import com.management.cmdb.core.models.business.identity.User;
 import com.management.cmdb.core.models.business.project.Project;
 import com.management.cmdb.core.ports.inputs.ProjectInputPort;
 import org.slf4j.Logger;
@@ -32,7 +33,8 @@ public class ProjectController {
 
     @GetMapping("/{uuid}")
     public ResponseEntity<ProjectDto> getProject(@PathVariable UUID uuid) {
-        return inventoryServiceClient.getOneProjectItem(uuid)
+        Project projectModel = projectService.findOne(uuid, User.UNKNONW);
+        return Optional.of(projectModel)
                 .map(ProjectMapper.INSTANCE::toDto)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.badRequest().build());

@@ -12,5 +12,8 @@ public interface EnvironmentOutputPort {
 
     Environment save (Environment environment);
 
+    void attachProject (Environment environment, UUID projectUuid);
+    void detachProject (Environment environment, UUID projectUuid);
+
     void delete(Environment environment);
 }

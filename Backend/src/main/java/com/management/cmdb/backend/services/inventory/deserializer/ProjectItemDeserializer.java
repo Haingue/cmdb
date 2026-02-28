@@ -44,10 +44,10 @@ public class ProjectItemDeserializer extends JsonDeserializer<Project> implement
                 .collect(Collectors.toSet());
 
         UUID uuid = itemDto.uuid();
-        String fullName = attributes.get("fullName");
-        String shortName = attributes.get("shortName");
-        String description = attributes.get("description");
-        BusinessService businessService = BusinessService.builder().name(attributes.get("businessService")).build();
+        String fullName = attributes.get("FullName");
+        String shortName = attributes.get("ShortName");
+        String description = attributes.get("Description");
+        BusinessService businessService = BusinessService.builder().name(attributes.get("BusinessService")).build();
 //        UserGroup maintainers = attributes.get("maintainers");
 //        UserGroup owners = attributes.get("owners");
         Set<Environment> environments = environmentUuids.stream().map(envUuid -> Environment.builder().uuid(envUuid).build()).collect(Collectors.toSet());

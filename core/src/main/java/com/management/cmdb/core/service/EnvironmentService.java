@@ -1,6 +1,7 @@
 package com.management.cmdb.core.service;
 
 import com.management.cmdb.core.models.business.component.Component;
+import com.management.cmdb.core.models.business.constant.EnvironmentStatus;
 import com.management.cmdb.core.models.business.constant.EnvironmentType;
 import com.management.cmdb.core.models.business.constant.GlobalStaticParameter;
 import com.management.cmdb.core.models.business.identity.User;
@@ -33,13 +34,18 @@ public class EnvironmentService implements EnvironmentInputPort {
     }
 
     @Override
-    public Environment create(String location, EnvironmentType type, String jiraTracker, User initiator) {
+    public Environment create(UUID projectUuid, String location, EnvironmentType type, String jiraTracker, User initiator) {
         Environment environment = Environment.builder()
                 .location(location)
+                .status(EnvironmentStatus.REQUESTED)
                 .type(type)
                 .jiraTracker(jiraTracker)
                 .build();
-        return this.create(environment, initiator);
+        environment = this.create(environment, initiator);
+
+        // Attach environment to project
+        environmentOutputPort.attachProject(environment, projectUuid);
+        return environment;
     }
 
     @Override

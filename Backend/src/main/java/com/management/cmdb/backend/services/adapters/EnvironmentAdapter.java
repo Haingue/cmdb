@@ -55,6 +55,18 @@ public class EnvironmentAdapter implements EnvironmentOutputPort {
     }
 
     @Override
+    public void attachProject(Environment environment, UUID projectUuid) {
+        LinkDto linkDto = new LinkDto(new LinkTypeDto(LINK_TYPE_COMPONENT), environment.getUuid(), projectUuid, "");
+        inventoryServiceClient.linkItems(linkDto);
+
+    }
+
+    @Override
+    public void detachProject(Environment environment, UUID projectUuid) {
+        throw new NotImplemented();
+    }
+
+    @Override
     public void delete(Environment environment) {
         throw new NotImplemented();
     }
