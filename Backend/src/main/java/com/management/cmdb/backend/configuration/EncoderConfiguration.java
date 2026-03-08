@@ -11,6 +11,7 @@ import com.management.cmdb.backend.services.inventory.deserializer.*;
 import com.management.cmdb.backend.services.inventory.dto.ItemDto;
 import com.management.cmdb.backend.services.inventory.dto.wrapper.PaginatedResponseDto;
 import com.management.cmdb.backend.services.inventory.serializer.BusinessServiceItemSerializer;
+import com.management.cmdb.backend.services.inventory.serializer.EnvironmentItemSerializer;
 import com.management.cmdb.backend.services.inventory.serializer.ProjectItemSerializer;
 import com.management.cmdb.core.models.business.component.Component;
 import com.management.cmdb.core.models.business.component.Hardware;
@@ -63,6 +64,7 @@ public class EncoderConfiguration {
         module.addSerializer(LocalDateTime.class, LocalDateTimeSerializer.INSTANCE);
         module.addSerializer(BusinessService.class, new BusinessServiceItemSerializer());
         module.addSerializer(Project.class, new ProjectItemSerializer());
+        module.addSerializer(Environment.class, new EnvironmentItemSerializer());
         return module;
     }
 

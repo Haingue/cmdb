@@ -66,7 +66,7 @@ const BusinessServiceIndexPage = () => {
       <section className="mt-4">
         <h3 className="text-lg font-medium mb-2">Business Services creation</h3>
         <FormSection title="Identifiers">
-          <TextInput label="Abbreviation" name="abbreviation" value={abbreviation} placeholder="Abbreviation of the business service" onChange={(e) => setAbbreviation(e.target.value)} />
+          <TextInput label="Abbreviation" name="abbreviation" value={abbreviation} maxlength={3} placeholder="Abbreviation of the business service" onChange={(e) => setAbbreviation(e.target.value)} />
           <TextInput label="Name" name="name" value={name} placeholder="Name of the business service" onChange={(e) => setName(e.target.value)} />
           <TextInput label="Description" name="description" value={description} placeholder="Description of the business service" onChange={(e) => setDescription(e.target.value)} disabled />
         </FormSection>

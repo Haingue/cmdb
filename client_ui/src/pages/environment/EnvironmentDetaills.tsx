@@ -78,7 +78,7 @@ const EnvironmentDetaillsPage = () => {
       })))
       if (projectUuid) {
         const foundProject = _projects.content.find(item => item.uuid === projectUuid)
-        console.debug("Looking for project with UUID:", projectUuid, foundProject);
+        console.debug("Looking for parent project with UUID:", projectUuid, foundProject);
         if (foundProject) {
           setProject({
             uuid: foundProject.uuid!,
@@ -120,12 +120,17 @@ const EnvironmentDetaillsPage = () => {
 
     createEnvironment({
       uuid: null,
+      requestor: null, // TODO: get current user UUID
+      requestTimestamp: new Date().toISOString(),
       projectUuid: project.uuid,
-      name: name,
-      description: description,
-      type: type,
-      location: location,
-      status: status,
+      environment: {
+        uuid: null,
+        name: name,
+        description: description,
+        type: type,
+        location: location,
+        status: status,
+      }
     })
     .then((createdEnvironment) => {
       console.debug("Environment created:", createdEnvironment)

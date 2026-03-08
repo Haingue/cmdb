@@ -1,6 +1,6 @@
 import { BACKEND_BASE_URL } from "../../configuration";
 import type { ItemDto, PaginatedResponseDto } from "../inventory/types";
-import type { BackendServerInfo, BusinessService, ApiProblem, ProjectCreationRequest, Environment, Host, Software } from "./types";
+import type { BackendServerInfo, BusinessService, ApiProblem, ProjectCreationRequest, Environment, Host, Software, EnvironmentCreationRequest } from "./types";
 
 /** Server **/
 export async function getServerInfo(): Promise<BackendServerInfo> {
@@ -66,13 +66,13 @@ export async function searchEnvironment(name?: string): Promise<PaginatedRespons
   return response.json();
 }
 
-export async function createEnvironment(environment: Environment): Promise<ItemDto> {
+export async function createEnvironment(EnvironmentCreationRequest: EnvironmentCreationRequest): Promise<ItemDto> {
   const response = await fetch(`${BACKEND_BASE_URL}/service/environment`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(environment),
+    body: JSON.stringify(EnvironmentCreationRequest),
   });
   if (!response.ok) return Promise.reject(await response.json() as ApiProblem);
   return response.json();

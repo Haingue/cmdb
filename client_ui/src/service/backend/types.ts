@@ -74,6 +74,11 @@ export type Environment = {
   location?: string
 }
 
+export type EnvironmentCreationRequest = Request & {
+    environment: Environment
+    projectUuid: UUID
+}
+
 export type Component = {
   uuid: UUID
   environmentUuid?: UUID

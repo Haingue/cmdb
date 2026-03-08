@@ -23,6 +23,7 @@ import SoftwareIndexPage from './pages/component/software'
 import AlertSection from './components/alert/AlertSection'
 import ProjectDetailsPage from './pages/project/ProjectDetails'
 import EnvironmentDetaillsPage from './pages/environment/EnvironmentDetaills'
+import Breadcrumbs from './components/Breadcrumbs'
 
 const Root = () => {
   return (
@@ -34,6 +35,7 @@ const Root = () => {
         <div className={`relative grow h-full overflow-y-auto transition duration-75 lg:ml-64 ml-4`}>
           <SideBar backdrop />
           <main className="p-4">
+            <Breadcrumbs />
             <AlertSection />
             <Routes>
               <Route path="/" Component={Dashboard} />

@@ -72,45 +72,18 @@ public class ItemServiceImpl implements ItemService {
         itemEntity.setUuid(UUID.randomUUID());
         itemEntity.setType(itemTypeEntity);
 
-        Map<String, AttributeTypeEntity> attributeDefMap = itemTypeEntity.getAttributes()
-                .stream().collect(Collectors.toMap(AttributeTypeEntity::getLabel, attr -> attr));
-        for (AttributeEntity attribute : itemEntity.getAttributes()) {
-            attribute.setUuid(UUID.randomUUID());
-            attribute.setItem(itemEntity);
-            attribute.setCreatedBy(author.uuid());
-
-            AttributeTypeEntity attributeType = attributeDefMap.get(attribute.getAttributeType().getLabel());
-            if (attributeType != null) {
-                attribute.setAttributeType(attributeType);
+        Map<String, AttributeEntity> attributeMap = itemEntity.getAttributes()
+                .stream().collect(Collectors.toMap(attr -> attr.getAttributeType().getLabel(), attr -> attr));
+        itemEntity.getAttributes().clear();
+        for (AttributeTypeEntity attributeTypeEntity : itemTypeEntity.getAttributes()) {
+            AttributeEntity attribute = attributeMap.get(attributeTypeEntity.getLabel());
+            if(attribute != null) {
+                attribute.setUuid(UUID.randomUUID());
+                attribute.setItem(itemEntity);
+                attribute.setCreatedBy(author.uuid());
+                attribute.setAttributeType(attributeTypeEntity);
             }
         }
-
-        /*
-        if (!itemEntity.getOutgoingLinks().isEmpty()) {
-            for (LinkEntity linkEntity : itemEntity.getOutgoingLinks()) {
-                linkEntity.setUuid(UUID.randomUUID());
-                linkEntity.setLinkType(linkTypeRepository.findFirstByLabelIgnoreCase(newItemDto.type().label())
-                        .orElseGet(() -> createLinkType(linkEntity.getLinkType(), author)));
-                linkEntity.setSourceItem(itemEntity);
-                ItemEntity targetItem = itemRepository.findById(linkEntity.getTargetItem().getUuid())
-                        .orElseThrow(() -> new LinkedItemDoesNotExist(linkEntity.getTargetItem()));
-                linkEntity.setTargetItem(targetItem);
-            }
-        }
-        if (!itemEntity.getIncomingLinks().isEmpty()) {
-            for (LinkEntity linkEntity : itemEntity.getIncomingLinks()) {
-                linkEntity.setUuid(UUID.randomUUID());
-                linkEntity.setLinkType(linkTypeRepository.findFirstByLabelIgnoreCase(newItemDto.type().label())
-                        .orElseGet(() -> createLinkType(linkEntity.getLinkType(), author)));
-
-                ItemEntity sourceItem = itemRepository.findById(linkEntity.getSourceItem().getUuid())
-                        .orElseThrow(() -> new LinkedItemDoesNotExist(linkEntity.getSourceItem()));
-                linkEntity.setSourceItem(sourceItem);
-                linkEntity.setTargetItem(itemEntity);
-            }
-        }
-         */
-
         itemEntity = this.itemRepository.save(itemEntity);
         ItemDto resultItem = ItemMapper.INSTANCE.toDto(itemEntity);
 
@@ -137,51 +110,6 @@ public class ItemServiceImpl implements ItemService {
         ItemTypeEntity itemTypeEntity = this.itemTypeRepository.findFirstByLabel(itemDto.type().label())
                 .orElseThrow(ItemTypeNotExist::new);
         existingItem.setType(itemTypeEntity);
-
-        /*
-        if (!itemDto.outgoingLinks().isEmpty()) {
-            // TODO Delete unupdated links ?
-            for (LinkDto linkDto : itemDto.outgoingLinks()) {
-                LinkTypeEntity linkType = linkTypeRepository.findFirstByLabelIgnoreCase(linkDto.linkType().label())
-                        .orElse(StartupJob.communicate_with);
-                ItemEntity targetItem = itemRepository.findById(linkDto.targetItemId())
-                        .orElseThrow(() -> new LinkedItemDoesNotExist(linkDto.targetItemId()));
-                LinkEntity linkEntity = linkRepository.findFirstBySourceItemUuidAndTargetItemUuidAndLinkTypeLabel(existingItem.getUuid(), targetItem.getUuid(), linkType.getLabel())
-                        .orElseGet(() -> {
-                            LinkEntity newLinkEntity = new LinkEntity();
-                            newLinkEntity.setUuid(UUID.randomUUID());
-                            newLinkEntity.setLinkType(linkType);
-                            return newLinkEntity;
-                        });
-
-                linkEntity.setSourceItem(existingItem);
-                linkEntity.setTargetItem(targetItem);
-                linkEntity.setDescription(linkDto.description());
-                existingItem.getOutgoingLinks().add(linkEntity);
-            }
-        }
-        if (!itemDto.incomingLinks().isEmpty()) {
-            // TODO Delete unupdated links ?
-            for (LinkDto linkDto : itemDto.incomingLinks()) {
-                LinkTypeEntity linkType = linkTypeRepository.findFirstByLabelIgnoreCase(linkDto.linkType().label())
-                        .orElse(StartupJob.communicate_with);
-                ItemEntity sourceItem = itemRepository.findById(linkDto.sourceItemId())
-                        .orElseThrow(() -> new LinkedItemDoesNotExist(linkDto.sourceItemId()));
-                LinkEntity linkEntity = linkRepository.findFirstBySourceItemUuidAndTargetItemUuidAndLinkTypeLabel(sourceItem.getUuid(), existingItem.getUuid(), linkType.getLabel())
-                        .orElseGet(() -> {
-                            LinkEntity newLinkEntity = new LinkEntity();
-                            newLinkEntity.setUuid(UUID.randomUUID());
-                            newLinkEntity.setLinkType(linkType);
-                            return newLinkEntity;
-                        });
-
-                linkEntity.setSourceItem(sourceItem);
-                linkEntity.setTargetItem(existingItem);
-                linkEntity.setDescription(linkDto.description());
-                existingItem.getIncomingLinks().add(linkEntity);
-            }
-        }
-         */
         existingItem = this.itemRepository.save(existingItem);
 
         applicationEventPublisher.publishEvent(

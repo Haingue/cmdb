@@ -10,6 +10,7 @@ type TextInputProps = {
     disabled?: boolean
     readonly?: boolean
     placeholder?: string
+    maxlength?: number
 }
 
 const InitialValueHint = ({ initialValue, onClick }: { initialValue?: string, onClick?: () => void }) => {
@@ -19,7 +20,7 @@ const InitialValueHint = ({ initialValue, onClick }: { initialValue?: string, on
     )
 }
 
-const TextInput = ({ name, label, initialValue, value, onChange, description, disabled, readonly, placeholder }: TextInputProps) => {
+const TextInput = ({ name, label, initialValue, value, onChange, description, disabled, readonly, placeholder, maxlength }: TextInputProps) => {
   return (
     <div>
         <label htmlFor={`${name}-input`} className='block mb-1 text-sm font-medium text-heading'>
@@ -38,6 +39,7 @@ const TextInput = ({ name, label, initialValue, value, onChange, description, di
                 title={description}
                 value={value}
                 placeholder={placeholder}
+                maxLength={maxlength}
                 onChange={onChange}
                 className='text-body block w-full px-3 py-2.5 bg-neutral-secondary-medium disabled:bg-neutral-400 border rounded-base shadow-xs'
             />
@@ -49,6 +51,7 @@ const TextInput = ({ name, label, initialValue, value, onChange, description, di
                 title={description}
                 value={value}
                 placeholder={placeholder}
+                maxLength={maxlength}
                 onChange={onChange}
                 className='text-body block w-full px-3 py-2.5 bg-neutral-secondary-medium border rounded-base shadow-xs focus:border-brand'
                 />
