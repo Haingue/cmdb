@@ -26,9 +26,18 @@ public class LinkController {
     }
 
     @PostMapping
-    public ResponseEntity<LinkDto> createLinkType(@RequestBody LinkDto linkDto) {
+    public ResponseEntity<LinkDto> createLink(@RequestBody LinkDto linkDto) {
         LOGGER.info("Creating new link type {}", linkDto);
         Optional<LinkDto> result = linkService.connectEntities(linkDto, UserDetail.UNKNOWN);
+        return result
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.BAD_REQUEST).build());
+    }
+
+    @DeleteMapping
+    public ResponseEntity<LinkDto> deleteLink(@RequestBody LinkDto linkDto) {
+        LOGGER.info("Delete link type {}", linkDto);
+        Optional<LinkDto> result = linkService.disconnectEntities(linkDto, UserDetail.UNKNOWN);
         return result
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.BAD_REQUEST).build());

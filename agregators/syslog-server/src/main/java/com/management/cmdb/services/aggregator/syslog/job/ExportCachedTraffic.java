@@ -25,7 +25,7 @@ public class ExportCachedTraffic {
 
     @Scheduled(cron = "0 * * * * *")
     public void exportCollectedTraffics() {
-        LOGGER.debug("Exporting collected traffics to inventory");
+        LOGGER.info("Exporting collected traffics to inventory");
         Map<String, Map<String, Traffic>> traffics = syslogService.getTraffics();
         for (Map.Entry<String, Map<String, Traffic>> source : traffics.entrySet()) {
             LOGGER.debug("Exporting traffics from {} [destination={}]", source.getKey(), source.getValue().size());

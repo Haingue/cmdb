@@ -59,10 +59,14 @@ public class ItemService {
         traffic.setSourceUuid(sourceItem.uuid());
         traffic.setDestinationUuid(destinationItem.uuid());
         String linkDescription = String.format("TRAFFIC [port=%s, app=%s, protocol=%s, rule=%s]", traffic.getDestinationPort(), traffic.getApplication(), traffic.getProtocol(), traffic.getRuleName());
-        LinkDto linkDto = new LinkDto(communicateWithLinkType, sourceItem.uuid(), destinationItem.uuid(), linkDescription);
-        sourceItem.outgoingLinks().add(linkDto);
 
-        inventoryServiceClient.updateItem(sourceItem, newItemTypeIpAddressAttribute, traffic.getSourceIp());
+        boolean linkDoesNotExist = sourceItem.outgoingLinks().stream()
+                .map(LinkDto::targetItemId)
+                .noneMatch(targetUuid -> targetUuid.equals(destinationItem.uuid()));
+        if (linkDoesNotExist) {
+            LinkDto linkDto = new LinkDto(communicateWithLinkType, sourceItem.uuid(), destinationItem.uuid(), linkDescription);
+            inventoryServiceClient.connectItems(linkDto, newItemTypeIpAddressAttribute, traffic.getSourceIp());
+        }
     }
 
     public PaginatedResponseDto<ItemDto> searchItemsByIpAddress(String newItemTypeIpAddressAttribute, String ip) {

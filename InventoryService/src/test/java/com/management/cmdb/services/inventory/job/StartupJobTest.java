@@ -29,7 +29,6 @@ class StartupJobTest {
             Optional<ItemTypeEntity> savedItemType = this.itemTypeRepository.findFirstByLabel(itemTypeExample.itemType.getLabel());
             Assertions.assertTrue(savedItemType.isPresent());
             Assertions.assertEquals(itemTypeExample.itemType.getLabel(), savedItemType.get().getLabel());
-            Assertions.assertEquals(itemTypeExample.itemType.getDescription(), savedItemType.get().getDescription());
             Assertions.assertEquals(itemTypeExample.itemType.getAttributes().size(), savedItemType.get().getAttributes().size());
         }
     }

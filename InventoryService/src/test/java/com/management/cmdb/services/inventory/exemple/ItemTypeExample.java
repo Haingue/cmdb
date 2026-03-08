@@ -11,7 +11,7 @@ import java.util.UUID;
 public enum ItemTypeExample {
 
     BUSINESS_SERVICE("d2761d9d-a632-46de-bdca-8f7c35c9e038", "Business service", "Representation of a business service/process", Set.of("abbreviation"), Set.of()),
-    PROJECT("385a188f-ef47-4872-9de2-c1b2ebae1ab6", "Project", "Representation of an IT project", Set.of("businessService", "fullName", "owners", "maintainers", "environments", "shortName"), Set.of()),
+    PROJECT("385a188f-ef47-4872-9de2-c1b2ebae1ab6", "Project", "Representation of an project", Set.of("businessService", "fullName", "owners", "maintainers", "environments", "shortName"), Set.of()),
     ENVIRONMENT("7a70ce7e-841d-42e1-92b4-73f65a99cfba", "Environment", "Representation of a project environment", Set.of("components", "location", "status"), Set.of(AttributeTypeExample.ENV_TYPE)),
     MAINTAINER("09227a4a-74e8-4622-9aa7-9cc54c8c96c1", "Maintainer", "List of project maintainers", Set.of("email", "members"), Set.of()),
     COMPONENT("f317eae7-747a-493c-9d7f-78751f151cd9", "Component", "Representation of a project component (ex: server, application, ...)", Set.of("version"), Set.of(AttributeTypeExample.DOMAIN, AttributeTypeExample.STATUS)),

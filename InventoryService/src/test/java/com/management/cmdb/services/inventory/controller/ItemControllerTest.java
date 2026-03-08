@@ -89,27 +89,6 @@ class ItemControllerTest {
     }
 
     @Test
-    void shouldCreateItemWithOutgoingLinkSuccessfully() {
-        ItemDto postgreSqlItem = createItem(webTestClient, ItemExample.POSTGRESQL01.toDto());
-
-        ItemEntity itemEntity = ItemExample.JETTY01.toEntity();
-        LinkEntity linkEntity = new LinkEntity();
-        linkEntity.setLinkType(LinkTypeExample.COMMUNICATE_WITH.toEntity());
-        linkEntity.setTargetItem(ItemMapper.INSTANCE.toEntity(postgreSqlItem));
-        itemEntity.getOutgoingLinks().add(linkEntity);
-        ItemDto createdItem = createItem(webTestClient, ItemMapper.INSTANCE.toDto(itemEntity));
-
-        assertThat(createdItem)
-                .isNotNull()
-                .returns(itemEntity.getName(), from(ItemDto::name))
-                .returns(itemEntity.getDescription(), from(ItemDto::description));
-
-        assertThat(createdItem.outgoingLinks())
-                .isNotEmpty()
-                .hasSize(1);
-    }
-
-    @Test
     void shouldUpdateItemSuccessfully() {
         ItemDto itemDto = ItemExample.POSTGRESQL01.toDto();
         ItemDto createdItem = createItem(webTestClient, itemDto);

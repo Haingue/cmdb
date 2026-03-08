@@ -25,7 +25,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Transactional
 @Service
@@ -69,17 +72,20 @@ public class ItemServiceImpl implements ItemService {
         itemEntity.setUuid(UUID.randomUUID());
         itemEntity.setType(itemTypeEntity);
 
+        Map<String, AttributeTypeEntity> attributeDefMap = itemTypeEntity.getAttributes()
+                .stream().collect(Collectors.toMap(AttributeTypeEntity::getLabel, attr -> attr));
         for (AttributeEntity attribute : itemEntity.getAttributes()) {
             attribute.setUuid(UUID.randomUUID());
             attribute.setItem(itemEntity);
             attribute.setCreatedBy(author.uuid());
 
-            AttributeTypeEntity attributeType = itemTypeEntity.getAttributes().stream()
-                    .filter(attributeTypeRef -> attributeTypeRef.getLabel().equalsIgnoreCase(attribute.getAttributeType().getLabel()))
-                    .findFirst().orElseThrow(ItemNotValid::new);
-            attribute.setAttributeType(attributeType);
+            AttributeTypeEntity attributeType = attributeDefMap.get(attribute.getAttributeType().getLabel());
+            if (attributeType != null) {
+                attribute.setAttributeType(attributeType);
+            }
         }
 
+        /*
         if (!itemEntity.getOutgoingLinks().isEmpty()) {
             for (LinkEntity linkEntity : itemEntity.getOutgoingLinks()) {
                 linkEntity.setUuid(UUID.randomUUID());
@@ -103,6 +109,7 @@ public class ItemServiceImpl implements ItemService {
                 linkEntity.setTargetItem(itemEntity);
             }
         }
+         */
 
         itemEntity = this.itemRepository.save(itemEntity);
         ItemDto resultItem = ItemMapper.INSTANCE.toDto(itemEntity);
@@ -118,22 +125,6 @@ public class ItemServiceImpl implements ItemService {
         return resultItem;
     }
 
-    private LinkTypeEntity createLinkType(LinkTypeEntity linkTypeEntity, UserDetail author) {
-        if (StringUtils.isBlank(linkTypeEntity.getLabel())) throw new LinkTypeNotValid();
-        linkTypeEntity.setUuid(UUID.randomUUID());
-        LinkTypeEntity newLink = linkTypeRepository.save(linkTypeEntity);
-
-        applicationEventPublisher.publishEvent(
-                new NotificationDto(
-                        new AuthorDto(author.email()),
-                        NotificationDto.NotificationType.NEW_ITEM,
-                        "Connect items",
-                        newLink.getUuid()
-                )
-        );
-        return newLink;
-    }
-
     @Override
     @Tool(description = "Tool targetItemId update an existing item in the CMDB")
     public ItemDto updateItem(ItemDto itemDto, UserDetail author) {
@@ -147,6 +138,7 @@ public class ItemServiceImpl implements ItemService {
                 .orElseThrow(ItemTypeNotExist::new);
         existingItem.setType(itemTypeEntity);
 
+        /*
         if (!itemDto.outgoingLinks().isEmpty()) {
             // TODO Delete unupdated links ?
             for (LinkDto linkDto : itemDto.outgoingLinks()) {
@@ -189,6 +181,7 @@ public class ItemServiceImpl implements ItemService {
                 existingItem.getIncomingLinks().add(linkEntity);
             }
         }
+         */
         existingItem = this.itemRepository.save(existingItem);
 
         applicationEventPublisher.publishEvent(

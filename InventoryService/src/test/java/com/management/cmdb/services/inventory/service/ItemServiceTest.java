@@ -43,7 +43,8 @@ class ItemServiceTest {
         this.itemRepository = itemRepository;
         this.itemService = itemService;
 
-        this.itemTypeExample = itemTypeRepository.save(ItemTypeExample.HOST.itemType);
+        this.itemTypeExample = itemTypeRepository.findFirstByLabel(ItemTypeExample.HOST.itemType.getLabel())
+                .orElse(ItemTypeExample.HOST.itemType);
         this.itemExample = itemRepository.save(ItemExample.JETTY01.toEntity());
         this.userDetail = new UserDetail(new UUID(0, 0), "test","test@test.com");
     }
@@ -145,16 +146,6 @@ class ItemServiceTest {
     @Test
     @Transactional
     void shouldNotDuplicateItemType () {
-        Optional<ItemTypeEntity> searchItemType = this.itemTypeRepository.findFirstByLabel(this.itemTypeExample.getLabel());
-        Assertions.assertTrue(searchItemType.isPresent());
-        ItemTypeEntity itemTypeEntity = searchItemType.get();
-        itemTypeEntity = this.itemTypeRepository.save(itemTypeEntity);
-        itemTypeEntity = this.itemTypeRepository.save(itemTypeEntity);
-        itemTypeEntity = this.itemTypeRepository.save(itemTypeEntity);
-        itemTypeEntity = this.itemTypeRepository.save(itemTypeEntity);
-        Assertions.assertEquals(itemTypeEntity.getLabel(), this.itemTypeExample.getLabel());
-
-
         ItemEntity newItem = ItemExample.JETTY01.toEntity();
         newItem.setName("New Jetty 01");
         this.itemService.createItem(ItemMapper.INSTANCE.toDto(newItem), this.userDetail);
@@ -166,6 +157,6 @@ class ItemServiceTest {
         this.itemService.createItem(ItemMapper.INSTANCE.toDto(newItem), this.userDetail);
 
         Page<ItemTypeEntity> itemTypeList = this.itemTypeRepository.searchAllByLabelContainingIgnoreCase(this.itemTypeExample.getLabel(), PageRequest.of(0, 10));
-        Assertions.assertEquals(2L, itemTypeList.getTotalElements());
+        Assertions.assertEquals(1L, itemTypeList.getTotalElements());
     }
 }

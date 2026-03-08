@@ -38,7 +38,8 @@ public class ExceptionAdvice {
             HttpClientErrorException.class,
             TransactionSystemException.class,
             ItemNotValid.class,
-            LinkTypeNotValid.class
+            LinkTypeNotValid.class,
+            LinkedItemDoesNotExist.class
     })
     public ResponseEntity<ProblemDetail> handleClientException(RuntimeException ex) {
         return ResponseEntity.badRequest().body(generateProblemDetail(HttpStatus.BAD_REQUEST, ex));

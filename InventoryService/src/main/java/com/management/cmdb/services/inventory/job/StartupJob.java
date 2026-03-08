@@ -27,8 +27,8 @@ import java.util.stream.Collectors;
 public class StartupJob implements CommandLineRunner {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StartupJob.class);
-    public static LinkTypeEntity communicate_with = new LinkTypeEntity("Communicate with");
-    public static LinkTypeEntity UNDEFINED = new LinkTypeEntity("Undefined");
+    public static LinkTypeEntity COMMUNICATE_WITH_LINK_TYPE = new LinkTypeEntity("Communicate with");
+    public static LinkTypeEntity UNDEFINED_LINK_TYPE = new LinkTypeEntity("Undefined");
 
     private final Environment env;
 
@@ -42,11 +42,16 @@ public class StartupJob implements CommandLineRunner {
     }
 
     private void createLinkType() {
-        Optional<LinkTypeDto> communicationWithLinkType = linkTypeService.findByLabel(communicate_with.getLabel());
+        Optional<LinkTypeDto> communicationWithLinkType = linkTypeService.findByLabel(COMMUNICATE_WITH_LINK_TYPE.getLabel());
         if (communicationWithLinkType.isEmpty()) {
-            communicationWithLinkType = Optional.of(linkTypeService.create(LinkTypeMapper.INSTANCE.toDto(communicate_with), UserDetail.SYSTEM));
+            communicationWithLinkType = Optional.of(linkTypeService.create(LinkTypeMapper.INSTANCE.toDto(COMMUNICATE_WITH_LINK_TYPE), UserDetail.SYSTEM));
         }
-        communicate_with = LinkTypeMapper.INSTANCE.toEntity(communicationWithLinkType.get());
+        UNDEFINED_LINK_TYPE = LinkTypeMapper.INSTANCE.toEntity(communicationWithLinkType.get());
+        Optional<LinkTypeDto> undefinedLinkType = linkTypeService.findByLabel(UNDEFINED_LINK_TYPE.getLabel());
+        if (undefinedLinkType.isEmpty()) {
+            undefinedLinkType = Optional.of(linkTypeService.create(LinkTypeMapper.INSTANCE.toDto(UNDEFINED_LINK_TYPE), UserDetail.SYSTEM));
+        }
+        UNDEFINED_LINK_TYPE = LinkTypeMapper.INSTANCE.toEntity(undefinedLinkType.get());
     }
 
     private void createItemType() throws NoSuchFieldException, NoSuchMethodException {
@@ -74,7 +79,7 @@ public class StartupJob implements CommandLineRunner {
             itemTypeEntity.setUuid(UUID.randomUUID());
             itemTypeEntity.setLabel(coreModel.getSimpleName());
             itemTypeEntity.setDescription(
-                    String.format("Description of %s", coreModel.getSimpleName()));
+                    String.format("Representation of %s", coreModel.getSimpleName()));
             itemTypeEntity.setCreatedBy(UserDetail.SYSTEM.uuid());
 
             // Add attribute type

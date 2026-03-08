@@ -1,6 +1,7 @@
 package com.management.cmdb.services.aggregator.syslog.external.inventory;
 
 import com.management.cmdb.services.aggregator.syslog.external.inventory.dto.ItemDto;
+import com.management.cmdb.services.aggregator.syslog.external.inventory.dto.LinkDto;
 import com.management.cmdb.services.aggregator.syslog.external.inventory.dto.wrapper.PaginatedResponseDto;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -22,8 +23,8 @@ public interface InventoryServiceClient {
     @CacheEvict(cacheNames = "connected-assets", key = "{#attributeName + #attributeValue}")
     ResponseEntity<ItemDto> createItem(@RequestBody ItemDto itemDto, @RequestParam String attributeName, @RequestParam String attributeValue);
 
-    @PutMapping("/item")
+    @PostMapping("/link")
     @CacheEvict(cacheNames = "connected-assets", key = "{#attributeName + #attributeValue}")
-    ResponseEntity<ItemDto> updateItem(@RequestBody ItemDto itemDto, @RequestParam String attributeName, @RequestParam String attributeValue);
+    ResponseEntity<LinkDto> connectItems(@RequestBody LinkDto linkDto, @RequestParam String attributeName, @RequestParam String attributeValue);
 
 }
