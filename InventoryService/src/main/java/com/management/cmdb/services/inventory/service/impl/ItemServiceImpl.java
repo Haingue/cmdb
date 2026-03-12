@@ -82,6 +82,7 @@ public class ItemServiceImpl implements ItemService {
                 attribute.setItem(itemEntity);
                 attribute.setCreatedBy(author.uuid());
                 attribute.setAttributeType(attributeTypeEntity);
+                itemEntity.getAttributes().add(attribute);
             }
         }
         itemEntity = this.itemRepository.save(itemEntity);

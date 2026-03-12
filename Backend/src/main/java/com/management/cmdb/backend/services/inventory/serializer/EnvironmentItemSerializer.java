@@ -41,8 +41,8 @@ public class EnvironmentItemSerializer extends JsonSerializer<Environment> imple
                 EnvironmentItemType,
                 Set.of(
                     new AttributeDto(null, "Type", null, environment.getType().name(), null, null, null, null),
-                    new AttributeDto(null, "Version", null, ""+environment.getRevision(), null, null, null, null),
-                    new AttributeDto(null, "JiraTicket", null, environment.getJiraTracker(), null, null, null, null),
+                    new AttributeDto(null, "Revision", null, ""+environment.getRevision(), null, null, null, null),
+                    new AttributeDto(null, "JiraTracker", null, environment.getJiraTracker(), null, null, null, null),
                     new AttributeDto(null, "Location", null, environment.getLocation(), null, null, null, null),
                     new AttributeDto(null, "Status", null, environment.getStatus().name(), null, null, null, null)
                 ),

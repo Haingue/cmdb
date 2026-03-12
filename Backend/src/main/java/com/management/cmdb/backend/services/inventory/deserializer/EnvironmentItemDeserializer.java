@@ -37,15 +37,19 @@ public class EnvironmentItemDeserializer extends JsonDeserializer<Environment> i
             ));
 
         UUID uuid = itemDto.uuid();
-        String status = attributes.get("status");
-        String type = attributes.get("type");
+        String status = attributes.get("Status");
+        String type = attributes.get("Type");
         String location = attributes.get("Location");
         String jiraTracker = attributes.get("JiraTracker");
+
+        long revision = -1L;
+        if (attributes.containsKey("Revision")) revision = Long.parseLong(attributes.get("Revision"));
 
         Environment.EnvironmentBuilder<?, ?> environmentBuilder = Environment.builder()
                 .uuid(uuid)
                 .location(location)
                 .jiraTracker(jiraTracker)
+                .revision(revision)
                 .creationDatetime(itemDto.createdDate());
         if (status != null) {
             environmentBuilder.status(EnvironmentStatus.valueOf(status));
