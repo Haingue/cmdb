@@ -1,29 +1,8 @@
-import { Route, Routes } from 'react-router'
-import Dashboard from './pages/home/Dashboard'
-import NotFound from './pages/NotFound'
-import Map from './pages/map/Map'
 import SideBar from './components/navigation/SideBar'
 import NavBar from './components/navigation/NavBar'
-import InventoryService from './pages/InventoryService'
-import About from './pages/about'
-import ItemTypeExplorer from './pages/InventoryService/item-type'
-import ItemTypeForm from './pages/InventoryService/item-type-form'
-import LinkTypeExplorer from './pages/InventoryService/link-type'
-import LinkTypeForm from './pages/InventoryService/link-type-form'
-import ItemExplorer from './pages/InventoryService/items'
-import ItemFormPage from './pages/InventoryService/item-form'
-import TrafficPage from './pages/traffic'
-import ItemDetailsPage from './pages/InventoryService/items/item-details'
-import ProjectIndexPage from './pages/project'
-import BusinessServiceIndexPage from './pages/business-service'
-import EnvironmentIndexPage from './pages/environment'
-import ComponentIndexPage from './pages/component'
-import HostIndexPage from './pages/component/host'
-import SoftwareIndexPage from './pages/component/software'
 import AlertSection from './components/alert/AlertSection'
-import ProjectDetailsPage from './pages/project/ProjectDetails'
-import EnvironmentDetaillsPage from './pages/environment/EnvironmentDetaills'
 import Breadcrumbs from './components/Breadcrumbs'
+import { Outlet } from 'react-router'
 
 const Root = () => {
   return (
@@ -37,7 +16,8 @@ const Root = () => {
           <main className="p-4">
             <Breadcrumbs />
             <AlertSection />
-            <Routes>
+            <Outlet />
+            {/* <Routes>
               <Route path="/" Component={Dashboard} />
               <Route path="/map" Component={Map} />
               <Route path="/project" Component={ProjectIndexPage} />
@@ -64,7 +44,7 @@ const Root = () => {
               <Route path="/about" Component={About} />
 
               <Route path="*" Component={NotFound} />
-            </Routes>
+            </Routes> */}
           </main>
         </div>
       </div>

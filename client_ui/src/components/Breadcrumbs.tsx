@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { matchRoutes, useLocation } from "react-router";
+import { matchRoutes, useLocation, useMatches } from "react-router";
 
 const Breadcrumbs = () => {
-  const location = useLocation();
+  const matches = useMatches()
   const [crumbs, setCrumbs] = useState<any[]>([]);
 
   const goBack = () => {
@@ -20,6 +20,7 @@ const Breadcrumbs = () => {
               Back
             </button>
           </li>
+          <li>{matches[matches.length - 1]?.pathname}</li>
         </ol>
       </nav>
     </>

@@ -41,7 +41,7 @@ const ProjectIndexPage = () => {
       console.error("Error fetching Project Item Type:", error);
       dispatch(addAlert({ type: "error", message: "Failed to fetch Project Item Type.", details: error }))
     })
-    searchItems(undefined, "Project")
+    searchItems({ itemType: "Project" })
     .then((_projects) => {
       console.debug("Projects fetched:", _projects);
       setProjects(_projects.content)
@@ -116,7 +116,7 @@ const ProjectIndexPage = () => {
   const handleEditProject = (projectUuid: string) => {
     console.debug("Edit Project clicked for UUID:", projectUuid)
     // Navigate to Project Details page
-    navigate(`/project-details?projectUuid=${projectUuid}`)
+    navigate(`/project/details?projectUuid=${projectUuid}`)
   }
   const createEditButton = (projectUuid: string): ReactNode => {
     return (
@@ -128,7 +128,7 @@ const ProjectIndexPage = () => {
     <>
       <PageTitle title="Projects" />
       <section className="mt-4">
-        <ButtonInput name="create-new-project" label="Create New Project" onClick={() => navigate('/project-details')} />
+        <ButtonInput name="create-new-project" label="Create New Project" onClick={() => navigate('/project/details')} />
       </section>
       <section className="mt-4">
         <h3 className="text-xl-heading font-medium mb-2">Existing Projects</h3>

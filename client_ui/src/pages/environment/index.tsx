@@ -32,7 +32,7 @@ const EnvironmentIndexPage = () => {
         console.error("Error fetching Environment Item Type:", error);
         dispatch(addAlert({ type: "error", message: "Failed to fetch Environment Item Type.", details: error }))
       })
-      searchItems(undefined, "Environment")
+      searchItems({ itemType: "Environment" })
       .then((_environments) => {
         console.debug("Environments fetched:", _environments);
         setEnvironments(_environments.content)
@@ -47,7 +47,7 @@ const EnvironmentIndexPage = () => {
     <>
       <PageTitle title="Environments" />
       <section className="mt-4">
-        <ButtonInput label="Create Environment" name="create-environment" onClick={() => navigate("/environment-details")} />
+        <ButtonInput label="Create Environment" name="create-environment" onClick={() => navigate("/environment/details")} />
       </section>
       <section className="mt-4">
         <h3 className="text-xl-heading font-medium mb-2">Existing Projects</h3>
@@ -66,7 +66,7 @@ const EnvironmentIndexPage = () => {
             description: {content: item.description},
             ...item.attributes && { ...item.attributes.reduce((acc, attr) => ({ ...acc, [attr.label]: { content: attr.value } }), {}) },
             lastModifiedDate: {content: item.lastModifiedDate},
-            actions: {content: <ButtonInput key={`editBtn-${item.uuid}`} name={`edit-environment-${item.uuid}`} label="Edit" onClick={() => navigate(`/environment-details?environmentUuid=${item.uuid}`)} /> }
+            actions: {content: <ButtonInput key={`editBtn-${item.uuid}`} name={`edit-environment-${item.uuid}`} label="Edit" onClick={() => navigate(`/environment/details?environmentUuid=${item.uuid}`)} /> }
           })) || []}
           isCollapsed={false}
         />

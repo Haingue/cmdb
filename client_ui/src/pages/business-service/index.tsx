@@ -30,7 +30,7 @@ const BusinessServiceIndexPage = () => {
         console.error("Error fetching BusinessService Item Type:", error);
         dispatch(addAlert({ type: "error", message: "Failed to fetch BusinessService Item Type.", details: error }))
       })
-      searchItems(undefined, "BusinessService")
+      searchItems({ itemType: "BusinessService" })
       .then((_businessServices) => {
         console.debug("BusinessServices fetched:", _businessServices);
         setBusinessServices(_businessServices.content)

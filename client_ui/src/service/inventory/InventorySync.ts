@@ -11,12 +11,12 @@ export async function getServerInfo(): Promise<InventoryServiceServerInfo> {
 }
 
 /** Item **/
-export async function searchItems(
+export async function searchItems({ itemName, itemType, pageNumber = 0, pageSize = 100 }: {
   itemName?: string,
   itemType?: string,
-  pageNumber: number = 0,
-  pageSize: number = 100
-): Promise<PaginatedResponseDto<ItemDto>> {
+  pageNumber?: number,
+  pageSize?: number
+}): Promise<PaginatedResponseDto<ItemDto>> {
   const queryParams = new URLSearchParams();
   if (itemName) queryParams.append("itemName", itemName);
   if (itemType) queryParams.append("itemType", itemType);
