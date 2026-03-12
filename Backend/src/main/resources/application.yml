@@ -38,7 +38,7 @@ spring:
               - Method=GET,POST,PUT,DELETE,OPTIONS
               filters:
                 - RewritePath=/api/inventory/?(?<segment>.*), /$\{segment}
-                - LocalResponseCache=30m,500MB
+                - LocalResponseCache=1m,500MB
 #                - name: CircuitBreaker
 #                  args:
 #                    name: myCircuitBreaker
