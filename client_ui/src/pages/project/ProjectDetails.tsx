@@ -148,7 +148,7 @@ const ProjectDetailsPage = () => {
         <FormSection title="Attributes">
           <TextInput label="Full name" name="fullname" value={fullName} placeholder="Full name of the project" onChange={(e) => setFullName(e.target.value)} />
           <TextInput label="Short name" name="shortname" value={shortName} placeholder="Short name of the project, used to prefix component" onChange={(e) => setShortName(e.target.value)} />
-          <VersionInput label="Version" name="version" value={version} placeholder="Version of the business service" onChange={() => {}} />
+          <VersionInput label="Version" name="version" value={version} placeholder="Version of the business service" onChange={(e) => setVersion(e.target.value)} />
           <SelectInput label="Business Service" name="business_service" value={businessServiceName} placeholder="Select a business service" onChange={(e) => setBusinessServiceName(e.target.value)} options={businessServices.map((bs) => ({ label: bs.name, value: `${bs.name}` }))} />
           <SelectInput label="Owners" name="owners" value={owners?.name} placeholder="Select an group of the project owners" onChange={() => {}} options={[]} />
           <SelectInput label="Maintainers" name="maintainers" value={maintainers?.name} placeholder="Select an group of the project maintainers" onChange={() => {}} options={[]} />

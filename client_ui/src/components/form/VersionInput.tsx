@@ -1,4 +1,4 @@
-import type { ChangeEvent, ChangeEventHandler } from "react"
+import { type ChangeEvent, type ChangeEventHandler } from "react"
 
 type VersionInputProps = {
     name: string
@@ -20,6 +20,14 @@ const InitialValueHint = ({ initialValue, onClick }: { initialValue?: string, on
 }
 
 const VersionInput = ({ name, label, initialValue, value, onChange, description, disabled, readonly, placeholder }: VersionInputProps) => {
+  const [major, minor, patch] = value ? value.split('.').map(Number) : [0, 0, 0]
+
+  const onChangeVersion = (major: number, minor: number, patch: number) => {
+    const newValue = `${major}.${minor}.${patch}`
+    if (onChange) {
+      onChange({ target: { id: `${name}-input`, value: newValue } } as ChangeEvent<HTMLInputElement>)
+    }
+  }
   return (
     <div>
         <label htmlFor={`${name}-input`} className='block mb-1 text-sm font-medium text-heading'>
@@ -43,15 +51,11 @@ const VersionInput = ({ name, label, initialValue, value, onChange, description,
             />
         }
         { !readonly && !disabled && 
-            <input
-                id={`${name}-input`}
-                type="text"
-                title={description}
-                value={value}
-                placeholder={placeholder}
-                onChange={onChange}
-                className='text-body block w-full px-3 py-2.5 bg-neutral-secondary-medium border rounded-base shadow-xs focus:border-brand'
-                />
+          <div className="flex items-center">
+            <input id={`${name}-major-input`} type="number" min="0" max="999" value={major} onChange={(e) => { onChangeVersion(Number(e.target.value), minor, patch) }} className='text-body block w-full px-3 py-2.5 bg-neutral-secondary-medium border rounded-base shadow-xs focus:border-brand' />
+            <input id={`${name}-minor-input`} type="number" min="0" max="999" value={minor} onChange={(e) => { onChangeVersion(major, Number(e.target.value), patch) }} className='text-body block w-full px-3 py-2.5 bg-neutral-secondary-medium border rounded-base shadow-xs focus:border-brand' />
+            <input id={`${name}-patch-input`} type="number" min="0" max="999" value={patch} onChange={(e) => { onChangeVersion(major, minor, Number(e.target.value)) }} className='text-body block w-full px-3 py-2.5 bg-neutral-secondary-medium border rounded-base shadow-xs focus:border-brand' />
+          </div>
         }
     </div>
   )
