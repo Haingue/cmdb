@@ -1,13 +1,12 @@
 
 import { Background, BackgroundVariant, ControlButton, Controls, MiniMap, ReactFlow, useEdgesState, useNodesState, type Edge, type Node, type XYZPosition } from '@xyflow/react'
-import { useCallback, useEffect, useRef, useState } from 'react'
-import NodeTypeHost from '../../components/ReactFlow/NodeTypeHost'
-import type { ItemDto, LinkDto } from '../../service/inventory/types'
-import Host from '../../models/Host'
 import { graphlib, layout } from 'dagre'
-import TrafficEdge from '../../components/ReactFlow/edge-types/TrafficEdge'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import EdgeTypeFactory from '../../components/ReactFlow/EdgeFactory'
+import NodeTypeFactory from '../../components/ReactFlow/NodeFactory'
+import type { ItemDto, LinkDto } from '../../service/inventory/types'
 
-const TrafficMap = ({items}: {items: ItemDto[]}) => {
+const AssetMap = ({items}: {items: ItemDto[]}) => {
   const flowRef = useRef(null)
   const nodeWidth = flowRef.current ? (flowRef.current as any).clientWidth : 100
   const nodeHeight = flowRef.current ? (flowRef.current as any).clientHeight : 100
@@ -20,10 +19,15 @@ const TrafficMap = ({items}: {items: ItemDto[]}) => {
 
   const addNode = (item: ItemDto, position: XYZPosition): Node => {
     const node: Node = {
-      id: item.uuid,
-      type: 'host',
+      id: item.uuid as string,
       position: position,
-      data: new Host(item)
+      type: item.type?.label || 'default',
+      data: {
+        name: item.name,
+        label: item.name,
+        description: item.description,
+        attributes: item.attributes,
+      }
     }
     setNodes((nds) => nds.concat(node))
     return node
@@ -35,7 +39,7 @@ const TrafficMap = ({items}: {items: ItemDto[]}) => {
       source: link.sourceItemId as string,
       target: link.targetItemId as string,
       label: link.linkType.label,
-      type: 'traffic',
+      type: link.linkType.label || 'default',
       data: link
     }
     setEdges((eds) => eds.concat(edge))
@@ -124,8 +128,8 @@ const TrafficMap = ({items}: {items: ItemDto[]}) => {
       <ReactFlow
           nodes={nodes}
           edges={edges}
-          nodeTypes={{host: NodeTypeHost}}
-          edgeTypes={{traffic: TrafficEdge}}
+          nodeTypes={NodeTypeFactory}
+          edgeTypes={EdgeTypeFactory}
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           ref={flowRef}
@@ -151,4 +155,4 @@ const TrafficMap = ({items}: {items: ItemDto[]}) => {
 }
 
 
-export default TrafficMap
+export default AssetMap

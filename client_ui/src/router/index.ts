@@ -18,7 +18,7 @@ import SoftwareIndexPage from '../pages/component/software'
 import EnvironmentIndexPage from '../pages/environment'
 import EnvironmentDetaillsPage from '../pages/environment/EnvironmentDetaills'
 import Dashboard from '../pages/home/Dashboard'
-import Map from '../pages/map/Map'
+import MapPage from '../pages/map'
 import ProjectIndexPage from '../pages/project'
 import ProjectDetailsPage from '../pages/project/ProjectDetails'
 import TrafficPage from '../pages/traffic'
@@ -30,7 +30,7 @@ const router: DataRouter = createBrowserRouter([
     Component: Root,
     children: [
       { index: true, Component: Dashboard },
-      { path: "/map", Component: Map },
+      { path: "/map", Component: MapPage },
       {
         path: "/project",
         children: [

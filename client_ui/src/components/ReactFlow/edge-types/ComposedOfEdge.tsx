@@ -1,24 +1,12 @@
 import { BaseEdge, EdgeLabelRenderer, getBezierPath, MarkerType, type EdgeProps } from "@xyflow/react";
 import type { ReactNode } from "react";
+import EdgeLabel from "./EdgeLabel";
 
-export type TrafficEdge = EdgeProps & {
+export type ComposedOfEdge = EdgeProps & {
     onEdgeClick: () => void
 }
 
-function EdgeLabel({ transform, label }: { transform: string; label: ReactNode }) {
-  return (
-    <div
-      style={{
-        transform,
-      }}
-      className="nodrag nopan w-30 absolute text-xs font-semibold text-brand-strong dark:text-brand-soft"
-    >
-      {label}
-    </div>
-  );
-}
-
-const TrafficEdge = ({ id, label, sourceX, sourceY, sourcePosition, targetX, targetY, targetPosition, data }: TrafficEdge) => {
+const ComposedOfEdge = ({ id, label, sourceX, sourceY, sourcePosition, targetX, targetY, targetPosition, data }: ComposedOfEdge) => {
   const [edgePath, labelX, labelY ] = getBezierPath({
     sourceX,
     sourceY,
@@ -31,10 +19,11 @@ const TrafficEdge = ({ id, label, sourceX, sourceY, sourcePosition, targetX, tar
  
   return (
     <>
-      <BaseEdge id={id} path={edgePath} markerEnd={MarkerType.ArrowClosed} />
+      <BaseEdge id={id} path={edgePath} markerEnd={MarkerType.Arrow} />
       <EdgeLabelRenderer>
         <EdgeLabel
             label={label}
+            textClassName="text-black-strong dark:text-black-soft"
             transform={`translate(-50%, -100%) translate(${labelX}px,${labelY}px)`}/>
         {data && data.description != null && (
           <EdgeLabel
@@ -47,4 +36,4 @@ const TrafficEdge = ({ id, label, sourceX, sourceY, sourcePosition, targetX, tar
   );
 }
 
-export default TrafficEdge
+export default ComposedOfEdge
