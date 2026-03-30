@@ -1,0 +1,89 @@
+import { createBrowserRouter, type DataRouter } from 'react-router'
+
+import Root from '../Root'
+import InventoryService from '../pages/InventoryService'
+import ItemFormPage from '../pages/InventoryService/item-form'
+import ItemTypeExplorer from '../pages/InventoryService/item-type'
+import ItemTypeForm from '../pages/InventoryService/item-type-form'
+import ItemExplorer from '../pages/InventoryService/items'
+import ItemDetailsPage from '../pages/InventoryService/items/item-details'
+import LinkTypeExplorer from '../pages/InventoryService/link-type'
+import LinkTypeForm from '../pages/InventoryService/link-type-form'
+import NotFound from '../pages/NotFound'
+import About from '../pages/about'
+import BusinessServiceIndexPage from '../pages/business-service'
+import ComponentIndexPage from '../pages/component'
+import HostIndexPage from '../pages/component/host'
+import SoftwareIndexPage from '../pages/component/software'
+import EnvironmentIndexPage from '../pages/environment'
+import EnvironmentDetaillsPage from '../pages/environment/EnvironmentDetaills'
+import Dashboard from '../pages/home/Dashboard'
+import Map from '../pages/map/Map'
+import ProjectIndexPage from '../pages/project'
+import ProjectDetailsPage from '../pages/project/ProjectDetails'
+import TrafficPage from '../pages/traffic'
+
+const router: DataRouter = createBrowserRouter([
+  {
+    Component: Root,
+    children: [
+      { index: true, Component: Dashboard },
+      { path: "/map", Component: Map },
+      {
+        path: "/project",
+        children: [
+          { index: true, Component: ProjectIndexPage },
+          { path: "details", Component: ProjectDetailsPage },
+        ]
+      },
+      { path: "/business-service", Component: BusinessServiceIndexPage },
+      {
+        path: "/environment",
+        children: [
+          { index: true, Component: EnvironmentIndexPage },
+          { path: "details", Component: EnvironmentDetaillsPage },
+        ]
+      },
+      {
+        path: "/component",
+        children: [
+          { index: true, Component: ComponentIndexPage },
+          { path: "host", Component: HostIndexPage },
+          { path: "software", Component: SoftwareIndexPage },
+        ]
+      },
+      
+      { 
+        path: "/standards",
+        children: [
+          { path: "host", Component: ComponentIndexPage },
+          { path: "development", Component: ComponentIndexPage },
+        ]
+      },
+    
+      {
+        path: "/traffic",
+        children: [
+          { index: true, Component: TrafficPage },
+        ]
+      },
+
+      {
+        path: "/inventory-service",
+        children: [
+          { index: true, Component: InventoryService },
+          { path: "item-types", Component: ItemTypeExplorer },
+          { path: "item-type-form", Component: ItemTypeForm },
+          { path: "link-types", Component: LinkTypeExplorer },
+          { path: "link-type-form", Component: LinkTypeForm },
+          { path: "items", Component: ItemExplorer },
+          { path: "items/:itemUuid", Component: ItemDetailsPage },
+          { path: "item-form", Component: ItemFormPage },
+        ]
+      },
+      { path: "/about", Component: About },
+      { path: "*", Component: NotFound },
+    ]
+  },
+])
+export default router
