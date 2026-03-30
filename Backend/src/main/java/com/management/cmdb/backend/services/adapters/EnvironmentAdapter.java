@@ -9,6 +9,7 @@ import com.management.cmdb.core.models.business.project.Environment;
 import com.management.cmdb.core.models.business.project.Project;
 import com.management.cmdb.core.models.exceptions.NotImplemented;
 import com.management.cmdb.core.ports.outputs.EnvironmentOutputPort;
+import feign.FeignException;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -38,27 +39,27 @@ public class EnvironmentAdapter implements EnvironmentOutputPort {
 
     @Override
     public Environment save(Environment environment) {
-        Optional<Environment> newItem = inventoryServiceClient.createItem(environment);
-        if (newItem.isEmpty()) {
+        try {
+            Optional<Environment> newItem = inventoryServiceClient.createItem(environment);
+            // Save link to components
+            if (!environment.getComponents().isEmpty()) {
+                for (Component component: environment.getComponents()) {
+                    LinkDto linkDto = new LinkDto(new LinkTypeDto(LINK_TYPE_COMPONENT), environment.getUuid(), component.getUuid(), "");
+                    inventoryServiceClient.linkItems(linkDto);
+                }
+            }
+            return newItem
+                    .orElseThrow(AdapterException::new);
+        } catch (FeignException exception) {
             return inventoryServiceClient.updateItem(environment)
                     .orElseThrow(AdapterException::new);
         }
-        // Save link to components
-        if (!environment.getComponents().isEmpty()) {
-            for (Component component: environment.getComponents()) {
-                LinkDto linkDto = new LinkDto(new LinkTypeDto(LINK_TYPE_COMPONENT), environment.getUuid(), component.getUuid(), "");
-                inventoryServiceClient.linkItems(linkDto);
-            }
-        }
-        return newItem
-                .orElseThrow(AdapterException::new);
     }
 
     @Override
     public void attachProject(Environment environment, UUID projectUuid) {
-        LinkDto linkDto = new LinkDto(new LinkTypeDto(LINK_TYPE_COMPONENT), environment.getUuid(), projectUuid, "");
+        LinkDto linkDto = new LinkDto(new LinkTypeDto(LINK_TYPE_COMPONENT), projectUuid, environment.getUuid(), "");
         inventoryServiceClient.linkItems(linkDto);
-
     }
 
     @Override

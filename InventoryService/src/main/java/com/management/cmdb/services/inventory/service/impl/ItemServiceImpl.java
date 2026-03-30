@@ -2,18 +2,21 @@ package com.management.cmdb.services.inventory.service.impl;
 
 import com.management.cmdb.services.inventory.dto.AuthorDto;
 import com.management.cmdb.services.inventory.dto.ItemDto;
-import com.management.cmdb.services.inventory.dto.LinkDto;
 import com.management.cmdb.services.inventory.dto.NotificationDto;
 import com.management.cmdb.services.inventory.dto.wrapper.PaginatedResponseDto;
-import com.management.cmdb.services.inventory.entity.*;
-import com.management.cmdb.services.inventory.exception.*;
-import com.management.cmdb.services.inventory.job.StartupJob;
+import com.management.cmdb.services.inventory.entity.AttributeEntity;
+import com.management.cmdb.services.inventory.entity.AttributeTypeEntity;
+import com.management.cmdb.services.inventory.entity.ItemEntity;
+import com.management.cmdb.services.inventory.entity.ItemTypeEntity;
+import com.management.cmdb.services.inventory.exception.ItemExist;
+import com.management.cmdb.services.inventory.exception.ItemNotExist;
+import com.management.cmdb.services.inventory.exception.ItemNotValid;
+import com.management.cmdb.services.inventory.exception.ItemTypeNotExist;
 import com.management.cmdb.services.inventory.mapper.ItemMapper;
 import com.management.cmdb.services.inventory.model.UserDetail;
 import com.management.cmdb.services.inventory.repository.*;
 import com.management.cmdb.services.inventory.service.ItemService;
 import jakarta.transaction.Transactional;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.tool.annotation.Tool;
@@ -26,7 +29,6 @@ import org.springframework.util.ObjectUtils;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 

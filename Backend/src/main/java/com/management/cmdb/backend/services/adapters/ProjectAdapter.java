@@ -11,6 +11,7 @@ import com.management.cmdb.core.models.business.project.Environment;
 import com.management.cmdb.core.models.business.project.Project;
 import com.management.cmdb.core.models.exceptions.NotImplemented;
 import com.management.cmdb.core.ports.outputs.ProjectOutputPort;
+import feign.FeignException;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -46,31 +47,31 @@ public class ProjectAdapter implements ProjectOutputPort {
 
     @Override
     public Project save(Project project) {
-        Optional<Project> newItem = inventoryServiceClient.createItem(project);
-        if (newItem.isEmpty()) {
+        try {
+            Optional<Project> newItem = inventoryServiceClient.createItem(project);
+            // Save link to business service
+            if (project.getBusinessService() != null) {
+                ItemDto businessService = inventoryServiceClient.searchItems(project.getBusinessService().getName(), BusinessServiceAdapter.ITEM_TYPE_LABEL, 0, 1)
+                        .content().stream()
+                        .findFirst()
+                        .orElseThrow(UnsavedDependencyException::new);
+                LinkDto linkDto = new LinkDto(new LinkTypeDto(LINK_TYPE_BUSINESS_SERVICE), project.getUuid(), businessService.uuid(), "");
+                inventoryServiceClient.linkItems(linkDto);
+            }
+            // Save link to environments
+            if (!project.getEnvironments().isEmpty()) {
+                for (Environment env: project.getEnvironments()) {
+                    LinkDto linkDto = new LinkDto(new LinkTypeDto(LINK_TYPE_ENVIRONMENT), project.getUuid(), env.getUuid(), "");
+                    inventoryServiceClient.linkItems(linkDto);
+                }
+            }
+
+            return newItem
+                    .orElseThrow(AdapterException::new);
+        } catch (FeignException exception) {
             return inventoryServiceClient.updateItem(project)
                     .orElseThrow(AdapterException::new);
         }
-
-        // Save link to business service
-        if (project.getBusinessService() != null) {
-            ItemDto businessService = inventoryServiceClient.searchItems(project.getBusinessService().getName(), BusinessServiceAdapter.ITEM_TYPE_LABEL, 0, 1)
-                    .content().stream()
-                    .findFirst()
-                    .orElseThrow(UnsavedDependencyException::new);
-            LinkDto linkDto = new LinkDto(new LinkTypeDto(LINK_TYPE_BUSINESS_SERVICE), project.getUuid(), businessService.uuid(), "");
-            inventoryServiceClient.linkItems(linkDto);
-        }
-        // Save link to environments
-        if (!project.getEnvironments().isEmpty()) {
-            for (Environment env: project.getEnvironments()) {
-                LinkDto linkDto = new LinkDto(new LinkTypeDto(LINK_TYPE_ENVIRONMENT), project.getUuid(), env.getUuid(), "");
-                inventoryServiceClient.linkItems(linkDto);
-            }
-        }
-
-        return newItem
-                .orElseThrow(AdapterException::new);
     }
 
     @Override

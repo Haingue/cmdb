@@ -1,8 +1,6 @@
 package com.management.cmdb.services.inventory.controller;
 
 import com.management.cmdb.services.inventory.dto.LinkDto;
-import com.management.cmdb.services.inventory.dto.LinkTypeDto;
-import com.management.cmdb.services.inventory.mapper.LinkMapper;
 import com.management.cmdb.services.inventory.model.UserDetail;
 import com.management.cmdb.services.inventory.service.LinkService;
 import org.slf4j.Logger;

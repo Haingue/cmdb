@@ -23,6 +23,8 @@ import java.util.stream.Collectors;
 @SuperBuilder
 public class Environment extends VersionedSavedEntity {
 
+    private String name;
+    private String description;
     private String location;
     private EnvironmentType type;
 

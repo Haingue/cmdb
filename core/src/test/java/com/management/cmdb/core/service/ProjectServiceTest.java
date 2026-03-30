@@ -174,7 +174,7 @@ class ProjectServiceTest {
         // Given
         given(businessServiceService.findOne(businessService.getName(), initiator)).willReturn(businessService);
         given(projectOutputPort.save(any(Project.class))).willAnswer(invocation -> invocation.getArgument(0));
-        willThrow(new CoreException("Environment creation failed")).given(environmentService).create(UUID.randomUUID(), anyString(), EnvironmentType.TEST, anyString(), any(User.class));
+        willThrow(new CoreException("Environment creation failed")).given(environmentService).create(UUID.randomUUID(), anyString(), anyString(), anyString(), EnvironmentType.TEST, anyString(), any(User.class));
 
         // When & Then
         assertThatThrownBy(() -> projectService.create(

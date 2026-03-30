@@ -25,6 +25,7 @@ public class MainConfiguration {
         corsConfig.addAllowedMethod("GET");
         corsConfig.addAllowedMethod("POST");
         corsConfig.addAllowedMethod("PUT");
+        corsConfig.addAllowedMethod("DELETE");
         corsConfig.addAllowedHeader("*");
 
         corsConfig.setAllowCredentials(true);

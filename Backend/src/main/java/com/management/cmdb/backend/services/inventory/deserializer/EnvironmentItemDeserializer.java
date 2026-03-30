@@ -47,6 +47,8 @@ public class EnvironmentItemDeserializer extends JsonDeserializer<Environment> i
 
         Environment.EnvironmentBuilder<?, ?> environmentBuilder = Environment.builder()
                 .uuid(uuid)
+                .name(itemDto.name())
+                .description(itemDto.description())
                 .location(location)
                 .jiraTracker(jiraTracker)
                 .revision(revision)

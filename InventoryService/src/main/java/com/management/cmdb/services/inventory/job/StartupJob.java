@@ -5,6 +5,7 @@ import com.management.cmdb.services.inventory.dto.LinkTypeDto;
 import com.management.cmdb.services.inventory.entity.AttributeTypeEntity;
 import com.management.cmdb.services.inventory.entity.ItemTypeEntity;
 import com.management.cmdb.services.inventory.entity.LinkTypeEntity;
+import com.management.cmdb.services.inventory.entity.PredefinedLinkType;
 import com.management.cmdb.services.inventory.mapper.ItemTypeMapper;
 import com.management.cmdb.services.inventory.mapper.LinkTypeMapper;
 import com.management.cmdb.services.inventory.model.UserDetail;
@@ -27,8 +28,6 @@ import java.util.stream.Collectors;
 public class StartupJob implements CommandLineRunner {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StartupJob.class);
-    public static LinkTypeEntity COMMUNICATE_WITH_LINK_TYPE = new LinkTypeEntity("Communicate with");
-    public static LinkTypeEntity UNDEFINED_LINK_TYPE = new LinkTypeEntity("Undefined");
 
     private final Environment env;
 
@@ -42,16 +41,14 @@ public class StartupJob implements CommandLineRunner {
     }
 
     private void createLinkType() {
-        Optional<LinkTypeDto> communicationWithLinkType = linkTypeService.findByLabel(COMMUNICATE_WITH_LINK_TYPE.getLabel());
-        if (communicationWithLinkType.isEmpty()) {
-            communicationWithLinkType = Optional.of(linkTypeService.create(LinkTypeMapper.INSTANCE.toDto(COMMUNICATE_WITH_LINK_TYPE), UserDetail.SYSTEM));
+        for (PredefinedLinkType predefinedLinkType : PredefinedLinkType.values()) {
+            Optional<LinkTypeDto> predefinedLinkTypeEntity = linkTypeService.findByLabel(predefinedLinkType.getLabel());
+            if (predefinedLinkTypeEntity.isEmpty()) {
+                LinkTypeEntity newPredefinedLinkType = new LinkTypeEntity(predefinedLinkType.getLabel());
+                predefinedLinkTypeEntity = Optional.of(linkTypeService.create(LinkTypeMapper.INSTANCE.toDto(newPredefinedLinkType), UserDetail.SYSTEM));
+            }
+            predefinedLinkType.setLinkTypeEntity(LinkTypeMapper.INSTANCE.toEntity(predefinedLinkTypeEntity.get()));
         }
-        UNDEFINED_LINK_TYPE = LinkTypeMapper.INSTANCE.toEntity(communicationWithLinkType.get());
-        Optional<LinkTypeDto> undefinedLinkType = linkTypeService.findByLabel(UNDEFINED_LINK_TYPE.getLabel());
-        if (undefinedLinkType.isEmpty()) {
-            undefinedLinkType = Optional.of(linkTypeService.create(LinkTypeMapper.INSTANCE.toDto(UNDEFINED_LINK_TYPE), UserDetail.SYSTEM));
-        }
-        UNDEFINED_LINK_TYPE = LinkTypeMapper.INSTANCE.toEntity(undefinedLinkType.get());
     }
 
     private void createItemType() throws NoSuchFieldException, NoSuchMethodException {

@@ -12,6 +12,8 @@ import java.util.UUID;
 
 public record EnvironmentDto(
         UUID uuid,
+        String name,
+        String description,
         String location,
         EnvironmentType type,
         Set<Component>components,

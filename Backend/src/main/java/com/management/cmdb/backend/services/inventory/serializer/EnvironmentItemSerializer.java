@@ -36,8 +36,8 @@ public class EnvironmentItemSerializer extends JsonSerializer<Environment> imple
 
         ItemDto EnvironmentItem = new ItemDto(
                 environment.getUuid(),
-                ITEM_TYPE_LABEL,
-                ITEM_TYPE_LABEL,
+                environment.getName(),
+                environment.getDescription(),
                 EnvironmentItemType,
                 Set.of(
                     new AttributeDto(null, "Type", null, environment.getType().name(), null, null, null, null),

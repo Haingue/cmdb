@@ -5,6 +5,7 @@ import com.management.cmdb.services.inventory.dto.LinkTypeDto;
 import com.management.cmdb.services.inventory.entity.ItemEntity;
 import com.management.cmdb.services.inventory.entity.LinkEntity;
 import com.management.cmdb.services.inventory.entity.LinkTypeEntity;
+import com.management.cmdb.services.inventory.entity.PredefinedLinkType;
 import com.management.cmdb.services.inventory.job.StartupJob;
 import com.management.cmdb.services.inventory.mapper.LinkTypeMapper;
 import com.management.cmdb.services.inventory.repository.ItemRepository;
@@ -108,7 +109,7 @@ class LinkControllerTest {
                 .value(linkDto -> {
                     assertThat(linkDto.sourceItemId()).isEqualTo(validLinkDto.sourceItemId());
                     assertThat(linkDto.targetItemId()).isEqualTo(validLinkDto.targetItemId());
-                    assertThat(linkDto.linkType().label()).isEqualTo(StartupJob.UNDEFINED_LINK_TYPE.getLabel());
+                    assertThat(linkDto.linkType().label()).isEqualTo(PredefinedLinkType.UNDEFINED_LINK_TYPE.getLabel());
                 });
     }
     @Test

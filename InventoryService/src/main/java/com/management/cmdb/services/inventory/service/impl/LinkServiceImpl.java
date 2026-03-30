@@ -6,8 +6,8 @@ import com.management.cmdb.services.inventory.dto.NotificationDto;
 import com.management.cmdb.services.inventory.entity.ItemEntity;
 import com.management.cmdb.services.inventory.entity.LinkEntity;
 import com.management.cmdb.services.inventory.entity.LinkTypeEntity;
+import com.management.cmdb.services.inventory.entity.PredefinedLinkType;
 import com.management.cmdb.services.inventory.exception.LinkedItemDoesNotExist;
-import com.management.cmdb.services.inventory.job.StartupJob;
 import com.management.cmdb.services.inventory.mapper.LinkMapper;
 import com.management.cmdb.services.inventory.model.UserDetail;
 import com.management.cmdb.services.inventory.repository.ItemRepository;
@@ -48,7 +48,7 @@ public class LinkServiceImpl implements LinkService {
 
     public Optional<LinkEntity> connectEntities(ItemEntity itemSource, ItemEntity itemTarget, String linkTypeLabel, String itemDescription, UserDetail requestor) {
         LinkTypeEntity linkType = linkTypeRepository.findFirstByLabelIgnoreCase(linkTypeLabel)
-                .orElse(StartupJob.UNDEFINED_LINK_TYPE);
+                .orElse(PredefinedLinkType.UNDEFINED_LINK_TYPE.getLinkTypeEntity());
 
         LinkEntity linkEntity = linkRepository.findFirstBySourceItemUuidAndTargetItemUuidAndLinkTypeLabel(itemSource.getUuid(), itemTarget.getUuid(), linkType.getLabel())
             .orElseGet(() -> {
