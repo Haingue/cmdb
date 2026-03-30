@@ -1,5 +1,5 @@
 import { BACKEND_BASE_URL } from "../../configuration";
-import type { InventoryServiceServerInfo, ItemDto, ItemTypeDto, LinkTypeDto, PaginatedResponseDto, ServerSentEventNotificationDto, UUID } from "./types"
+import type { InventoryServiceServerInfo, ItemDto, ItemTypeDto, LinkDto, LinkTypeDto, PaginatedResponseDto, ServerSentEventNotificationDto, UUID } from "./types"
 
 const URL = `${BACKEND_BASE_URL}/api/inventory`
 
@@ -113,6 +113,32 @@ export async function createNewLinkType(link: LinkTypeDto): Promise<LinkTypeDto>
   if (!response.ok) throw new Error("Failed to create link");
   return response.json();
 }
+
+/** Link  **/
+export async function createLink(link: LinkDto): Promise<LinkDto> {
+  const response = await fetch(`${URL}/link`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(link),
+  });
+  if (!response.ok) throw new Error("Failed to create link");
+  return response.json();
+}
+
+export async function removeLink(link: LinkDto): Promise<void> {
+  const response = await fetch(`${URL}/link`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(link),
+  });
+  if (!response.ok) throw new Error("Failed to create link");
+  return;
+}
+
 
 /** Notification  **/
 export function subscribeToNotifications(callback: (event: ServerSentEventNotificationDto) => void): EventSource {

@@ -22,6 +22,8 @@ import Map from '../pages/map/Map'
 import ProjectIndexPage from '../pages/project'
 import ProjectDetailsPage from '../pages/project/ProjectDetails'
 import TrafficPage from '../pages/traffic'
+import NotAvailable from '../pages/NotAvailable'
+import LinkForm from '../pages/InventoryService/link-form'
 
 const router: DataRouter = createBrowserRouter([
   {
@@ -54,10 +56,10 @@ const router: DataRouter = createBrowserRouter([
       },
       
       { 
-        path: "/standards",
+        path: "/standard",
         children: [
-          { path: "host", Component: ComponentIndexPage },
-          { path: "development", Component: ComponentIndexPage },
+          { path: "host", Component: NotAvailable },
+          { path: "development", Component: NotAvailable },
         ]
       },
     
@@ -79,6 +81,7 @@ const router: DataRouter = createBrowserRouter([
           { path: "items", Component: ItemExplorer },
           { path: "items/:itemUuid", Component: ItemDetailsPage },
           { path: "item-form", Component: ItemFormPage },
+          { path: "link-form", Component: LinkForm },
         ]
       },
       { path: "/about", Component: About },

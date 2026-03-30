@@ -48,7 +48,7 @@ export type LinkDto = {
   sourceItemName: UUID;
   targetItemId: UUID;
   targetItemName: UUID;
-  description: string;
+  description?: string;
 } & AuditableDto
 
 export type ItemDto = {
