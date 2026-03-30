@@ -158,7 +158,7 @@ const ProjectDetailsPage = () => {
       </section>
       <section className="mt-4">
         <h3 className="text-xl-heading font-medium mb-2">Childs</h3>
-        <ButtonInput name="add-new-environment" label="Add new Environment" onClick={() => navigate(`/environment-details?projectUuid=${projectUuid}`)} />
+        <ButtonInput name="add-new-environment" label="Add new Environment" onClick={() => navigate(`/environment/details?projectUuid=${projectUuid}`)} />
         <ComingSoonComponent />
       </section>
       <section className="mt-4">

@@ -1,7 +1,7 @@
 info:
   application:
-    name: cmdb-@project.artefactId@
-    version: @project.version@
+    name: "cmdb-@project.artefactId@"
+    version: "@project.version@"
 
 server:
   port: 8090

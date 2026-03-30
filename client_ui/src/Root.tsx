@@ -17,34 +17,6 @@ const Root = () => {
             <Breadcrumbs />
             <AlertSection />
             <Outlet />
-            {/* <Routes>
-              <Route path="/" Component={Dashboard} />
-              <Route path="/map" Component={Map} />
-              <Route path="/project" Component={ProjectIndexPage} />
-              <Route path="/project-details" Component={ProjectDetailsPage} />
-              <Route path="/business-service" Component={BusinessServiceIndexPage} />
-              <Route path="/environment" Component={EnvironmentIndexPage} />
-              <Route path="/environment-details" Component={EnvironmentDetaillsPage} />
-              <Route path="/component" Component={ComponentIndexPage} />
-              <Route path="/component/host" Component={HostIndexPage} />
-              <Route path="/component/software" Component={SoftwareIndexPage} />
-              
-              <Route path="/standards/host" Component={ComponentIndexPage} />
-              <Route path="/standards/development" Component={ComponentIndexPage} />
-
-              <Route path="/traffic" Component={TrafficPage} />
-              <Route path="/inventory-service" Component={InventoryService} />
-              <Route path="/inventory-service/item-types" Component={ItemTypeExplorer} />
-              <Route path="/inventory-service/item-type-form" Component={ItemTypeForm} />
-              <Route path="/inventory-service/link-types" Component={LinkTypeExplorer} />
-              <Route path="/inventory-service/link-type-form" Component={LinkTypeForm} />
-              <Route path="/inventory-service/items" Component={ItemExplorer} />
-              <Route path="/inventory-service/items/:itemUuid" Component={ItemDetailsPage} />
-              <Route path="/inventory-service/item-form" Component={ItemFormPage} />
-              <Route path="/about" Component={About} />
-
-              <Route path="*" Component={NotFound} />
-            </Routes> */}
           </main>
         </div>
       </div>
