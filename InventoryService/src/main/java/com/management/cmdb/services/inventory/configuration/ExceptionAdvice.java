@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.TransactionSystemException;
+import org.springframework.web.bind.MissingRequestValueException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.client.HttpClientErrorException;
@@ -34,6 +35,7 @@ public class ExceptionAdvice {
 
     /** Catch business exception from client **/
     @ExceptionHandler({
+            MissingRequestValueException.class,
             BadRequestException.class,
             HttpClientErrorException.class,
             TransactionSystemException.class,

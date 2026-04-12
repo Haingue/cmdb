@@ -1,5 +1,6 @@
 package com.management.cmdb.services.inventory.service.impl;
 
+import com.management.cmdb.services.inventory.dto.AttributeDto;
 import com.management.cmdb.services.inventory.dto.AuthorDto;
 import com.management.cmdb.services.inventory.dto.ItemDto;
 import com.management.cmdb.services.inventory.dto.NotificationDto;
@@ -29,6 +30,7 @@ import org.springframework.util.ObjectUtils;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -113,6 +115,24 @@ public class ItemServiceImpl implements ItemService {
         ItemTypeEntity itemTypeEntity = this.itemTypeRepository.findFirstByLabel(itemDto.type().label())
                 .orElseThrow(ItemTypeNotExist::new);
         existingItem.setType(itemTypeEntity);
+
+        Map<String, String> attributeMap = itemDto.attributes()
+                .stream()
+                .filter(attributeDto -> Objects.nonNull(attributeDto.label()) && Objects.nonNull(attributeDto.value()))
+                .collect(Collectors.toMap(AttributeDto::label, AttributeDto::value));
+        existingItem.getAttributes().clear();
+        for (AttributeTypeEntity attributeTypeEntity : itemTypeEntity.getAttributes()) {
+            String attributeValue = attributeMap.get(attributeTypeEntity.getLabel());
+            if (attributeValue != null) {
+                AttributeEntity newAttribute = new AttributeEntity();
+                newAttribute.setUuid(UUID.randomUUID());
+                newAttribute.setItem(existingItem);
+                newAttribute.setAttributeType(attributeTypeEntity);
+                newAttribute.setValueStr(attributeValue);
+                newAttribute.setCreatedBy(author.uuid());
+                existingItem.getAttributes().add(newAttribute);
+            }
+        }
         existingItem = this.itemRepository.save(existingItem);
 
         applicationEventPublisher.publishEvent(

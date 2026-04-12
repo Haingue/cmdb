@@ -1,5 +1,6 @@
 import { BACKEND_BASE_URL } from "../../configuration";
 import type { InventoryServiceServerInfo, ItemDto, ItemTypeDto, LinkDto, LinkTypeDto, PaginatedResponseDto, ServerSentEventNotificationDto, UUID } from "./types"
+import type { ItemTypeLabel } from "../backend/constants";
 
 const URL = `${BACKEND_BASE_URL}/api/inventory`
 
@@ -28,9 +29,15 @@ export async function searchItems({ itemName, itemType, pageNumber = 0, pageSize
   return response.json();
 }
 
-export async function getItemById(itemId: UUID): Promise<ItemDto> {
-  const response = await fetch(`${URL}/item/${itemId}`);
+export async function getItemById(itemUuid: UUID): Promise<ItemDto> {
+  const response = await fetch(`${URL}/item/${itemUuid}`);
   if (!response.ok) throw new Error("Failed to fetch item");
+  return response.json();
+}
+
+export async function getItemsByIds(itemUuids: UUID[]): Promise<ItemDto[]> {
+  const response = await fetch(`${URL}/item/all?${itemUuids.map(uuid => `uuid=${uuid}`).join('&')}`);
+  if (!response.ok) throw new Error("Failed to fetch items");
   return response.json();
 }
 
@@ -60,7 +67,7 @@ export async function updateItem(item: ItemDto): Promise<ItemDto> {
 
 /** ItemType  **/
 export async function searchItemTypes(
-  label?: string,
+  label?: (typeof ItemTypeLabel)[keyof typeof ItemTypeLabel] | string,
   pageNumber: number = 0,
   pageSize: number = 10
 ): Promise<PaginatedResponseDto<ItemTypeDto>> {

@@ -1,8 +1,8 @@
 import { Handle, Position, type NodeProps } from '@xyflow/react';
-import type Host from '../../models/Host';
+import type HostModel from '../../models/Host';
 
 const NodeTypeHost = ({ data }: NodeProps) => {
-  const hostItem: Host = data as Host;
+  const hostItem: HostModel = data as HostModel;
   return (
     <div className="p-4 bg-white dark:bg-gray-900 dark:text-white border border-gray-300 rounded-lg shadow-md">
       <Handle

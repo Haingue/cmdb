@@ -16,6 +16,8 @@ import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 
 import java.net.InetAddress;
+import java.net.URI;
+import java.net.URL;
 import java.net.UnknownHostException;
 import java.time.DayOfWeek;
 import java.util.HashSet;
@@ -88,7 +90,9 @@ public class SimpleModelTest {
                 .version(new Version(1, 0, 5))
                 .certificate(null)
                 .technology(springBoot)
-                .host(backendHost)
+                .repositoryUrl(URI.create("https://github.com"))
+                .hosts(Set.of(backendHost))
+                .softwareType(TechnologyType.BACKEND)
                 .build();
 
         env1.addComponents(sensorHost);

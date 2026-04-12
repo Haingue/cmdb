@@ -9,11 +9,15 @@ import TextInput from "../../components/form/TextInput"
 import VersionInput from "../../components/form/VersionInput"
 import PageTitle from "../../components/PageTitle"
 import { createProject, searchBusinessService } from "../../service/backend/BackendSync"
-import { type UserGroup, type BusinessService, type Project, type ProjectCreationRequest } from "../../service/backend/types"
-import { getItemById, searchItemTypes } from "../../service/inventory/InventorySync"
-import type { ItemTypeDto, UUID } from "../../service/inventory/types"
+import { type UserGroup, type BusinessService, type Project, type ProjectCreationRequest, type Environment } from "../../service/backend/types"
+import { LinkTypeLabel } from "../../service/backend/constants"
+import { ItemTypeLabel } from "../../service/backend/constants"
+import { getItemById, getItemsByIds, searchItemTypes } from "../../service/inventory/InventorySync"
+import { type ItemTypeDto, type UUID } from "../../service/inventory/types"
 import type { AppDispatch } from "../../store"
 import { addAlert } from "../../store/alert.slice"
+import SimpleTable from "../../components/table-simple"
+import { convertItemIntoEnvironment } from "../../utils/ItemUtils"
 
 const ProjectDetailsPage = () => {
   const navigate = useNavigate()
@@ -34,8 +38,10 @@ const ProjectDetailsPage = () => {
   const [owners, setOwners] = useState<UserGroup | undefined>(undefined)
   const [maintainers, setMaintainers] = useState<UserGroup | undefined>(undefined)
   
+  const [environments, setEnvironments] = useState<Environment[]>([])
+
   useEffect(() => {
-    searchItemTypes("Project")
+    searchItemTypes(ItemTypeLabel.PROJECT)
     .then((_itemTypes) => {
       console.debug("Project Item Type fetched:", _itemTypes)
       setProjectItemType(_itemTypes.content[0])
@@ -79,6 +85,20 @@ const ProjectDetailsPage = () => {
         setBusinessServiceName(businessServices.find(bs => bs.uuid === item.attributes?.find(attr => attr.label === "businessServiceUuid")?.value)?.name || undefined)
         setOwners(item.attributes?.find(attr => attr.label === "owners")?.value as UserGroup || undefined)
         setMaintainers(item.attributes?.find(attr => attr.label === "maintainers")?.value as UserGroup || undefined)
+
+        const environmentUuids = item.outgoingLinks?.filter(link => link.linkType.label === LinkTypeLabel.COMPOSED_OF).map(link => link.targetItemId);
+        if (!environmentUuids || environmentUuids.length === 0) {
+          console.debug("No linked environments found for project:", projectUuid);
+          setEnvironments([])
+        } else {
+          console.debug("Linked environment UUIDs found for project:", environmentUuids);
+          getItemsByIds(environmentUuids)
+          .then((environmentItems) => {
+            const environmentsLinked: Environment[] = environmentItems.map(convertItemIntoEnvironment)
+            console.debug("Linked environments fetched for project:", environmentsLinked);
+            setEnvironments(environmentsLinked)
+          })
+        }
       })
       .catch((error) => {
         console.error("Error fetching Project by UUID:", error);
@@ -136,6 +156,10 @@ const ProjectDetailsPage = () => {
     });
   }
 
+  const deleteEnvironment = (environmentUuid: UUID) => {
+    alert(`Delete environment with UUID: ${environmentUuid} (not implemented yet)`)
+  }
+
   return (
     <>
       <PageTitle title="Projects" />
@@ -159,7 +183,25 @@ const ProjectDetailsPage = () => {
       <section className="mt-4">
         <h3 className="text-xl-heading font-medium mb-2">Childs</h3>
         <ButtonInput name="add-new-environment" label="Add new Environment" onClick={() => navigate(`/environment/details?projectUuid=${projectUuid}`)} />
-        <ComingSoonComponent />
+        <SimpleTable
+          columns={[
+            { name: 'uuid', label: 'uuid' },
+            { name: 'location', label: 'location' },
+            { name: 'type', label: 'type' },
+            { name: 'status', label: 'status' },
+            { name: 'description', label: 'description' },
+            { name: 'actions', label: 'Actions' },
+          ]}
+          rows={environments?.map(environmentLinked => ({
+            uuid: {content: environmentLinked.uuid},
+            location: {content: environmentLinked.location},
+            description: {content: environmentLinked.description},
+            type: {content: environmentLinked.type},
+            status: {content: environmentLinked.status},
+            actions: {content: <ButtonInput key={`deleteBtn-${environmentLinked.uuid}`} name={`delete-environment-${environmentLinked.uuid}`} label="Delete" onClick={() => deleteEnvironment(environmentLinked.uuid)} /> }
+          })) || []}
+          isCollapsed={false}
+        />
       </section>
       <section className="mt-4">
         <h3 className="text-xl-heading font-medium mb-2">Linked items</h3>

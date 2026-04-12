@@ -87,8 +87,26 @@ export type Component = {
   type?: string
   status?: string
   version?: string
+  certificate?: string
+  technology?: string
 }
 export type Host = Component & {
+  domain?: string
+  networkArea?: string
+  macAddress?: string
+  vlan?: string
+  version?: string
+  dns?: string
+  patchingDay?: string
+  ipAddress?: string
+  archiveDatetime?: string
+  creationDatetime?: string
+  //? events: string[]
+  communicatesWith?: Component[]
 }
 export type Software = Component & {
+  softwareType?: string
+  repositoryUrl?: string
+  hosts?: Host[]
 }
+

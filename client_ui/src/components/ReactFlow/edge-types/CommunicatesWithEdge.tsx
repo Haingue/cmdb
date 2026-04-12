@@ -1,6 +1,7 @@
-import { BaseEdge, EdgeLabelRenderer, getBezierPath, MarkerType, type EdgeProps } from "@xyflow/react";
+import { BaseEdge, EdgeLabelRenderer, getBezierPath, getSmoothStepPath, MarkerType, useInternalNode, type EdgeProps } from "@xyflow/react";
 import type { ReactNode } from "react";
 import EdgeLabel from "./EdgeLabel";
+import { getEdgeParams } from "../../../utils/ReactFlowUtils";
 
 export type CommunicatesWithEdge = EdgeProps & {
     onEdgeClick: () => void
@@ -9,7 +10,18 @@ export type CommunicatesWithEdge = EdgeProps & {
 const PARTICLE_COUNT = 6
 const ANIMATE_DURATION = 6
 
-const CommunicatesWithEdge = ({ id, label, sourceX, sourceY, sourcePosition, targetX, targetY, targetPosition, data }: CommunicatesWithEdge) => {
+const CommunicatesWithEdge = ({ id, label, source, target, markerEnd, data }: CommunicatesWithEdge) => {
+  const sourceNode = useInternalNode(source);
+  const targetNode = useInternalNode(target);
+ 
+  if (!sourceNode || !targetNode) {
+    return null;
+  }
+
+  const { sourceX, sourceY, targetX, targetY, sourcePosition, targetPosition } = getEdgeParams(
+    sourceNode,
+    targetNode,
+  );
   const [edgePath, labelX, labelY ] = getBezierPath({
     sourceX,
     sourceY,
@@ -22,7 +34,7 @@ const CommunicatesWithEdge = ({ id, label, sourceX, sourceY, sourcePosition, tar
  
   return (
     <>
-      <BaseEdge id={id} path={edgePath} markerEnd={MarkerType.ArrowClosed} />
+      <BaseEdge id={id} path={edgePath} markerEnd={markerEnd} />
       <EdgeLabelRenderer>
         <EdgeLabel
             label={label}

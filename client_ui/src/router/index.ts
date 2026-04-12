@@ -24,6 +24,8 @@ import ProjectDetailsPage from '../pages/project/ProjectDetails'
 import TrafficPage from '../pages/traffic'
 import NotAvailable from '../pages/NotAvailable'
 import LinkForm from '../pages/InventoryService/link-form'
+import HostDetailsPage from '../pages/component/host/HostDetails'
+import SoftwareDetailsPage from '../pages/component/software/SoftwareDetails'
 
 const router: DataRouter = createBrowserRouter([
   {
@@ -50,8 +52,20 @@ const router: DataRouter = createBrowserRouter([
         path: "/component",
         children: [
           { index: true, Component: ComponentIndexPage },
-          { path: "host", Component: HostIndexPage },
-          { path: "software", Component: SoftwareIndexPage },
+          {
+            path: "host",
+            children: [
+              { index: true, Component: HostIndexPage },
+              { path: "details", Component: HostDetailsPage },
+            ]
+          },
+          {
+            path: "software",
+            children: [
+              { index: true, Component: SoftwareIndexPage },
+              { path: "details", Component: SoftwareDetailsPage },
+            ]
+          }
         ]
       },
       

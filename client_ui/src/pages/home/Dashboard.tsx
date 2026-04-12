@@ -2,7 +2,7 @@ import PageTitle from '../../components/PageTitle'
 import './Dashboard.css'
 import { Doughnut } from 'react-chartjs-2';
 
-const MeasureCard = ({ title, value, change, chartId }: { title: string; value: string; change?: string; chartId?: string }) => {
+export const MeasureCard = ({ title, value, change, chartId }: { title: string; value: string; change?: string; chartId?: string }) => {
   return (
     <div className="min-w-0 p-4 bg-white rounded-lg shadow dark:bg-gray-800">
       <h5 className="mb-4 text-base font-semibold text-gray-900 dark:text-white">{title}</h5>

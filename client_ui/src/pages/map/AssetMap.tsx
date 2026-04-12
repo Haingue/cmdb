@@ -1,5 +1,5 @@
 
-import { Background, BackgroundVariant, ControlButton, Controls, MiniMap, ReactFlow, useEdgesState, useNodesState, type Edge, type Node, type XYZPosition } from '@xyflow/react'
+import { Background, BackgroundVariant, ControlButton, Controls, MarkerType, MiniMap, ReactFlow, useEdgesState, useNodesState, type Edge, type Node, type ReactFlowInstance, type XYZPosition } from '@xyflow/react'
 import { graphlib, layout } from 'dagre'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import EdgeTypeFactory from '../../components/ReactFlow/EdgeFactory'
@@ -8,8 +8,9 @@ import type { ItemDto, LinkDto } from '../../service/inventory/types'
 
 const AssetMap = ({items}: {items: ItemDto[]}) => {
   const flowRef = useRef(null)
-  const nodeWidth = flowRef.current ? (flowRef.current as any).clientWidth : 100
-  const nodeHeight = flowRef.current ? (flowRef.current as any).clientHeight : 100
+  const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance | undefined>(undefined)
+  const nodeWidth = 272// flowRef.current ? (flowRef.current as any).clientWidth : 50
+  const nodeHeight = 136// flowRef.current ? (flowRef.current as any).clientHeight : 50
   const [isHorizontal, setIsHorizontal] =  useState(true)
 
   const [nodes, setNodes, onNodesChange] = useNodesState([])
@@ -40,9 +41,17 @@ const AssetMap = ({items}: {items: ItemDto[]}) => {
       target: link.targetItemId as string,
       label: link.linkType.label,
       type: link.linkType.label || 'default',
+      markerEnd: {
+        type: MarkerType.Arrow,
+        width: 30,
+        height: 30,
+      },
+      // animated: true,
       data: link
     }
-    setEdges((eds) => eds.concat(edge))
+    // if (edges.filter((e: Edge) => e.id === edge.id).length < 2) {
+      setEdges((eds) => eds.concat(edge))
+    // }
     return edge
   }
 
@@ -66,11 +75,9 @@ const AssetMap = ({items}: {items: ItemDto[]}) => {
         ...node,
         targetPosition: _isHorizontal ? 'left' : 'top',
         sourcePosition: _isHorizontal ? 'right' : 'bottom',
-        // We are shifting the dagre node position (anchor=center center) to the top left
-        // so it matches the React Flow node anchor point (top left).
         position: {
-          x: nodeWithPosition.x - nodeWidth / 2,
-          y: nodeWithPosition.y - nodeHeight / 2,
+          x: nodeWithPosition.x - (nodeWidth / 2),
+          y: nodeWithPosition.y - (nodeHeight / 2),
           z: 0,
         },
       };
@@ -95,21 +102,22 @@ const AssetMap = ({items}: {items: ItemDto[]}) => {
       );
       setNodes([...layoutedNodes])
       setEdges([...layoutedEdges])
+      reactFlowInstance?.fitView()
     },
     [nodes, edges],
   )
   
-  const onClean = () => {
-    setNodes([])
-    setEdges([])
+  const onClean = async () => {
+    await setNodes([])
+    await setEdges([])
   }
   
-  const onLoad = () => {
-    onClean()
+  const onLoad = async () => {
+    await onClean()
     items?.forEach((item, key) => {
-      const position = { x: key * 10, y: 350, z: 0 }
+      const position = { x: key * 200, y: 350, z: 0 }
       if (key === 0) {
-        position.x = 350
+        position.x = 250
         position.y = 100
       }
       addNode(item, position)
@@ -117,10 +125,12 @@ const AssetMap = ({items}: {items: ItemDto[]}) => {
       item.incomingLinks?.forEach(link => addEdge(link))
     });
     // onLayout()
+    await reactFlowInstance?.fitView()
   }
 
   useEffect(() => {
     onLoad()
+    .then(() => console.debug(`AssetMap: Loaded ${items.length} items [nodes: ${nodes.length}, edges: ${edges.length}]`))
   }, [items])
 
   return (
@@ -133,7 +143,7 @@ const AssetMap = ({items}: {items: ItemDto[]}) => {
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           ref={flowRef}
-          fitView
+          onInit={(instance) => setReactFlowInstance(instance)}
       >
         <Controls>
           <ControlButton onClick={() => onChangeDirection()}>

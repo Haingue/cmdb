@@ -10,7 +10,8 @@ import TextInput from "../../components/form/TextInput"
 import PageTitle from "../../components/PageTitle"
 import SimpleTable from "../../components/table-simple"
 import { createEnvironment, searchProject } from "../../service/backend/BackendSync"
-import type { Project } from "../../service/backend/types"
+import { type Project } from "../../service/backend/types"
+import { ItemTypeLabel } from "../../service/backend/constants"
 import { getItemById, removeLink, searchItemTypes } from "../../service/inventory/InventorySync"
 import type { ItemDto, ItemTypeDto, LinkDto, UUID } from "../../service/inventory/types"
 import type { AppDispatch } from "../../store"
@@ -41,7 +42,7 @@ const EnvironmentDetaillsPage = () => {
   const [components, setComponents] = useState<LinkDto[]>([])
 
   useEffect(() => {
-    searchItemTypes("Environment")
+    searchItemTypes(ItemTypeLabel.ENVIRONMENT)
     .then((_itemTypes) => {
       console.debug("Environment Item Type fetched:", _itemTypes)
       setEnvironmentItemType(_itemTypes.content[0])
@@ -203,7 +204,7 @@ const EnvironmentDetaillsPage = () => {
 
   return (
     <>
-      <PageTitle title="Environments" />
+      <PageTitle title="Environment detail" />
       <section className="mt-4">
         { isNewEnvironment ?
             <h3 className="text-lg font-medium mb-2">Environment creation</h3>

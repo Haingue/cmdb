@@ -1,3 +1,6 @@
+import type { LinkTypeLabel } from "../backend/constants"
+import type { ItemTypeLabel } from "../backend/constants"
+
 export type InventoryServiceServerInfo = {
   application: {
     name: string
@@ -19,7 +22,7 @@ export type AuditableDto = {
 
 export type AttributeDto = {
   label: string;
-  attributeTypeId: UUID;
+  attributeTypeId?: UUID;
   value: string | number | boolean | undefined;
 } & AuditableDto
 
@@ -33,13 +36,13 @@ export type AttributeTypeDto = {
 } & AuditableDto
 
 export type ItemTypeDto = {
-  label: string;
-  description: string;
-  attributes: AttributeTypeDto[];
+  label: (typeof ItemTypeLabel)[keyof typeof ItemTypeLabel] | string;
+  description?: string;
+  attributes?: AttributeTypeDto[];
 } & AuditableDto
 
 export type LinkTypeDto = {
-  label: string;
+  label: (typeof LinkTypeLabel)[keyof typeof LinkTypeLabel] | string;
 } & AuditableDto
 
 export type LinkDto = {

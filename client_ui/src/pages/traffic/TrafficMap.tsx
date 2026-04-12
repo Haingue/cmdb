@@ -3,7 +3,7 @@ import { Background, BackgroundVariant, ControlButton, Controls, MiniMap, ReactF
 import { useCallback, useEffect, useRef, useState } from 'react'
 import NodeTypeHost from '../../components/ReactFlow/NodeTypeHost'
 import type { ItemDto, LinkDto } from '../../service/inventory/types'
-import Host from '../../models/Host'
+import HostModel from '../../models/Host'
 import { graphlib, layout } from 'dagre'
 import TrafficEdge from '../../components/ReactFlow/edge-types/TrafficEdge'
 
@@ -23,7 +23,7 @@ const TrafficMap = ({items}: {items: ItemDto[]}) => {
       id: item.uuid,
       type: 'host',
       position: position,
-      data: new Host(item)
+      data: new HostModel(item)
     }
     setNodes((nds) => nds.concat(node))
     return node

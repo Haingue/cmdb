@@ -8,6 +8,7 @@ import type { ItemDto, ItemTypeDto } from "../../service/inventory/types"
 import type { AppDispatch } from "../../store"
 import { addAlert } from "../../store/alert.slice"
 import { useNavigate } from "react-router"
+import { ItemTypeLabel } from "../../service/backend/constants"
 
 const EnvironmentIndexPage = () => {
   const navigate = useNavigate()
@@ -23,7 +24,7 @@ const EnvironmentIndexPage = () => {
   const [name, setName] = useState(`${project?.shortname || 'Project'}-${type}`)
 
   useEffect(() => {
-    searchItemTypes("Environment")
+    searchItemTypes(ItemTypeLabel.ENVIRONMENT)
       .then((_itemTypes) => {
         console.debug("Environment Item Type fetched:", _itemTypes)
         setEnvironmentItemType(_itemTypes.content[0])
@@ -32,7 +33,7 @@ const EnvironmentIndexPage = () => {
         console.error("Error fetching Environment Item Type:", error);
         dispatch(addAlert({ type: "error", message: "Failed to fetch Environment Item Type.", details: error }))
       })
-      searchItems({ itemType: "Environment" })
+      searchItems({ itemType: ItemTypeLabel.ENVIRONMENT })
       .then((_environments) => {
         console.debug("Environments fetched:", _environments);
         setEnvironments(_environments.content)

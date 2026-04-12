@@ -10,6 +10,7 @@ import { useEffect, useState, type ReactNode } from "react"
 import { createProject, searchBusinessService } from "../../service/backend/BackendSync"
 import { addAlert } from "../../store/alert.slice"
 import { type BusinessService } from "../../service/backend/types"
+import { ItemTypeLabel } from "../../service/backend/constants"
 import SimpleTable from "../../components/table-simple"
 import type { ItemDto, ItemTypeDto } from "../../service/inventory/types"
 import { searchItems, searchItemTypes } from "../../service/inventory/InventorySync"
@@ -32,7 +33,7 @@ const ProjectIndexPage = () => {
   const [maintainers, setMaintainers] = useState("")
   
   useEffect(() => {
-    searchItemTypes("Project")
+    searchItemTypes(ItemTypeLabel.PROJECT)
     .then((_itemTypes) => {
       console.debug("Project Item Type fetched:", _itemTypes)
       setProjectItemType(_itemTypes.content[0])
@@ -41,7 +42,7 @@ const ProjectIndexPage = () => {
       console.error("Error fetching Project Item Type:", error);
       dispatch(addAlert({ type: "error", message: "Failed to fetch Project Item Type.", details: error }))
     })
-    searchItems({ itemType: "Project" })
+    searchItems({ itemType: ItemTypeLabel.PROJECT })
     .then((_projects) => {
       console.debug("Projects fetched:", _projects);
       setProjects(_projects.content)

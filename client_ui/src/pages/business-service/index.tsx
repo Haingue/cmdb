@@ -10,6 +10,7 @@ import { addAlert } from "../../store/alert.slice"
 import SimpleTable from "../../components/table-simple"
 import { type ItemDto, type ItemTypeDto } from "../../service/inventory/types"
 import { searchItems, searchItemTypes } from "../../service/inventory/InventorySync"
+import { ItemTypeLabel } from "../../service/backend/constants"
 
 const BusinessServiceIndexPage = () => {
   const dispatch = useDispatch<AppDispatch>()
@@ -21,7 +22,7 @@ const BusinessServiceIndexPage = () => {
   const [description, setDescription] = useState("")
 
   useEffect(() => {
-    searchItemTypes("BusinessService")
+    searchItemTypes(ItemTypeLabel.BUSINESS_SERVICE)
       .then((_itemTypes) => {
         console.debug("BusinessService Item Type fetched:", _itemTypes)
         setBusinessServiceItemType(_itemTypes.content[0])
@@ -30,7 +31,7 @@ const BusinessServiceIndexPage = () => {
         console.error("Error fetching BusinessService Item Type:", error);
         dispatch(addAlert({ type: "error", message: "Failed to fetch BusinessService Item Type.", details: error }))
       })
-      searchItems({ itemType: "BusinessService" })
+      searchItems({ itemType: ItemTypeLabel.BUSINESS_SERVICE })
       .then((_businessServices) => {
         console.debug("BusinessServices fetched:", _businessServices);
         setBusinessServices(_businessServices.content)

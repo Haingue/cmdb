@@ -1,40 +1,82 @@
-import ComingSoonComponent from "../../../components/ComingSoonComponent"
-import ButtonInput from "../../../components/form/ButtonInput"
-import FormSection from "../../../components/form/FormSection"
-import IpInput from "../../../components/form/IpInput"
-import SelectInput from "../../../components/form/SelectInput"
-import TextInput from "../../../components/form/TextInput"
-import VersionInput from "../../../components/form/VersionInput"
+import { useNavigate } from "react-router"
 import PageTitle from "../../../components/PageTitle"
+import SimpleTable from "../../../components/table-simple"
+import { useDispatch } from "react-redux"
+import type { AppDispatch } from "../../../store"
+import type { ItemDto, ItemTypeDto } from "../../../service/inventory/types"
+import { useEffect, useState } from "react"
+import { addAlert } from "../../../store/alert.slice"
+import { searchItems, searchItemTypes } from "../../../service/inventory/InventorySync"
+import ButtonInput from "../../../components/form/ButtonInput"
+import { ItemTypeLabel } from "../../../service/backend/constants"
+import { MeasureCard } from "../../home/Dashboard"
 
 const HostIndexPage = () => {
+  const navigate = useNavigate()
+  const dispatch = useDispatch<AppDispatch>()
+  
+  const [hostItemType, setHostItemType] = useState<ItemTypeDto|undefined>(undefined)
+  const [hosts, setHosts] = useState<ItemDto[]>([])
+
+  useEffect(() => {
+    searchItemTypes(ItemTypeLabel.HOST)
+      .then((_itemTypes) => {
+        console.debug("Component Item Type fetched:", _itemTypes)
+        setHostItemType(_itemTypes.content[0])
+      })
+      .catch((error) => {
+        console.error("Error fetching Component Item Type:", error);
+        dispatch(addAlert({ type: "error", message: "Failed to fetch Component Item Type.", details: error }))
+      })
+      searchHosts()
+  }, [])
+
+  const searchHosts = async () => {
+    const hosts = await searchItems({ itemType: ItemTypeLabel.HOST })
+    setHosts(hosts.content)
+  }
+
+  const editHost = (component: ItemDto) => {
+    navigate(`/component/host/details?componentUuid=${component.uuid}`)
+  }
+
+  const totalHost = hosts.length
+  const commonHostNumber = hosts.filter(host => host.attributes?.find(attr => attr.label === 'Domain')?.value === 'COMMON').length || 0
+  const manufacturingHostNumber = hosts.filter(host => host.attributes?.find(attr => attr.label === 'Domain')?.value === 'MANUFACTURING').length || 0
+  const unknownHostNumber = totalHost - commonHostNumber - manufacturingHostNumber
+
   return (
     <>
-      <PageTitle title="Host" />
-      <section className="mt-4">
-        <h3 className="text-lg font-medium mb-2">Host creation</h3>
-        <FormSection title="Parent">
-          <SelectInput label="Environment" name="environment" value="" placeholder="Select an environment" onChange={() => {}} options={[]} />
-        </FormSection>
-        <FormSection title="Identifiers">
-          <TextInput label="Name" name="label" value="" placeholder="Name of the software" onChange={() => {}} />
-          <TextInput label="Description" name="description" value="" placeholder="Description of the software" onChange={() => {}} />
-        </FormSection>
-        <FormSection title="Attributes">
-          <VersionInput label="Version" name="version" value="" placeholder="Version of the business service" onChange={() => {}} />
-          <SelectInput label="Technology" name="technology" value="" placeholder="Select a technology" onChange={() => {}} options={[]} />
-          <IpInput label="IpAddress" name="ipAddress" value="" placeholder="IP Address of the host" onChange={() => {}} />
-          <TextInput label="Operating System" name="operatingSystem" value="" placeholder="Operating System name of the host" onChange={() => {}} />
-          <SelectInput label="Patching Day" name="patchingDay" value="" placeholder="Select a patching day" onChange={() => {}} options={[]} />
-          <SelectInput label="Domain" name="domain" value="" placeholder="Select a domain" onChange={() => {}} options={[{ label: "COMMON", value: "COMMON" }, { label: "MANUFACTURING", value: "MANUFACTURING" }]} />
-          <SelectInput label="Network area" name="networkArea" value="" placeholder="Select a network area" onChange={() => {}} options={[{ label: "IT", value: "IT" }, { label: "DMZ", value: "DMZ" }, { label: "OT", value: "OT" }]} />
-          <SelectInput label="Vlan" name="vlan" value="" placeholder="Select a vlan" onChange={() => {}} options={[]} />
-          <TextInput label="Mac Address" name="macAddress" value="" placeholder="MAC address of the host" onChange={() => {}} />
-          <TextInput label="Certificates" name="certificates" value="" placeholder="Certificates of the host" onChange={() => {}} />
-        </FormSection>
-        <ButtonInput name="create-host" label="Create Host" />
+      <PageTitle title="Hosts" />
+      <section className="mt-4 flex flex-row gap-4 max-h-32">
+        <MeasureCard title="COMMON" value={`${commonHostNumber}`} />
+        <MeasureCard title="MANUFACTURING" value={`${manufacturingHostNumber}`} />
+        <MeasureCard title="UNKNOWN" value={`${unknownHostNumber}/${totalHost}`} />
       </section>
-      <ComingSoonComponent />
+      <section className="mt-4">
+        <h3 className="text-xl-heading font-medium mb-2">Existing hosts</h3>
+        <SimpleTable
+          columns={[
+            { name: 'uuid', label: 'uuid' },
+            { name: 'name', label: 'name' },
+            { name: 'description', label: 'description' },
+            { name: 'type', label: 'type' },
+            ...(hostItemType && hostItemType?.attributes?.map(attr => ({ name: attr.label, label: attr.label }))) || [],
+            { name: 'lastModifiedDate', label: 'lastModifiedDate' },
+            { name: 'actions', label: 'Actions' },
+          ]}
+          rows={hosts?.map(item => ({
+            uuid: {content: item.uuid},
+            name: {content: item.name},
+            description: {content: item.description},
+            type: {content: item.type?.label},
+            ...item.attributes && { ...item.attributes.reduce((acc, attr) => ({ ...acc, [attr.label]: { content: attr.value } }), {}) },
+            lastModifiedDate: {content: item.lastModifiedDate},
+            actions: {content: <ButtonInput key={`editBtn-${item.uuid}`} name={`edit-component-${item.uuid}`} label="Edit" onClick={() => editHost(item)} /> }
+          })) || []}
+          isCollapsed={false}
+        />
+      </section>
     </>
   )
 }

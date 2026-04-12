@@ -10,7 +10,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/item")
@@ -49,6 +51,18 @@ public class ItemController {
     ) {
         LOGGER.info("Get items by attribute [attribute={}, value={}, itemType={}]", attributeName, attributeValue, itemType);
         return ResponseEntity.ok(itemService.searchItemByAttribute(itemType, attributeName, attributeValue, UserDetail.UNKNOWN));
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<Set<ItemDto>> getItemsByUuids(
+            @RequestParam(name = "uuid") Set<UUID> uuids
+    ) {
+        if (uuids == null || uuids.isEmpty()) return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        LOGGER.info("Get items [uuids={}]", uuids);
+        Set<ItemDto> result = uuids.stream().map(
+                uuid -> itemService.findItemById(uuid, UserDetail.UNKNOWN)
+        ).collect(Collectors.toSet());
+        return ResponseEntity.ok(result);
     }
 
     @PostMapping
