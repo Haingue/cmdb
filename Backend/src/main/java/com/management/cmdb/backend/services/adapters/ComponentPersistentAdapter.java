@@ -104,7 +104,8 @@ public class ComponentPersistentAdapter implements ComponentVisitor<Component> {
     public Software accept(Software software) {
         ItemDto itemDto = componentToItemDto(software);
         itemDto.attributes().addAll(Set.of(
-                AttributeDto.builder().label("Host").value(software.getHost().getName()).build()
+                // TODO manage the list of host
+                AttributeDto.builder().label("Host").value(software.getHosts().stream().map(Host::getName).findFirst().orElse(null)).build()
         ));
         inventoryServiceClient.createItem(itemDto);
         return software;

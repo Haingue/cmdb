@@ -21,6 +21,7 @@ import java.net.UnknownHostException;
 import java.time.DayOfWeek;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -158,7 +159,8 @@ public class ComponentAdapter implements ComponentOutputPort {
                 }
                 String hostName = attributes.get("Host");
                 if (hostName != null) {
-                    softwareBuilder.host(Host.builder().name(hostName).build());
+                    // TODO manage the list of host
+                    softwareBuilder.hosts(Set.of(Host.builder().name(hostName).build()));
                 }
                 component = softwareBuilder.build();
                 break;

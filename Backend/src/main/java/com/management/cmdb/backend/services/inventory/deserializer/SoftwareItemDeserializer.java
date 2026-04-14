@@ -17,6 +17,7 @@ import com.management.cmdb.core.models.business.technology.Version;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -60,7 +61,8 @@ public class SoftwareItemDeserializer extends JsonDeserializer<Software> impleme
             component.technology(Technology.builder().name(technology).build());
         }
         if (host != null) {
-            component.host(Host.builder().name(host).build());
+            // TODO manage the list of host
+            component.hosts(Set.of(Host.builder().name(host).build()));
         }
         return component.build();
     }
