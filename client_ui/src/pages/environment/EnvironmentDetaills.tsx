@@ -153,7 +153,7 @@ const EnvironmentDetaillsPage = () => {
 
   const validForm = () => {
     updateIdentifiers(project, location, type)
-    if (!project) {
+    if (!project || !project.uuid) {
       dispatch(addAlert({ type: "error", message: "Project is required to create an environment." }))
       return
     }
@@ -212,10 +212,10 @@ const EnvironmentDetaillsPage = () => {
         }
         <FormSection title="Parent">
           <SelectInput label="Project" name="project"
-            value={project?.shortName}
+            value={project?.uuid as string}
             placeholder="Select a project"
-            onChange={(e) => setProject({uuid: null, shortName: e.target.value})}
-            options={projects.map(p => ({label: p.name!, value: p.shortName!}))}
+            onChange={(e) => getAndSetProject(e.target.value, projects)}
+            options={projects.map(p => ({label: p.name!, value: p.uuid!}))}
             disabled={!!projectUuid} />
         </FormSection>
         <FormSection title="Identifiers">
