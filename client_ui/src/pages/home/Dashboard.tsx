@@ -40,7 +40,7 @@ function Dashboard() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetch('/api/dashboard/metrics')
+    fetch(`${import.meta.env.VITE_BACKEND_BASE_URL}/dashboard/metrics`)
       .then((res) => res.json())
       .then((data) => {
         setMetrics(data)
