@@ -110,3 +110,10 @@ export type Software = Component & {
   hosts?: Host[]
 }
 
+export interface DashboardMetrics {
+  serverCount: number
+  applicationCount: number
+  projectCount: number
+  activeUserCount: number
+}
+

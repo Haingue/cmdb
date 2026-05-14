@@ -2,12 +2,8 @@ import { useEffect, useState } from 'react'
 import PageTitle from '../../components/PageTitle'
 import './Dashboard.css'
 
-interface DashboardMetrics {
-  serverCount: number
-  applicationCount: number
-  projectCount: number
-  activeUserCount: number
-}
+import { DashboardMetrics } from '../../service/backend/types';
+import BackendSync from '../../service/backend/BackendSync';
 
 export const MeasureCard = ({ title, value, change, chartId }: { title: string; value: string; change?: string; chartId?: string }) => {
   return (
@@ -40,8 +36,7 @@ function Dashboard() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_BACKEND_BASE_URL}/dashboard/metrics`)
-      .then((res) => res.json())
+    BackendSync.getDashboardMetrics()
       .then((data) => {
         setMetrics(data)
         setLoading(false)
