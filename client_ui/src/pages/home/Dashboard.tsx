@@ -1,6 +1,9 @@
+import { useEffect, useState } from 'react'
 import PageTitle from '../../components/PageTitle'
 import './Dashboard.css'
-import { Doughnut } from 'react-chartjs-2';
+
+import { DashboardMetrics } from '../../service/backend/types';
+import BackendSync from '../../service/backend/BackendSync';
 
 export const MeasureCard = ({ title, value, change, chartId }: { title: string; value: string; change?: string; chartId?: string }) => {
   return (
@@ -21,7 +24,6 @@ export const MeasureCard = ({ title, value, change, chartId }: { title: string; 
 }
 
 const TrafficRateChart = () => {
-
   return (
     <div className="min-w-0 p-4 bg-white rounded-lg shadow dark:bg-gray-800">
     </div>
@@ -30,24 +32,35 @@ const TrafficRateChart = () => {
 
 function Dashboard() {
   const title = 'dashboard'
-  return (
-    <>
-      <PageTitle title={title} />
-      <div className="hidden">
-      </div>
+  const [metrics, setMetrics] = useState<DashboardMetrics | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    BackendSync.getDashboardMetrics()
+      .then((data) => {
+        setMetrics(data)
+        setLoading(false)
+      })
+      .catch((err) => {
+        console.error('Error fetching dashboard metrics:', err)
+        setLoading(false)
+      })
+  }, [])
+
+  if (loading) {
+    return (
+      <>
+        <PageTitle title={title} />
+        <div className="p-4 text-center text-gray-500">Chargement des métriques...</div>
+      </>
+    )
+  }
       <section className="p-4 rounded-lg dark:bg-gray-800 mt-4">
         <div className="grid grid-cols-1 gap-4 mb-4 lg:grid-cols-3">
-          <MeasureCard title="Total clients" value="32" change="+2" />
-          <MeasureCard title="Server uptime" value="99.9%" />
-          <MeasureCard title="Active sessions" value="5" />
-        </div>
-      </section>
-      <section className="p-4 rounded-lg dark:bg-gray-800 mt-4">
-        <div className="grid grid-cols-1 gap-4 mb-4 lg:grid-cols-3">
-          <MeasureCard title="Projects" value="84" />
-          <MeasureCard title="Software" value="34" />
-          <MeasureCard title="Servers" value="72" />
-          <MeasureCard title="End user device" value="605" change="-1.2%" />
+          <MeasureCard title="Servers" value={metrics?.serverCount.toString() ?? '0'} />
+          <MeasureCard title="Applications" value={metrics?.applicationCount.toString() ?? '0'} />
+          <MeasureCard title="Projects" value={metrics?.projectCount.toString() ?? '0'} />
+          <MeasureCard title="Users actifs" value={metrics?.activeUserCount.toString() ?? '0'} />
         </div>
       </section>
       <section className="p-4 rounded-lg dark:bg-gray-800 mt-4">

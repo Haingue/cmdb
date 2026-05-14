@@ -124,4 +124,19 @@ export async function createSoftware(project: Software): Promise<ItemDto> {
   return response.json();
 }
 
-export default {getServerInfo, createBusinessService, createProject, createEnvironment, createHost, createSoftware}
+/** Dashboard **/
+export async function getDashboardMetrics(): Promise<DashboardMetrics> {
+  const response = await fetch(`${BACKEND_BASE_URL}/dashboard/metrics`);
+  if (!response.ok) return Promise.reject(await response.json() as ApiProblem);
+  return response.json();
+}
+
+export default {
+  getServerInfo,
+  createBusinessService,
+  createProject,
+  createEnvironment,
+  createHost,
+  createSoftware,
+  getDashboardMetrics
+};
