@@ -19,3 +19,15 @@ pnpm-debug.log*
 
 # macOS-specific files
 .DS_Store
+
+# Editor directories and files
+.vscode
+.vscode/settings.json
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
