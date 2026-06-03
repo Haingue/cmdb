@@ -1,8 +1,9 @@
 package com.management.cmdb.services.inventory.configuration;
 
+import com.management.cmdb.services.inventory.service.ItemService;
+import com.management.cmdb.services.inventory.service.ItemTypeService;
 import org.springframework.ai.support.ToolCallbacks;
 import org.springframework.ai.tool.ToolCallback;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.AuditorAware;
@@ -14,7 +15,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Configuration(proxyBeanMethods = false)
-@EnableAutoConfiguration
 @EnableWebMvc
 @EnableScheduling
 public class MainConfiguration {
@@ -27,7 +27,7 @@ public class MainConfiguration {
 
     /** Use targetItemId setup MCP Server tools (AI agent) **/
     @Bean
-    List<ToolCallback> findTools() {
-        return List.of(ToolCallbacks.from());
+    List<ToolCallback> findTools(ItemTypeService itemTypeService, ItemService itemService) {
+        return List.of(ToolCallbacks.from(itemTypeService, itemService));
     }
 }

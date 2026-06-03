@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.TransactionSystemException;
+import org.springframework.web.bind.MissingRequestValueException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.client.HttpClientErrorException;
@@ -34,9 +35,14 @@ public class ExceptionAdvice {
 
     /** Catch business exception from client **/
     @ExceptionHandler({
+            MissingRequestValueException.class,
             BadRequestException.class,
             HttpClientErrorException.class,
             TransactionSystemException.class,
+            ItemNotValid.class,
+            LinkTypeNotValid.class,
+            LinkedItemDoesNotExist.class,
+            ItemExist.class
     })
     public ResponseEntity<ProblemDetail> handleClientException(RuntimeException ex) {
         return ResponseEntity.badRequest().body(generateProblemDetail(HttpStatus.BAD_REQUEST, ex));
@@ -44,6 +50,8 @@ public class ExceptionAdvice {
 
     /** Catch business exception for not found entities **/
     @ExceptionHandler({
+            ItemTypeNotExist.class,
+            ItemNotExist.class
     })
     public ResponseEntity<ProblemDetail> handleNotFoundException(RuntimeException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(generateProblemDetail(HttpStatus.NOT_FOUND, ex));
