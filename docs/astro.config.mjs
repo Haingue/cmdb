@@ -4,6 +4,11 @@ import starlight from '@astrojs/starlight'
 
 // https://astro.build/config
 export default defineConfig({
+  // Configuration pour GitHub Pages
+  // Base URL pour le déploiement sur haingue.github.io/cmdb/
+  // Peut être écrasé avec BASE_URL= lors du build local
+  base: process.env.BASE_URL || '/cmdb/',
+  
   integrations: [
     starlight({
       title: 'CMDB Docs',
