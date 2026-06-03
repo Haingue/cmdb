@@ -7,6 +7,11 @@ export default defineConfig({
   integrations: [
     starlight({
       title: 'CMDB Docs',
+      description: 'Configuration Management Database Documentation',
+      logo: {
+        src: './src/assets/cmdb-logo.svg',
+        alt: 'CMDB Logo',
+      },
       social: [
         {
           icon: 'github',
@@ -16,17 +21,27 @@ export default defineConfig({
       ],
       sidebar: [
         {
-          label: 'Guides',
+          label: 'Overview',
           items: [
-            // Each item here is one entry in the navigation menu.
-            { label: 'Example Guide', slug: 'guides/example' },
+            { label: 'Home', slug: '' },
+            { label: 'Getting Started', slug: 'getting-started' },
           ],
         },
         {
-          label: 'Reference',
-          autogenerate: { directory: 'reference' },
+          label: 'Architecture',
+          items: [
+            { label: 'Architecture Overview', slug: 'architecture' },
+            { label: 'API Reference', slug: 'api' },
+          ],
+        },
+        {
+          label: 'Contributing',
+          items: [
+            { label: 'Contribution Guide', slug: 'contributing' },
+          ],
         },
       ],
+      lastUpdated: true,
     }),
   ],
 })
