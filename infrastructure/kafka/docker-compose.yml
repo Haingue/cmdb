@@ -1,6 +1,6 @@
 services:
   # ============================================================================
-  # Kafka Cluster with KRaft (3 brokers) - No Zookeeper needed
+  # Kafka Cluster with KRaft (3 brokers)
   # ============================================================================
 
   # Kafka Broker 1 (Controller + Broker)
@@ -9,9 +9,9 @@ services:
     hostname: kafka-broker-1
     container_name: cmdb-kafka-1
     ports:
-      - '9092:9092' # External broker port
-      - '19092:19092' # Internal broker port
-      - '29092:29092' # Controller port
+      - '9092:9092' # External BROKER port (only BROKER port needs to be exposed)
+      # - '19092:19092' # Internal broker port [NOT NEEDED]
+      # - '29092:29092' # Controller port [NOT NEEDED]
     environment:
       # Node configuration
       KAFKA_NODE_ID: '1'
@@ -20,9 +20,13 @@ services:
       KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
 
       # Listeners configuration
+      # - BROKER: for client connections (external)
+      # - CONTROLLER: for internal KRaft communication (not exposed to host)
       KAFKA_LISTENERS: 'BROKER://:9092,CONTROLLER://:29092'
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'BROKER:PLAINTEXT,CONTROLLER:PLAINTEXT'
-      KAFKA_ADVERTISED_LISTENERS: 'BROKER://localhost:9092,CONTROLLER://kafka-broker-1:29092'
+
+      # ⚠️ IMPORTANT: Only BROKER listener in advertised.listeners (NOT CONTROLLER)
+      KAFKA_ADVERTISED_LISTENERS: 'BROKER://host.docker.internal:9092'
       KAFKA_INTER_BROKER_LISTENER_NAME: 'BROKER'
 
       # Cluster configuration
@@ -46,6 +50,9 @@ services:
 
       # JVM settings
       KAFKA_HEAP_OPTS: '-Xmx512M -Xms512M'
+      KAFKA_JMX_PORT: '9999'
+      KAFKA_JMX_HOSTNAME: 'kafka-broker-1'
+      KAFKA_JMX_OPTS: -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=kafka-broker-1 -Dcom.sun.management.jmxremote.rmi.port=9999
     volumes:
       - ./data/kafka-1:/var/lib/kafka/data
     networks:
@@ -55,14 +62,16 @@ services:
       test:
         [
           'CMD',
-          'kafka-broker-api-versions',
+          '/opt/kafka/bin/kafka-broker-api-versions.sh',
           '--bootstrap-server',
           'localhost:9092',
         ]
       interval: 10s
       timeout: 5s
       retries: 10
-      start_period: 30s
+      start_period: 60s
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
 
   # Kafka Broker 2 (Controller + Broker)
   kafka-broker-2:
@@ -70,9 +79,7 @@ services:
     hostname: kafka-broker-2
     container_name: cmdb-kafka-2
     ports:
-      - '9093:9092' # External broker port
-      - '19093:19092' # Internal broker port
-      - '29093:29092' # Controller port
+      - '9093:9092' # External BROKER port
     environment:
       KAFKA_NODE_ID: '2'
       KAFKA_PROCESS_ROLES: 'broker,controller'
@@ -81,7 +88,7 @@ services:
 
       KAFKA_LISTENERS: 'BROKER://:9092,CONTROLLER://:29092'
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'BROKER:PLAINTEXT,CONTROLLER:PLAINTEXT'
-      KAFKA_ADVERTISED_LISTENERS: 'BROKER://localhost:9093,CONTROLLER://kafka-broker-2:29092'
+      KAFKA_ADVERTISED_LISTENERS: 'BROKER://host.docker.internal:9093'
       KAFKA_INTER_BROKER_LISTENER_NAME: 'BROKER'
 
       KAFKA_CLUSTER_ID: 'cmdb-kafka-cluster'
@@ -99,6 +106,9 @@ services:
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
 
       KAFKA_HEAP_OPTS: '-Xmx512M -Xms512M'
+      KAFKA_JMX_PORT: '9999'
+      KAFKA_JMX_HOSTNAME: 'kafka-broker-2'
+      KAFKA_JMX_OPTS: -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=kafka-broker-2 -Dcom.sun.management.jmxremote.rmi.port=9999
     volumes:
       - ./data/kafka-2:/var/lib/kafka/data
     networks:
@@ -108,14 +118,16 @@ services:
       test:
         [
           'CMD',
-          'kafka-broker-api-versions',
+          '/opt/kafka/bin/kafka-broker-api-versions.sh',
           '--bootstrap-server',
           'localhost:9092',
         ]
       interval: 10s
       timeout: 5s
       retries: 10
-      start_period: 30s
+      start_period: 60s
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
 
   # Kafka Broker 3 (Controller + Broker)
   kafka-broker-3:
@@ -123,9 +135,7 @@ services:
     hostname: kafka-broker-3
     container_name: cmdb-kafka-3
     ports:
-      - '9094:9092' # External broker port
-      - '19094:19092' # Internal broker port
-      - '29094:29092' # Controller port
+      - '9094:9092' # External BROKER port
     environment:
       KAFKA_NODE_ID: '3'
       KAFKA_PROCESS_ROLES: 'broker,controller'
@@ -134,7 +144,7 @@ services:
 
       KAFKA_LISTENERS: 'BROKER://:9092,CONTROLLER://:29092'
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'BROKER:PLAINTEXT,CONTROLLER:PLAINTEXT'
-      KAFKA_ADVERTISED_LISTENERS: 'BROKER://localhost:9094,CONTROLLER://kafka-broker-3:29092'
+      KAFKA_ADVERTISED_LISTENERS: 'BROKER://host.docker.internal:9094'
       KAFKA_INTER_BROKER_LISTENER_NAME: 'BROKER'
 
       KAFKA_CLUSTER_ID: 'cmdb-kafka-cluster'
@@ -152,6 +162,9 @@ services:
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
 
       KAFKA_HEAP_OPTS: '-Xmx512M -Xms512M'
+      KAFKA_JMX_PORT: '9999'
+      KAFKA_JMX_HOSTNAME: 'kafka-broker-3'
+      KAFKA_JMX_OPTS: -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=kafka-broker-3 -Dcom.sun.management.jmxremote.rmi.port=9999
     volumes:
       - ./data/kafka-3:/var/lib/kafka/data
     networks:
@@ -161,14 +174,16 @@ services:
       test:
         [
           'CMD',
-          'kafka-broker-api-versions',
+          '/opt/kafka/bin/kafka-broker-api-versions.sh',
           '--bootstrap-server',
           'localhost:9092',
         ]
       interval: 10s
       timeout: 5s
       retries: 10
-      start_period: 30s
+      start_period: 60s
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
 
   # ============================================================================
   # Topic Initialization Service (creates CMDB topics on startup)
@@ -201,10 +216,12 @@ services:
       - ./scripts:/scripts
     entrypoint: /bin/sh
     command:
-      ['-c', 'sleep 30 && /scripts/create-topics.sh && tail -f /dev/null']
+      ['-c', 'sleep 60 && /scripts/create-topics.sh && tail -f /dev/null']
     networks:
       - cmdb-kafka-net
     restart: on-failure
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
 
   # ============================================================================
   # Kafka UI - Web Management Interface
@@ -220,15 +237,14 @@ services:
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: 'kafka-broker-1:9092,kafka-broker-2:9092,kafka-broker-3:9092'
       KAFKA_CLUSTERS_0_PROTOCOL: 'PLAINTEXT'
       KAFKA_CLUSTERS_0_METRICS_PORT: '9999'
-      # Optional: if you enable schema registry later
-      # KAFKA_CLUSTERS_0_SCHEMAREGISTRY: "http://schema-registry:8081"
-      # KAFKA_CLUSTERS_0_KAFKACONNECT: "http://kafka-connect:8083"
     depends_on:
       kafka-broker-1:
         condition: service_healthy
     networks:
       - cmdb-kafka-net
     restart: unless-stopped
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
 
 # ============================================================================
 # Docker Network

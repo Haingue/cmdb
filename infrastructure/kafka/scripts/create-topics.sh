@@ -24,7 +24,7 @@ DEFAULT_RETENTION_MS=604800000
 
 # Function to check if Kafka is ready
 wait_for_kafka() {
-  local max_attempts=30
+  local max_attempts=60
   local attempt=1
   
   echo "Waiting for Kafka cluster to be ready..."
@@ -32,6 +32,15 @@ wait_for_kafka() {
   until kafka-topics --bootstrap-server $BOOTSTRAP_SERVERS --list &>/dev/null; do
     if [ $attempt -ge $max_attempts ]; then
       echo "ERROR: Kafka cluster did not become ready after $max_attempts attempts"
+      echo "Checking individual brokers..."
+      for broker in kafka-broker-1 kafka-broker-2 kafka-broker-3; do
+        echo "Testing $broker:9092..."
+        if kafka-broker-api-versions --bootstrap-server $broker:9092 &>/dev/null; then
+          echo "  $broker is responsive"
+        else
+          echo "  $broker is NOT responsive"
+        fi
+      done
       exit 1
     fi
     echo "  Attempt $attempt/$max_attempts - Kafka not ready yet, waiting 5 seconds..."
