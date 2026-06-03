@@ -35,6 +35,17 @@ export default defineConfig({
           ],
         },
         {
+          label: 'CORE Domain',
+          items: [
+            { label: 'CORE Overview', slug: 'core' },
+            { label: 'Domain Business Logic', slug: 'core/core-domain-logic' },
+            { label: 'Validation Chains', slug: 'core/core-validation-chains' },
+            { label: 'Event Management', slug: 'core/core-event-management' },
+            { label: 'Business Rules', slug: 'core/core-business-rules' },
+            { label: 'Implementation Guide', slug: 'core/core-implementation-guide' },
+          ],
+        },
+        {
           label: 'Contributing',
           items: [
             { label: 'Contribution Guide', slug: 'contributing' },
