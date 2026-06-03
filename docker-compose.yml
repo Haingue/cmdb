@@ -1,62 +1,9 @@
 volumes:
   inventory_db:
-  inventory_db_2:
   bff_db:
   metabase-data:
 
 services:
-  bff_db:
-    image: postgres:18.1
-    environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: bff_db
-      PGDATA: /data/postgres
-    ports:
-      - '5433:5432'
-    volumes:
-      - bff_db:/data/postgres
-    healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U user -d bff_db']
-      interval: 5s
-      timeout: 5s
-      retries: 5
-
-  inventory_db:
-    image: postgres:18.1
-    environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: inventory_db
-      PGDATA: /data/postgres
-    ports:
-      - '5434:5432'
-    volumes:
-      - inventory_db:/data/postgres
-    healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U user -d inventory_db']
-      interval: 5s
-      timeout: 5s
-      retries: 5
-
-  metabase:
-    image: metabase/metabase:latest
-    container_name: metabase
-    depends_on:
-      - inventory_db
-      - bff_db
-    environment:
-      MB_DB_FILE: /metabase-data
-    ports:
-      - '5440:3000'
-    volumes:
-      - metabase-data:/metabase-data
-
-  zipkin:
-    image: openzipkin/zipkin
-    ports:
-      - '9411:9411'
-
   bff:
     build:
       context: .
