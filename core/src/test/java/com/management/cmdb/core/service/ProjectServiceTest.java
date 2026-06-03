@@ -90,10 +90,13 @@ class ProjectServiceTest {
             .fullName("Test Project")
             .shortName("TP")
             .description("Description")
-            .businessService(businessService)
             .maintainers(maintainers)
             .owners(owners)
             .build();
+
+    {
+        project.addBusinessService(businessService);
+    }
 
     @Test
     void findOne_ShouldReturnProject_WhenProjectExists() {
@@ -165,7 +168,7 @@ class ProjectServiceTest {
 
         // Then
         assertThat(result).isNotNull();
-        assertThat(result.getBusinessService()).isEqualTo(businessService);
+        assertThat(result.getBusinessServices()).contains(businessService);
         assertThat(result.getEnvironments()).hasSameSizeAs(environments);
     }
 
@@ -204,10 +207,10 @@ class ProjectServiceTest {
                 .fullName("Updated Project")
                 .shortName("UP")
                 .description("Updated Description")
-                .businessService(businessService)
                 .maintainers(maintainers)
                 .owners(owners)
                 .build();
+        updatedProject.addBusinessService(businessService);
         Project result = projectService.update(updatedProject, initiator);
 
         // Then

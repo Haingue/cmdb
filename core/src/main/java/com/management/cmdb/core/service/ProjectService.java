@@ -55,14 +55,15 @@ public class ProjectService implements ProjectInputPort {
                 .fullName(fullName)
                 .shortName(shortName)
                 .description(description)
-                .businessService(businessService)
                 .maintainers(maintainers)
                 .owners(owners)
                 .build();
+        project.addBusinessService(businessService);
         project.checkIntegrity();
 
-        BusinessService savedBusinessService = this.businessServiceService.findOne(project.getBusinessService().getName(), initiator);
-        project.setBusinessService(savedBusinessService);
+        BusinessService savedBusinessService = this.businessServiceService.findOne(businessService.getName(), initiator);
+        project.removeBusinessService(businessService);
+        project.addBusinessService(savedBusinessService);
         project = this.projectOutputPort.save(project);
 // TODO remove this part ? (link create by children)
 //        if (environments != null && !environments.isEmpty()) {
@@ -81,7 +82,8 @@ public class ProjectService implements ProjectInputPort {
 
     @Override
     public Project create(Project newEntity, User initiator) {
-        return this.create(newEntity.getFullName(), newEntity.getShortName(), newEntity.getDescription(), newEntity.getBusinessService(), newEntity.getMaintainers(), newEntity.getOwners(), newEntity.getEnvironments(), initiator);
+        BusinessService businessService = newEntity.getBusinessServices().stream().findFirst().orElse(null);
+        return this.create(newEntity.getFullName(), newEntity.getShortName(), newEntity.getDescription(), businessService, newEntity.getMaintainers(), newEntity.getOwners(), newEntity.getEnvironments(), initiator);
     }
 
     @Override
@@ -92,7 +94,7 @@ public class ProjectService implements ProjectInputPort {
 
         if (projectCreationRequest.getBusinessServiceName() != null) {
             BusinessService businessService = businessServiceService.findOne(projectCreationRequest.getBusinessServiceName(), projectCreationRequest.getRequestor());
-            projectCreationRequest.getProject().setBusinessService(businessService);
+            projectCreationRequest.getProject().addBusinessService(businessService);
         }
         return this.create(projectCreationRequest.getProject(), projectCreationRequest.getRequestor());
     }
@@ -127,8 +129,13 @@ public class ProjectService implements ProjectInputPort {
         existingProject.setMaintainers(project.getMaintainers());
         // TODO notify new/previous maintainer
 
-        BusinessService businessService = this.businessServiceService.findOne(project.getBusinessService().getName(), initiator);
-        existingProject.setBusinessService(businessService);
+        // Clear existing business services
+        existingProject.getBusinessServices().clear();
+        // Add updated business services
+        project.getBusinessServices().forEach(businessService -> {
+            BusinessService savedBusinessService = this.businessServiceService.findOne(businessService.getName(), initiator);
+            existingProject.addBusinessService(savedBusinessService);
+        });
 
         project.getEnvironments()
                 .stream().map((Environment env) -> this.environmentService.update(env, initiator))
