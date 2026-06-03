@@ -38,6 +38,7 @@ export default defineConfig({
           label: 'CORE Domain',
           items: [
             { label: 'CORE Overview', slug: 'core' },
+            { label: 'Business Logic Catalog', slug: 'core/core-business-logic-catalog' },
             { label: 'Domain Business Logic', slug: 'core/core-domain-logic' },
             { label: 'Validation Chains', slug: 'core/core-validation-chains' },
             { label: 'Event Management', slug: 'core/core-event-management' },
