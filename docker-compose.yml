@@ -1,23 +1,23 @@
 volumes:
   inventory_db:
   inventory_db_2:
-  backend_db:
+  bff_db:
   metabase-data:
 
 services:
-  backend_db:
+  bff_db:
     image: postgres:18.1
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: backend_db
+      POSTGRES_DB: bff_db
       PGDATA: /data/postgres
     ports:
       - '5433:5432'
     volumes:
-      - backend_db:/data/postgres
+      - bff_db:/data/postgres
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U user -d backend_db']
+      test: ['CMD-SHELL', 'pg_isready -U user -d bff_db']
       interval: 5s
       timeout: 5s
       retries: 5
@@ -44,7 +44,7 @@ services:
     container_name: metabase
     depends_on:
       - inventory_db
-      - backend_db
+      - bff_db
     environment:
       MB_DB_FILE: /metabase-data
     ports:
@@ -57,16 +57,16 @@ services:
     ports:
       - '9411:9411'
 
-  backend:
+  bff:
     build:
       context: .
-      dockerfile: Backend/Dockerfile
+      dockerfile: bff/Dockerfile
     ports:
       - '8080:8080'
     environment:
       DB_DRIVER: org.postgresql.Driver
       DB_DIALECT: org.hibernate.dialect.PostgreSQLDialect
-      DB_URL: jdbc:postgresql://backend_db:5432/backend_db
+      DB_URL: jdbc:postgresql://bff_db:5432/bff_db
       DB_USERNAME: user
       DB_PASSWORD: password
       DB_DDL_AUTO: update
@@ -74,7 +74,7 @@ services:
       InventoryService_URL: http://inventory-service:8080
       TracingTool_URL: http://zipkin:9411
     depends_on:
-      backend_db:
+      bff_db:
         condition: service_healthy
       # zipkin:
       #   condition: service_started
@@ -82,7 +82,7 @@ services:
   inventory-service:
     build:
       context: .
-      dockerfile: InventoryService/Dockerfile
+      dockerfile: services/inventory/Dockerfile
     ports:
       - '8085:8080'
     environment:
@@ -99,13 +99,13 @@ services:
       # zipkin:
       #   condition: service_started
 
-  client-ui:
+  frontend:
     build:
-      context: ./client_ui
+      context: ./frontend
       dockerfile: Dockerfile
     ports:
       - '8090:4173'
     depends_on:
-      - backend
+      - bff
     environment:
-      BACKEND_BASE_URL: 'http://backend:8080'
+      bff_BASE_URL: 'http://bff:8080'

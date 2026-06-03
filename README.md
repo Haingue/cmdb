@@ -25,10 +25,12 @@ Une plateforme pour cartographier l'environnement applicatif d'une entreprise, a
    git clone https://github.com/Haingue/cmdb.git
    cd votre-repo
 
-
-## Components
-
-- Inventory sevice
-- Cartography
-  - core
-  - client-ui
+## 📦 Monorepo Structure
+   Directory       | Purpose                          |
+ |-----------------|----------------------------------|
+ | `adr/`          | Architecture Decision Records    |
+ | `bff/`          | Backend For Frontend (API Gateway) |
+ | `frontend/`     | Frontend Application (React)    |
+ | `core/`         | Domain Logic (Hexagonal Architecture) |
+ | `services/`     | Microservices (Inventory, etc.)  |
+ | `aggregators/`  | Data Ingestion Tools (GitHub, Syslog) |

@@ -21,11 +21,11 @@ package CMDB {
   }
 
   package Cartography {
-    [Backend] as cartographybackend
+    [BackendForFrontend] as cartographybff
     [Frontend] as cartographyfrontend
-    cartographyfrontend - cartographybackend
+    cartographyfrontend - cartographybff
   }
-  cartographybackend <-> inventoryservice
+  cartographybff <-> inventoryservice
 }
 
 @enduml
@@ -59,13 +59,13 @@ package CMDB {
   networkdevice -> syslog : syslog (UPD)
 
   package Cartography {
-    [Backend] as cartographybackend
+    [BackendForFrontend] as cartographybff
     [Frontend] as cartographyfrontend
-    cartographyfrontend - cartographybackend
+    cartographyfrontend - cartographybff
   }
-  cartographybackend -> inventoryservice : HTTPS
-  syslog -> cartographybackend : HTTPS
-  git -> cartographybackend : HTTPS
+  cartographybff -> inventoryservice : HTTPS
+  syslog -> cartographybff : HTTPS
+  git -> cartographybff : HTTPS
 }
 
 @enduml
