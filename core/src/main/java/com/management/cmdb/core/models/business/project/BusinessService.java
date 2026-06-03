@@ -1,10 +1,12 @@
 package com.management.cmdb.core.models.business.project;
 
 import com.management.cmdb.core.models.exceptions.InvalidObjectException;
+import com.management.cmdb.core.models.technical.VersionedSavedEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Objects;
@@ -12,8 +14,8 @@ import java.util.Objects;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public final class BusinessService {
+@SuperBuilder(toBuilder = true)
+public class BusinessService extends VersionedSavedEntity {
     private String name;
     private String abbreviation;
 

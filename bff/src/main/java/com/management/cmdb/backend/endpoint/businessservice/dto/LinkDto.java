@@ -2,9 +2,9 @@ package com.management.cmdb.backend.endpoint.businessservice.dto;
 
 import java.util.UUID;
 
-public record BusinessServiceDto (
+public record LinkDto (
         UUID uuid,
-        String name,
-        String abbreviation
+        UUID projectUuid,
+        UUID businessServiceUuid
 ) {
 }
