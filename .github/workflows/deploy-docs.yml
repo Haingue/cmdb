@@ -1,24 +1,16 @@
 name: Deploy Documentation to GitHub Pages
 
-# Déclenche le workflow quand on push sur main ou develop
 on:
   push:
     branches: ['main', 'develop']
-    # Seulement si des fichiers dans docs/ ont été modifiés
     paths:
       - 'docs/**'
       - '.github/workflows/deploy-docs.yml'
 
-# Permissions nécessaires pour déployer sur GitHub Pages
 permissions:
   contents: read
   pages: write
   id-token: write
-
-# Environnement pour GitHub Pages
-environment:
-  name: github-pages
-  url: ${{ steps.deployment.outputs.page_url }}
 
 jobs:
   build-and-deploy:
@@ -40,34 +32,18 @@ jobs:
 
       - name: Build documentation
         working-directory: docs
-        # Pour GitHub Pages, le base est /cmdb/ (nom du repo)
-        # Pour tester localement: BASE_URL= npm run build
         run: npm run build
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
         with:
-          # Permet de deployer depuis n'importe quelle branche
           enablement: true
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Upload le dossier de build d'Astro
           path: docs/dist
 
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-        
-# Alternative: Si tu préfères utiliser une branche gh-pages au lieu de GitHub Pages native
-# (décommente cette section et commente la précédente si besoin)
-#      - name: Deploy to gh-pages branch
-#        uses: peaceiris/actions-gh-pages@v3
-#        with:
-#          github_token: ${{ secrets.GITHUB_TOKEN }}
-#          publish_dir: docs/dist
-#          keep_files: false
-#          user_name: 'github-actions[bot]'
-#          user_email: 'github-actions[bot]@users.noreply.github.com'
-#          commit_message: 'docs: deploy documentation ${{ github.sha }}'
