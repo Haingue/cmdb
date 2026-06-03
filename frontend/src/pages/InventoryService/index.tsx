@@ -78,6 +78,7 @@ const InventoryService = () => {
           <li><Link className="text-primary font-extrabold hover:underline" to="/inventory-service/link-type-form">Create new link type</Link></li>
           <li><Link className="text-primary font-extrabold hover:underline" to="/inventory-service/items">Explorer items</Link></li>
           <li><Link className="text-primary font-extrabold hover:underline" to="/inventory-service/item-form">Create new item</Link></li>
+          <li><Link className="text-primary font-extrabold hover:underline" to="/inventory-service/link-form">Create new link</Link></li>
         </ul>
       </section>
     </>
