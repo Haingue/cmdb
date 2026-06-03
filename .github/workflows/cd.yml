@@ -3,7 +3,7 @@ name: CD Pipeline
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ['main']
 
 jobs:
   deploy:
@@ -17,13 +17,13 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
-      - name: Build and push Backend
+      - name: Build and push bff image
         run: |
-          cd Backend
-          docker build -t votre-org/backend:${{ github.sha }} .
-          docker push votre-org/backend:${{ github.sha }}
+          cd bff
+          docker build -t votre-org/bff:${{ github.sha }} .
+          docker push votre-org/bff:${{ github.sha }}
 
       - name: Deploy to production
         run: |
           # Exemple avec kubectl (si vous utilisez Kubernetes)
-          kubectl set image deployment/backend backend=votre-org/backend:${{ github.sha }}
+          kubectl set image deployment/bff bff=votre-org/bff:${{ github.sha }}
