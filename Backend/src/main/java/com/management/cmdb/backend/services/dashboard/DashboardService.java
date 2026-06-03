@@ -1,5 +1,6 @@
 package com.management.cmdb.backend.services.dashboard;
 
+import com.management.cmdb.backend.services.adapters.ProjectAdapter;
 import com.management.cmdb.backend.services.inventory.InventoryServiceClient;
 import com.management.cmdb.backend.services.inventory.dto.ItemDto;
 import com.management.cmdb.backend.services.inventory.dto.wrapper.PaginatedResponseDto;
@@ -21,17 +22,11 @@ public class DashboardService {
 
     public Mono<DashboardMetrics> getMetrics() {
         try {
-            // Récupération des counts depuis l'InventoryService
-            // Servers = Host items
             long serverCount = countItemsByType("Host");
-            
-            // Applications = Software items
             long applicationCount = countItemsByType("Software");
+            long projectCount = countItemsByType(ProjectAdapter.ITEM_TYPE_LABEL);
             
-            // Projects
-            long projectCount = countItemsByType("Project");
-            
-            // Active users - à implémenter quand l'endpoint sera disponible
+            // TODO Active users - à implémenter quand l'endpoint sera disponible
             long activeUserCount = 0L;
 
             LOGGER.info("Dashboard metrics fetched: servers={}, applications={}, projects={}, activeUsers={}", 
@@ -40,15 +35,14 @@ public class DashboardService {
             return Mono.just(new DashboardMetrics(serverCount, applicationCount, projectCount, activeUserCount));
         } catch (Exception e) {
             LOGGER.error("Error fetching dashboard metrics", e);
-            // Retourne des valeurs par défaut en cas d'erreur
             return Mono.just(new DashboardMetrics(0L, 0L, 0L, 0L));
         }
     }
 
     private long countItemsByType(String itemType) {
         try {
-            PaginatedResponseDto<ItemDto> response = inventoryServiceClient.searchItems("", itemType, 0, 1);
-            return response.total();
+            PaginatedResponseDto<ItemDto> response = inventoryServiceClient.searchItems(null, itemType, 0, 1);
+            return response.totalElements();
         } catch (Exception e) {
             LOGGER.warn("Error counting items for type {}: {}", itemType, e.getMessage());
             return 0L;

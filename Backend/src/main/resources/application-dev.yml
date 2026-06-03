@@ -7,3 +7,6 @@
 
 #ALLOWED_HOST_REGEX: (http|https)://(localhost|.*.common.eu.corp.toyota.com)(:8080|:5173|:443)
 ALLOWED_HOST_REGEX: "*"
+
+server:
+  port: 8090

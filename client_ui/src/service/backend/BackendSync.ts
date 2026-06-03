@@ -1,6 +1,6 @@
 import { BACKEND_BASE_URL } from "../../configuration";
 import type { ItemDto, PaginatedResponseDto } from "../inventory/types";
-import type { BackendServerInfo, BusinessService, ApiProblem, ProjectCreationRequest, Environment, Host, Software, EnvironmentCreationRequest } from "./types";
+import type { BackendServerInfo, BusinessService, ApiProblem, ProjectCreationRequest, Environment, Host, Software, EnvironmentCreationRequest, DashboardMetrics } from "./types";
 
 /** Server **/
 export async function getServerInfo(): Promise<BackendServerInfo> {
@@ -126,7 +126,7 @@ export async function createSoftware(project: Software): Promise<ItemDto> {
 
 /** Dashboard **/
 export async function getDashboardMetrics(): Promise<DashboardMetrics> {
-  const response = await fetch(`${BACKEND_BASE_URL}/dashboard/metrics`);
+  const response = await fetch(`${BACKEND_BASE_URL}/service/dashboard/metrics`);
   if (!response.ok) return Promise.reject(await response.json() as ApiProblem);
   return response.json();
 }

@@ -1,4 +1,4 @@
-import type { DateTime, ItemDto, UUID } from "../inventory/types"
+import type { DateTime, UUID } from "../inventory/types"
 
 export type BackendServerInfo = {
   application: {
@@ -110,7 +110,7 @@ export type Software = Component & {
   hosts?: Host[]
 }
 
-export interface DashboardMetrics {
+export type DashboardMetrics = {
   serverCount: number
   applicationCount: number
   projectCount: number

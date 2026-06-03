@@ -3,9 +3,6 @@ info:
     name: "cmdb-@project.artefactId@"
     version: "@project.version@"
 
-server:
-  port: 8090
-
 com.management.cmdb:
   services:
     inventory:

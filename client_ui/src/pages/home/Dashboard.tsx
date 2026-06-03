@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react'
 import PageTitle from '../../components/PageTitle'
 import './Dashboard.css'
 
-import { DashboardMetrics } from '../../service/backend/types';
 import BackendSync from '../../service/backend/BackendSync';
+import type { DashboardMetrics } from '../../service/backend/types';
 
 export const MeasureCard = ({ title, value, change, chartId }: { title: string; value: string; change?: string; chartId?: string }) => {
   return (
@@ -55,6 +55,9 @@ function Dashboard() {
       </>
     )
   }
+  return (
+    <>
+      <PageTitle title={title} />
       <section className="p-4 rounded-lg dark:bg-gray-800 mt-4">
         <div className="grid grid-cols-1 gap-4 mb-4 lg:grid-cols-3">
           <MeasureCard title="Servers" value={metrics?.serverCount.toString() ?? '0'} />

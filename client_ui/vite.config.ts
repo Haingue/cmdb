@@ -2,14 +2,12 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 
+console.log(JSON.stringify(process.env.BACKEND_BASE_URL, null, 2))
 
-// https://vite.dev/config/
 export default defineConfig({
   define: {
-    'process.env': {
-      NODE_ENV: process.env.NODE_ENV,
-      BACKEND_BASE_URL: process.env.BACKEND_BASE_URL
-    }
+    __BACKEND_BASE_URL__: process.env.BACKEND_BASE_URL,
+    'process.env': process.env,
   },
   plugins: [react(), tailwindcss()],
   server: {

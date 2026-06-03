@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
 @RestController
-@RequestMapping("/api/dashboard")
+@RequestMapping("/service/dashboard")
 public class DashboardController {
 
     private final DashboardService dashboardService;
