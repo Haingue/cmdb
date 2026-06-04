@@ -23,7 +23,8 @@ public class Project extends VersionedSavedEntity {
     private String fullName;
     private String shortName;
     private String description;
-    private BusinessService businessService;
+    @Builder.Default
+    private Set<BusinessService> businessServices = new HashSet<>();
 
     private UserGroup maintainers;
     private UserGroup owners;
@@ -39,22 +40,30 @@ public class Project extends VersionedSavedEntity {
         environments.remove(environment);
     }
 
+    public void addBusinessService(BusinessService businessService) {
+        businessServices.add(businessService);
+    }
+
+    public void removeBusinessService(BusinessService businessService) {
+        businessServices.remove(businessService);
+    }
+
     public void checkIntegrity() {
         if (StringUtils.isBlank(fullName)) throw new InvalidObjectException("fullName cannot be blank", this);
         if (StringUtils.isBlank(shortName)) throw new InvalidObjectException("shortName cannot be blank", this);
         if (StringUtils.isBlank(description)) throw new InvalidObjectException("description cannot be blank", this);
-        if (businessService == null || StringUtils.isBlank(businessService.getName())) throw new InvalidObjectException("businessService is missing", this);
+        if (businessServices.isEmpty()) throw new InvalidObjectException("businessServices cannot be empty", this);
         if (owners == null) throw new InvalidObjectException("owners is missing", this);
     }
 
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof Project project)) return false;
-        return super.equals(project) && Objects.equals(shortName, project.shortName) && Objects.equals(businessService, project.businessService);
+        return super.equals(project) && Objects.equals(shortName, project.shortName) && Objects.equals(businessServices, project.businessServices);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), shortName, businessService);
+        return Objects.hash(super.hashCode(), shortName, businessServices);
     }
 }

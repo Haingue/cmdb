@@ -12,5 +12,8 @@ public interface BusinessServiceMapper {
 
     BusinessServiceDto toDto(BusinessService coreModel);
     BusinessService toCoreModel(BusinessServiceDto dto);
+    default UUID mapUuid(BusinessService businessService) {
+        return businessService.getUuid();
+    }
 
 }

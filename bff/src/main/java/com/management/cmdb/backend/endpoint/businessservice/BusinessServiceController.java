@@ -64,4 +64,18 @@ public class BusinessServiceController {
                 .orElseGet(() -> ResponseEntity.badRequest().build());
     }
 
+    @PostMapping("/link")
+    public ResponseEntity<LinkDto> createLink(@RequestBody LinkDto linkDto) {
+        LOGGER.info("Create link: {}", linkDto);
+        // TODO: Implement logic to create a link between Project and BusinessService
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/link/{uuid}")
+    public ResponseEntity<Void> deleteLink(@PathVariable UUID uuid) {
+        LOGGER.info("Delete link: {}", uuid);
+        // TODO: Implement logic to delete a link between Project and BusinessService
+        return ResponseEntity.ok().build();
+    }
+
 }
