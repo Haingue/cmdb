@@ -34,7 +34,7 @@ This document provides a **complete catalog** of all business logic that can be 
 | [Search](#10-search) | 8+ | 2 | 0 | 6 | ⭐⭐⭐ |
 | [Export/Import](#11-exportimport) | 10+ | 1 | 0 | 9 | ⭐⭐⭐ |
 | [Security & Compliance](#12-security--compliance) | 15+ | 2 | 0 | 13 | ⭐⭐⭐⭐⭐ |
-| [Toyota-Specific](#13-toyota-specific) | 20+ | 0 | 0 | 20 | ⭐⭐⭐⭐ |
+| [MyCompany-Specific](#13-mycompany-specific) | 20+ | 0 | 0 | 20 | ⭐⭐⭐⭐ |
 
 **Total: ~150+ business logic items** | **✅ 29** | **⚠️ 6** | **❌ 115** |
 
@@ -410,13 +410,13 @@ This document provides a **complete catalog** of all business logic that can be 
 
 ---
 
-## 13. 🎯 Toyota-Specific Logic
+## 13. 🎯 MyCompany-Specific Logic
 
 ### Industrial Environment Management
 
 | Logic | Description | Location | Status | Notes |
 |-------|-------------|----------|--------|-------|
-| **Environment classification** | Toyota-specific types | Model | ❌ | Need EnvironmentType extension |
+| **Environment classification** | MyCompany-specific types | Model | ❌ | Need EnvironmentType extension |
 | **Network zones** | Internal, DMZ, External, OT | Model | ✅ | NetworkArea enum exists |
 | **Criticality levels** | TIER 1, 2, 3 systems | Model | ❌ | Need Criticality enum |
 | **SLA per environment** | Different SLAs | Model | ❌ | Need SLA model |
@@ -488,7 +488,7 @@ This document provides a **complete catalog** of all business logic that can be 
 4. **Reporting & dashboards** - KPIs, analytics
 5. **Security & compliance** - Certificate management, compliance tracking
 
-### Phase 4: Toyota-Specific - **Ongoing**
+### Phase 4: MyCompany-Specific - **Ongoing**
 1. **Industrial environment classification**
 2. **Equipment management**
 3. **SAP/PLM integration**
