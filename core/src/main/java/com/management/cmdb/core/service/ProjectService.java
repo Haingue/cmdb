@@ -159,10 +159,11 @@ public class ProjectService implements ProjectInputPort {
         if (uuid == null) throw new CoreException("Project uuid cannot be null");
 
         Project existingProject = this.findOne(uuid, initiator);
-        // TODO delete environments
-        existingProject.getEnvironments().stream()
-                .peek(environment -> this.environmentService.delete(environment.getUuid(), initiator))
-                .forEach(existingProject::removeEnvironment);
+        // Collect environments to delete first to avoid ConcurrentModificationException
+        existingProject.getEnvironments().forEach(environment -> 
+            this.environmentService.delete(environment.getUuid(), initiator)
+        );
+        existingProject.getEnvironments().clear();
         existingProject.archive(GlobalStaticParameter.SYSTEM_NAME.name());
         projectOutputPort.save(existingProject);
     }
