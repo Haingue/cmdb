@@ -1,10 +1,12 @@
 package com.management.cmdb.core.models.business.technology;
 
 import com.management.cmdb.core.models.business.constant.TechnologyType;
+import com.management.cmdb.core.models.exceptions.InvalidObjectException;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Objects;
 
@@ -24,6 +26,14 @@ public class Technology {
 
     public boolean needsUpdate(Version version) {
         return 0 <= minimalVersion.compareTo(version);
+    }
+
+    public void checkIntegrity() {
+        if (StringUtils.isBlank(name)) throw new InvalidObjectException("Technology name cannot be blank", this);
+        if (Objects.isNull(type)) throw new InvalidObjectException("Technology type cannot be null", this);
+        if (Objects.isNull(minimalVersion)) throw new InvalidObjectException("Minimal version cannot be null", this);
+        if (Objects.isNull(targetVersion)) throw new InvalidObjectException("Target version cannot be null", this);
+        if (Objects.isNull(lastVersion)) throw new InvalidObjectException("Last version cannot be null", this);
     }
 
     @Override

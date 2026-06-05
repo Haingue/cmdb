@@ -80,4 +80,12 @@ public class Version implements Comparable {
         }
         return major - version.major;
     }
+
+    public boolean isNewerThan(Version version) {
+        return compareTo(version) > 0;
+    }
+
+    public boolean isOlderThan(Version version) {
+        return compareTo(version) < 0;
+    }
 }

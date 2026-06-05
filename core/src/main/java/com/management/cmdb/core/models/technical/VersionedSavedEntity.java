@@ -2,12 +2,14 @@ package com.management.cmdb.core.models.technical;
 
 import com.management.cmdb.core.models.business.identity.User;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -18,7 +20,8 @@ import java.util.Objects;
 public class VersionedSavedEntity extends UniqueEntity implements Serializable {
 
     protected long revision;
-    protected List<Event> events;
+    @Builder.Default
+    protected List<Event> events = new java.util.ArrayList<>();
     protected LocalDateTime creationDatetime;
     protected LocalDateTime archiveDatetime;
 
