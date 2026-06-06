@@ -15,6 +15,7 @@ import com.management.cmdb.core.ports.inputs.ComponentInputPort;
 import com.management.cmdb.core.ports.inputs.EnvironmentInputPort;
 import com.management.cmdb.core.ports.outputs.EnvironmentOutputPort;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class EnvironmentService implements EnvironmentInputPort {
@@ -103,7 +104,12 @@ public class EnvironmentService implements EnvironmentInputPort {
 
     @Override
     public void archive(UUID uuid, User initiator) {
-        throw new NotImplemented();
+        if (uuid == null) throw new InvalidObjectException("Uuid cannot be null");
+
+        Environment existingEnvironment = environmentOutputPort.findOne(uuid)
+                .orElseThrow(() -> new NotFoundException(uuid));
+        existingEnvironment.setArchiveDatetime(LocalDateTime.now());
+        this.environmentOutputPort.save(existingEnvironment);
     }
 
     @Override
