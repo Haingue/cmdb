@@ -1,7 +1,7 @@
 package com.management.cmdb.core.service;
 
-import com.management.cmdb.core.models.business.Notification;
-import com.management.cmdb.core.models.business.NotificationType;
+import com.management.cmdb.core.models.business.Event;
+import com.management.cmdb.core.models.business.EventType;
 import com.management.cmdb.core.models.business.identity.User;
 import com.management.cmdb.core.models.business.project.BusinessService;
 import com.management.cmdb.core.models.exceptions.CoreException;
@@ -10,18 +10,18 @@ import com.management.cmdb.core.models.exceptions.NotFoundException;
 import com.management.cmdb.core.models.exceptions.NotImplemented;
 import com.management.cmdb.core.ports.inputs.BusinessServiceInputPort;
 import com.management.cmdb.core.ports.outputs.BusinessServiceOutputPort;
-import com.management.cmdb.core.ports.outputs.NotificationOutputPort;
+import com.management.cmdb.core.ports.outputs.EventOutputPort;
 
 import java.time.Instant;
 
 public class BusinessServiceService implements BusinessServiceInputPort {
 
     private final BusinessServiceOutputPort businessServiceOutputPort;
-    private final NotificationOutputPort notificationOutputPort;
+    private final EventOutputPort eventOutputPort;
 
-    public BusinessServiceService(BusinessServiceOutputPort businessServiceOutputPort, NotificationOutputPort notificationOutputPort) {
+    public BusinessServiceService(BusinessServiceOutputPort businessServiceOutputPort, EventOutputPort eventOutputPort) {
         this.businessServiceOutputPort = businessServiceOutputPort;
-        this.notificationOutputPort = notificationOutputPort;
+        this.eventOutputPort = eventOutputPort;
     }
 
     private void isUniqueAbbreviation(String abbreviation) {
@@ -47,10 +47,10 @@ public class BusinessServiceService implements BusinessServiceInputPort {
         isUniqueAbbreviation(businessService.getAbbreviation());
 
         BusinessService savedBusinessService = businessServiceOutputPort.save(businessService);
-        notificationOutputPort.notify(
-                Notification.builder()
+        eventOutputPort.notify(
+                Event.builder()
                         .title(savedBusinessService.getName())
-                        .type(NotificationType.ITEM_CREATED)
+                        .type(EventType.ITEM_CREATED)
                         .payload(savedBusinessService)
                         .source(initiator.toString())
                         .timestamp(Instant.now())
@@ -71,10 +71,10 @@ public class BusinessServiceService implements BusinessServiceInputPort {
         previousValue.setAbbreviation(businessService.getAbbreviation());
 
         BusinessService savedBusinessService = businessServiceOutputPort.save(previousValue);
-        notificationOutputPort.notify(
-                Notification.builder()
+        eventOutputPort.notify(
+                Event.builder()
                         .title(savedBusinessService.getName())
-                        .type(NotificationType.ITEM_UPDATED)
+                        .type(EventType.ITEM_UPDATED)
                         .payload(savedBusinessService)
                         .source(initiator.toString())
                         .timestamp(Instant.now())
@@ -96,10 +96,10 @@ public class BusinessServiceService implements BusinessServiceInputPort {
                 .orElseThrow(() -> new NotFoundException(name));
         businessServiceOutputPort.delete(existingBusinessService.getName());
 
-        notificationOutputPort.notify(
-                Notification.builder()
+        eventOutputPort.notify(
+                Event.builder()
                         .title(existingBusinessService.getName())
-                        .type(NotificationType.ITEM_DELETED)
+                        .type(EventType.ITEM_DELETED)
                         .payload(existingBusinessService)
                         .source(initiator.toString())
                         .timestamp(Instant.now())

@@ -11,7 +11,7 @@ import com.management.cmdb.core.models.business.technology.Version;
 import com.management.cmdb.core.models.exceptions.InvalidObjectException;
 import com.management.cmdb.core.models.exceptions.NotFoundException;
 import com.management.cmdb.core.ports.outputs.ComponentOutputPort;
-import com.management.cmdb.core.ports.outputs.NotificationOutputPort;
+import com.management.cmdb.core.ports.outputs.EventOutputPort;
 import com.management.cmdb.core.ports.outputs.TechnologyOutputPort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -41,7 +41,7 @@ class TechnologyServiceTest {
     private ComponentOutputPort componentOutputPort;
 
     @Mock
-    private NotificationOutputPort notificationOutputPort;
+    private EventOutputPort eventOutputPort;
 
     @InjectMocks
     private TechnologyService technologyService;
@@ -53,7 +53,7 @@ class TechnologyServiceTest {
 
     @BeforeEach
     void setUp() {
-        technologyService = new TechnologyService(technologyOutputPort, componentOutputPort, notificationOutputPort);
+        technologyService = new TechnologyService(technologyOutputPort, componentOutputPort, eventOutputPort);
     }
 
     @Test

@@ -10,11 +10,11 @@ import java.time.Instant;
 @SuperBuilder
 @Getter
 @Setter
-public class Notification extends UniqueEntity {
+public class Event extends UniqueEntity {
 
     protected String title;
     protected Object payload;
-    protected NotificationType type;
+    protected EventType type;
     protected Instant timestamp;
     protected String source;
 
