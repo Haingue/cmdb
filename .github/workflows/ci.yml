@@ -19,24 +19,20 @@ jobs:
           distribution: 'temurin'
 
       - name: Build and test core
-        run: |
-          cd core
-          ./mvnw clean test
+        working-directory: core
+        run: mvn clean test
 
       - name: Build and test bff
-        run: |
-          cd bff
-          ./mvnw clean test
+        working-directory: bff
+        run: mvn clean test
 
       - name: Build and test InventoryService
-        run: |
-          cd services/inventory
-          ./mvnw clean test
+        working-directory: services/inventory
+        run: mvn clean test
 
       - name: Build and test SyslogAgregator
-        run: |
-          cd agregators/syslog-server
-          ./mvnw clean test
+        working-directory: agregators/syslog-server
+        run: mvn clean test
 
       - name: Build frontend (if applicable)
         if: contains(github.event_name, 'push') # Optionnel : ne pas bloquer les PR si le frontend échoue
