@@ -472,7 +472,7 @@ public boolean checkIntegrity() throws InvalidObjectException {
 
 | Rule ID | Relationship | Cardinality | Constraint | Validation Location |
 |---------|--------------|-------------|------------|---------------------|
-| REL-001 | Project ↔ BusinessService | Many-to-One | Project has exactly 1 BusinessService | Service layer |
+| REL-001 | Project ↔ BusinessService | Many-to-Many | Project has 1-N BusinessServices | Service layer |
 | REL-002 | Project ↔ Environment | One-to-Many | Project has 0-N Environments | N/A |
 | REL-003 | Environment ↔ Component | One-to-Many | Environment has 0-N Components | N/A |
 | REL-004 | Component ↔ Technology | Many-to-One | Component has exactly 1 Technology | `Component.checkIntegrity()` |
