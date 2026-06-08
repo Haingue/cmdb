@@ -20,35 +20,35 @@ public class BeanConfiguration {
     private final ProjectOutputPort projectAdapter;
     private final EnvironmentOutputPort environmentAdapter;
     private final ComponentOutputPort componentAdapter;
-    private final NotificationOutputPort notificationAdapter;
+    private final EventOutputPort eventAdapter;
     private final ComponentVisitor<Component> componentVisitor;
 
-    public BeanConfiguration(BusinessServiceOutputPort businessServiceAdapter, ProjectOutputPort projectAdapter, EnvironmentOutputPort environmentAdapter, ComponentOutputPort componentAdapter, NotificationOutputPort notificationAdapter, ComponentVisitor<Component> componentVisitor) {
+    public BeanConfiguration(BusinessServiceOutputPort businessServiceAdapter, ProjectOutputPort projectAdapter, EnvironmentOutputPort environmentAdapter, ComponentOutputPort componentAdapter, EventOutputPort eventAdapter, ComponentVisitor<Component> componentVisitor) {
         this.businessServiceAdapter = businessServiceAdapter;
         this.projectAdapter = projectAdapter;
         this.environmentAdapter = environmentAdapter;
         this.componentAdapter = componentAdapter;
-        this.notificationAdapter = notificationAdapter;
+        this.eventAdapter = eventAdapter;
         this.componentVisitor = componentVisitor;
     }
 
     @Bean
     public BusinessServiceService businessServiceService (BusinessServiceOutputPort businessServiceAdapter) {
-        return new BusinessServiceService(businessServiceAdapter, notificationAdapter);
+        return new BusinessServiceService(businessServiceAdapter, eventAdapter);
     }
 
     @Bean
     public ComponentInputPort componentService (ComponentOutputPort componentAdapter, ComponentVisitor<Component> componentVisitor) {
-        return new ComponentService(componentAdapter, componentVisitor, notificationAdapter);
+        return new ComponentService(componentAdapter, componentVisitor, eventAdapter);
     }
 
     @Bean
     public EnvironmentInputPort environmentService (EnvironmentOutputPort environmentAdapter, ComponentInputPort componentService) {
-        return new EnvironmentService(environmentAdapter, componentService, notificationAdapter);
+        return new EnvironmentService(environmentAdapter, componentService, eventAdapter);
     }
 
     @Bean
     public ProjectInputPort projectService (ProjectOutputPort projectAdapter, BusinessServiceService businessServiceService, EnvironmentInputPort environmentService) {
-        return new ProjectService(projectAdapter, businessServiceService, environmentService, notificationAdapter);
+        return new ProjectService(projectAdapter, businessServiceService, environmentService, eventAdapter);
     }
 }

@@ -13,7 +13,7 @@ import com.management.cmdb.core.models.exceptions.NotFoundException;
 import com.management.cmdb.core.ports.inputs.BusinessServiceInputPort;
 import com.management.cmdb.core.ports.inputs.EnvironmentInputPort;
 import com.management.cmdb.core.ports.inputs.ProjectInputPort;
-import com.management.cmdb.core.ports.outputs.NotificationOutputPort;
+import com.management.cmdb.core.ports.outputs.EventOutputPort;
 import com.management.cmdb.core.ports.outputs.ProjectOutputPort;
 
 import java.time.LocalDateTime;
@@ -25,13 +25,13 @@ public class ProjectService implements ProjectInputPort {
     private final ProjectOutputPort projectOutputPort;
     private final BusinessServiceInputPort businessServiceService;
     private final EnvironmentInputPort environmentService;
-    private final NotificationOutputPort notificationOutputPort;
+    private final EventOutputPort eventOutputPort;
 
-    public ProjectService(ProjectOutputPort projectOutputPort, BusinessServiceInputPort businessServiceInputPort, EnvironmentInputPort environmentInputPort, NotificationOutputPort notificationOutputPort) {
+    public ProjectService(ProjectOutputPort projectOutputPort, BusinessServiceInputPort businessServiceInputPort, EnvironmentInputPort environmentInputPort, EventOutputPort eventOutputPort) {
         this.projectOutputPort = projectOutputPort;
         this.businessServiceService = businessServiceInputPort;
         this.environmentService = environmentInputPort;
-        this.notificationOutputPort = notificationOutputPort;
+        this.eventOutputPort = eventOutputPort;
     }
 
     @Override

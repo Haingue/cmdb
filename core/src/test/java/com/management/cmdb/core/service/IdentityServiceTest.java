@@ -8,7 +8,7 @@ import com.management.cmdb.core.models.exceptions.InvalidObjectException;
 import com.management.cmdb.core.models.exceptions.NotFoundException;
 import com.management.cmdb.core.ports.outputs.EnvironmentOutputPort;
 import com.management.cmdb.core.ports.outputs.IdentityOutputPort;
-import com.management.cmdb.core.ports.outputs.NotificationOutputPort;
+import com.management.cmdb.core.ports.outputs.EventOutputPort;
 import com.management.cmdb.core.ports.outputs.ProjectOutputPort;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,7 +22,7 @@ class IdentityServiceTest {
 
     private ProjectOutputPort projectOutputPort;
     private EnvironmentOutputPort environmentOutputPort;
-    private NotificationOutputPort notificationOutputPort;
+    private EventOutputPort eventOutputPort;
     private IdentityOutputPort identityOutputPort;
 
     private IdentityService identityService;
@@ -32,9 +32,9 @@ class IdentityServiceTest {
         projectOutputPort = Mockito.mock(ProjectOutputPort.class);
         environmentOutputPort = Mockito.mock(EnvironmentOutputPort.class);
         identityOutputPort = Mockito.mock(IdentityOutputPort.class);
-        notificationOutputPort = Mockito.mock(NotificationOutputPort.class);
+        eventOutputPort = Mockito.mock(EventOutputPort.class);
 
-        identityService = new IdentityService(identityOutputPort, projectOutputPort, environmentOutputPort, notificationOutputPort);
+        identityService = new IdentityService(identityOutputPort, projectOutputPort, environmentOutputPort, eventOutputPort);
     }
 
     @Test

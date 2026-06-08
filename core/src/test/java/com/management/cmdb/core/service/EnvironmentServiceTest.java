@@ -2,7 +2,7 @@ package com.management.cmdb.core.service;
 
 import com.management.cmdb.core.fake.FakeEnvironment;
 import com.management.cmdb.core.fake.FakeUser;
-import com.management.cmdb.core.models.business.Notification;
+import com.management.cmdb.core.models.business.Event;
 import com.management.cmdb.core.models.business.component.Component;
 import com.management.cmdb.core.models.business.component.GenericComponent;
 import com.management.cmdb.core.models.business.constant.ComponentType;
@@ -15,7 +15,7 @@ import com.management.cmdb.core.models.exceptions.InvalidObjectException;
 import com.management.cmdb.core.models.exceptions.NotFoundException;
 import com.management.cmdb.core.ports.inputs.ComponentInputPort;
 import com.management.cmdb.core.ports.outputs.EnvironmentOutputPort;
-import com.management.cmdb.core.ports.outputs.NotificationOutputPort;
+import com.management.cmdb.core.ports.outputs.EventOutputPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -39,7 +39,7 @@ class EnvironmentServiceTest {
     @Mock
     private ComponentInputPort componentInputPort;
     @Mock
-    private NotificationOutputPort notificationOutputPort;
+    private EventOutputPort eventOutputPort;
     @InjectMocks
     private EnvironmentService environmentService;
 
@@ -83,7 +83,7 @@ class EnvironmentServiceTest {
                 .jiraTracker("NEW-JIRA")
                 .build();
         given(environmentOutputPort.save(any(Environment.class))).willAnswer(invocation -> invocation.getArgument(0));
-        given(notificationOutputPort.notify(any(Notification.class)))
+        given(eventOutputPort.notify(any(Event.class)))
                 .willReturn(true);
 
         // When
@@ -171,7 +171,7 @@ class EnvironmentServiceTest {
                 .jiraTracker(jiraTracker)
                 .build();
 
-        given(notificationOutputPort.notify(any(Notification.class)))
+        given(eventOutputPort.notify(any(Event.class)))
                 .willReturn(true);
 
         // Note: componentInputPort stub not needed - component creation is commented in EnvironmentService
@@ -224,7 +224,7 @@ class EnvironmentServiceTest {
                 .jiraTracker("NEW-JIRA")
                 .build();
 
-        given(notificationOutputPort.notify(any(Notification.class)))
+        given(eventOutputPort.notify(any(Event.class)))
                 .willReturn(true);
 
         given(environmentOutputPort.findOne(envUuid)).willReturn(Optional.of(existingEnv));
@@ -276,7 +276,7 @@ class EnvironmentServiceTest {
         UUID envUuid = devEnv.getUuid();
         given(environmentOutputPort.findOne(envUuid)).willReturn(Optional.of(devEnv));
         given(environmentOutputPort.save(any(Environment.class))).willAnswer(inv -> inv.getArgument(0));
-        given(notificationOutputPort.notify(any(Notification.class)))
+        given(eventOutputPort.notify(any(Event.class)))
                 .willReturn(true);
 
         // When
@@ -304,7 +304,7 @@ class EnvironmentServiceTest {
         // Given
         UUID envUuid = devEnv.getUuid();
         given(environmentOutputPort.findOne(envUuid)).willReturn(Optional.of(devEnv));
-        given(notificationOutputPort.notify(any(Notification.class)))
+        given(eventOutputPort.notify(any(Event.class)))
                 .willReturn(true);
 
         // When
@@ -355,7 +355,7 @@ class EnvironmentServiceTest {
         given(environmentOutputPort.findOne(envUuid)).willReturn(Optional.of(devEnv));
         given(componentInputPort.create(any(Component.class), any(User.class))).willReturn(newComponent);
         given(environmentOutputPort.save(any(Environment.class))).willAnswer(inv -> inv.getArgument(0));
-        given(notificationOutputPort.notify(any(Notification.class)))
+        given(eventOutputPort.notify(any(Event.class)))
                 .willReturn(true);
 
         // When

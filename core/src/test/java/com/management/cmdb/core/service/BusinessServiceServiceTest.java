@@ -2,15 +2,15 @@ package com.management.cmdb.core.service;
 
 import com.management.cmdb.core.fake.FakeBusinessService;
 import com.management.cmdb.core.fake.FakeUser;
-import com.management.cmdb.core.models.business.Notification;
-import com.management.cmdb.core.models.business.NotificationType;
+import com.management.cmdb.core.models.business.Event;
+import com.management.cmdb.core.models.business.EventType;
 import com.management.cmdb.core.models.business.project.BusinessService;
 import com.management.cmdb.core.models.exceptions.CoreException;
 import com.management.cmdb.core.models.exceptions.InvalidObjectException;
 import com.management.cmdb.core.models.exceptions.NotFoundException;
 import com.management.cmdb.core.models.exceptions.NotImplemented;
 import com.management.cmdb.core.ports.outputs.BusinessServiceOutputPort;
-import com.management.cmdb.core.ports.outputs.NotificationOutputPort;
+import com.management.cmdb.core.ports.outputs.EventOutputPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -32,7 +32,7 @@ class BusinessServiceServiceTest {
     private BusinessServiceOutputPort businessServiceOutputPort;
 
     @Mock
-    private NotificationOutputPort notificationOutputPort;
+    private EventOutputPort eventOutputPort;
 
     @InjectMocks
     private BusinessServiceService businessServiceService;
@@ -69,7 +69,7 @@ class BusinessServiceServiceTest {
                 .willReturn(Optional.empty());
         given(businessServiceOutputPort.save(validBusinessService))
                 .willReturn(validBusinessService);
-        given(notificationOutputPort.notify(any(Notification.class)))
+        given(eventOutputPort.notify(any(Event.class)))
                 .willReturn(true);
 
         // Act
@@ -77,8 +77,8 @@ class BusinessServiceServiceTest {
 
         // Assert
         assertEquals(validBusinessService, result);
-        then(notificationOutputPort).should().notify(argThat(notification ->
-                notification.getType() == NotificationType.ITEM_CREATED
+        then(eventOutputPort).should().notify(argThat(notification ->
+                notification.getType() == EventType.ITEM_CREATED
                         && notification.getSource().equals(FakeUser.SUPER_ADMIN.user.toString())
                         && notification.getTitle().equals(validBusinessService.getName())
                         && notification.getPayload().equals(validBusinessService)
@@ -117,13 +117,13 @@ class BusinessServiceServiceTest {
                 .willReturn(Optional.empty());
         given(businessServiceOutputPort.save(any(BusinessService.class)))
                 .willAnswer(invocation -> invocation.getArgument(0));
-        given(notificationOutputPort.notify(any(Notification.class)))
+        given(eventOutputPort.notify(any(Event.class)))
                 .willReturn(true);
 
         BusinessService result = businessServiceService.update(validBusinessService, FakeUser.BUSINESS_MEMBER.user);
 
         assertEquals(validBusinessService.getAbbreviation(), result.getAbbreviation());
-        then(notificationOutputPort).should().notify(any(Notification.class));
+        then(eventOutputPort).should().notify(any(Event.class));
     }
 
     @Test
@@ -171,13 +171,13 @@ class BusinessServiceServiceTest {
                 .willReturn(Optional.empty());
         given(businessServiceOutputPort.save(any(BusinessService.class)))
                 .willAnswer(invocation -> invocation.getArgument(0));
-        given(notificationOutputPort.notify(any(Notification.class)))
+        given(eventOutputPort.notify(any(Event.class)))
                 .willReturn(true);
 
         businessServiceService.update(validBusinessService, FakeUser.BUSINESS_MEMBER.user);
 
-        then(notificationOutputPort).should().notify(argThat(notification ->
-                notification.getType() == NotificationType.ITEM_UPDATED
+        then(eventOutputPort).should().notify(argThat(notification ->
+                notification.getType() == EventType.ITEM_UPDATED
                         && notification.getSource().equals(FakeUser.BUSINESS_MEMBER.user.toString())
                         && notification.getTitle().equals(validBusinessService.getName())
                         && notification.getPayload().equals(validBusinessService)
@@ -194,15 +194,15 @@ class BusinessServiceServiceTest {
     void delete_shouldDeleteBusinessService_whenFound() {
         given(businessServiceOutputPort.findOne(validBusinessService.getName()))
                 .willReturn(Optional.of(validBusinessService));
-        given(notificationOutputPort.notify(any(Notification.class)))
+        given(eventOutputPort.notify(any(Event.class)))
                 .willReturn(true);
 
         assertDoesNotThrow(() ->
                 businessServiceService.delete(validBusinessService.getName(), FakeUser.SUPER_ADMIN.user));
 
         then(businessServiceOutputPort).should().delete(validBusinessService.getName());
-        then(notificationOutputPort).should().notify(argThat(notification ->
-                notification.getType() == NotificationType.ITEM_DELETED
+        then(eventOutputPort).should().notify(argThat(notification ->
+                notification.getType() == EventType.ITEM_DELETED
                         && notification.getSource().equals(FakeUser.SUPER_ADMIN.user.toString())
                         && notification.getTitle().equals(validBusinessService.getName())
                         && notification.getPayload().equals(validBusinessService)

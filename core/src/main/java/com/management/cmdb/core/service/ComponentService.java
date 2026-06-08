@@ -7,7 +7,7 @@ import com.management.cmdb.core.models.exceptions.NotFoundException;
 import com.management.cmdb.core.models.technical.ComponentVisitor;
 import com.management.cmdb.core.ports.inputs.ComponentInputPort;
 import com.management.cmdb.core.ports.outputs.ComponentOutputPort;
-import com.management.cmdb.core.ports.outputs.NotificationOutputPort;
+import com.management.cmdb.core.ports.outputs.EventOutputPort;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -17,12 +17,12 @@ public class ComponentService implements ComponentInputPort {
 
     private final ComponentOutputPort componentOutputPort;
     private final ComponentVisitor<Component> persistentOutputPort;
-    private final NotificationOutputPort notificationOutputPort;
+    private final EventOutputPort eventOutputPort;
 
-    public ComponentService(ComponentOutputPort componentOutputPort, ComponentVisitor<Component> persistentOutputPort, NotificationOutputPort notificationOutputPort) {
+    public ComponentService(ComponentOutputPort componentOutputPort, ComponentVisitor<Component> persistentOutputPort, EventOutputPort eventOutputPort) {
         this.componentOutputPort = componentOutputPort;
         this.persistentOutputPort = persistentOutputPort;
-        this.notificationOutputPort = notificationOutputPort;
+        this.eventOutputPort = eventOutputPort;
     }
 
     @Override
