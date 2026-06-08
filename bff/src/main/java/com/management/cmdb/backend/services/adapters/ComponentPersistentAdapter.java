@@ -4,7 +4,6 @@ import com.management.cmdb.backend.services.inventory.InventoryServiceClient;
 import com.management.cmdb.backend.services.inventory.dto.AttributeDto;
 import com.management.cmdb.backend.services.inventory.dto.ItemDto;
 import com.management.cmdb.backend.services.inventory.dto.ItemTypeDto;
-import com.management.cmdb.backend.services.inventory.dto.LinkDto;
 import com.management.cmdb.core.models.business.component.*;
 import com.management.cmdb.core.models.business.identity.User;
 import com.management.cmdb.core.models.technical.ComponentVisitor;

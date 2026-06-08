@@ -6,7 +6,6 @@ import com.management.cmdb.backend.services.inventory.dto.LinkDto;
 import com.management.cmdb.backend.services.inventory.dto.LinkTypeDto;
 import com.management.cmdb.core.models.business.component.Component;
 import com.management.cmdb.core.models.business.project.Environment;
-import com.management.cmdb.core.models.business.project.Project;
 import com.management.cmdb.core.models.exceptions.NotImplemented;
 import com.management.cmdb.core.ports.outputs.EnvironmentOutputPort;
 import feign.FeignException;

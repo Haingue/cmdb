@@ -11,6 +11,7 @@ import com.management.cmdb.core.models.business.technology.Version;
 import com.management.cmdb.core.models.exceptions.InvalidObjectException;
 import com.management.cmdb.core.models.exceptions.NotFoundException;
 import com.management.cmdb.core.ports.outputs.ComponentOutputPort;
+import com.management.cmdb.core.ports.outputs.NotificationOutputPort;
 import com.management.cmdb.core.ports.outputs.TechnologyOutputPort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,8 +28,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.BDDMockito.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class TechnologyServiceTest {
@@ -38,6 +39,9 @@ class TechnologyServiceTest {
 
     @Mock
     private ComponentOutputPort componentOutputPort;
+
+    @Mock
+    private NotificationOutputPort notificationOutputPort;
 
     @InjectMocks
     private TechnologyService technologyService;
@@ -49,7 +53,7 @@ class TechnologyServiceTest {
 
     @BeforeEach
     void setUp() {
-        technologyService = new TechnologyService(technologyOutputPort, componentOutputPort);
+        technologyService = new TechnologyService(technologyOutputPort, componentOutputPort, notificationOutputPort);
     }
 
     @Test

@@ -1,7 +1,5 @@
 package com.management.cmdb.backend.endpoint.environment.dto;
 
-import com.management.cmdb.backend.endpoint.businessservice.dto.BusinessServiceDto;
-import com.management.cmdb.backend.endpoint.project.dto.ProjectDto;
 import com.management.cmdb.core.models.business.identity.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

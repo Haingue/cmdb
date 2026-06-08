@@ -17,11 +17,8 @@ import org.junit.jupiter.api.Assertions;
 
 import java.net.InetAddress;
 import java.net.URI;
-import java.net.URL;
 import java.net.UnknownHostException;
 import java.time.DayOfWeek;
-import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 
 public class SimpleModelTest {

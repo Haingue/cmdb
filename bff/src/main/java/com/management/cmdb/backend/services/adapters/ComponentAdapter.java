@@ -3,6 +3,7 @@ package com.management.cmdb.backend.services.adapters;
 import com.management.cmdb.backend.services.inventory.InventoryServiceClient;
 import com.management.cmdb.backend.services.inventory.dto.AttributeDto;
 import com.management.cmdb.backend.services.inventory.dto.ItemDto;
+import com.management.cmdb.backend.services.inventory.dto.LinkDto;
 import com.management.cmdb.core.models.business.component.*;
 import com.management.cmdb.core.models.business.component.network.Vlan;
 import com.management.cmdb.core.models.business.constant.ActiveDirectoryDomainName;
@@ -10,7 +11,6 @@ import com.management.cmdb.core.models.business.constant.ComponentType;
 import com.management.cmdb.core.models.business.constant.NetworkArea;
 import com.management.cmdb.core.models.business.technology.Technology;
 import com.management.cmdb.core.models.business.technology.Version;
-import com.management.cmdb.core.models.exceptions.NotFoundException;
 import com.management.cmdb.core.ports.outputs.ComponentOutputPort;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,10 +19,7 @@ import org.springframework.stereotype.Service;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.time.DayOfWeek;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -182,6 +179,25 @@ public class ComponentAdapter implements ComponentOutputPort {
         Optional<ItemDto> item = inventoryServiceClient.searchItems(name, ITEM_TYPE_LABEL, 0, 1)
                 .content().stream().findFirst();
         return item.flatMap(itemDto -> findOne(itemDto.uuid()));
+    }
+
+    @Override
+    public List<Component> findAllByTechnology(String technologyName) {
+        ItemDto technology = inventoryServiceClient.searchItems(technologyName, "TECHNOLOGY", 0, 1)
+                .content().getFirst();
+        Set<UUID> componentUuid = technology.outgoingLinks().stream()
+                .filter(i -> i.linkType().label().equals("USED_BY"))
+                .map(LinkDto::targetItemId)
+                .collect(Collectors.toSet());
+
+        return componentUuid.stream()
+                .map(inventoryServiceClient::getOneItem)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .map((ItemDto itemDto) -> this.findOne(itemDto.uuid()))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .toList();
     }
 
     @Override

@@ -1,16 +1,10 @@
 package com.management.cmdb.backend.endpoint.component;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.management.cmdb.backend.services.adapters.ComponentAdapter;
 import com.management.cmdb.backend.services.adapters.ComponentPersistentAdapter;
 import com.management.cmdb.backend.services.inventory.InventoryServiceClient;
 import com.management.cmdb.core.models.business.component.Component;
-import com.management.cmdb.core.models.business.component.GenericComponent;
-import com.management.cmdb.core.models.business.component.Hardware;
 import com.management.cmdb.core.models.business.component.Host;
-import com.management.cmdb.core.models.business.constant.ComponentType;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

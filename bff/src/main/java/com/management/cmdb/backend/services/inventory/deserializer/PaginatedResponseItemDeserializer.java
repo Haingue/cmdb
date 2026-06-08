@@ -2,10 +2,8 @@ package com.management.cmdb.backend.services.inventory.deserializer;
 
 import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.TreeNode;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.deser.ContextualDeserializer;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.management.cmdb.backend.services.inventory.dto.wrapper.PaginatedResponseDto;
 

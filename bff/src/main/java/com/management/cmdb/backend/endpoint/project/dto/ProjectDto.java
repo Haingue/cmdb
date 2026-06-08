@@ -1,7 +1,6 @@
 package com.management.cmdb.backend.endpoint.project.dto;
 
 import com.management.cmdb.core.models.business.identity.UserGroup;
-import com.management.cmdb.core.models.business.project.BusinessService;
 import com.management.cmdb.core.models.business.project.Environment;
 import com.management.cmdb.core.models.technical.Event;
 
