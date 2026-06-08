@@ -2,6 +2,7 @@ package com.management.cmdb.core.models.business.project;
 
 import com.management.cmdb.core.models.business.identity.UserGroup;
 import com.management.cmdb.core.models.exceptions.InvalidObjectException;
+import com.management.cmdb.core.models.technical.Checkable;
 import com.management.cmdb.core.models.technical.VersionedSavedEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,7 +19,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class Project extends VersionedSavedEntity {
+public class Project extends VersionedSavedEntity implements Checkable {
 
     private String fullName;
     private String shortName;
@@ -39,7 +40,8 @@ public class Project extends VersionedSavedEntity {
         environments.remove(environment);
     }
 
-    public void checkIntegrity() {
+    @Override
+    public void checkIntegrity () throws InvalidObjectException {
         if (StringUtils.isBlank(fullName)) throw new InvalidObjectException("fullName cannot be blank", this);
         if (StringUtils.isBlank(shortName)) throw new InvalidObjectException("shortName cannot be blank", this);
         if (StringUtils.isBlank(description)) throw new InvalidObjectException("description cannot be blank", this);

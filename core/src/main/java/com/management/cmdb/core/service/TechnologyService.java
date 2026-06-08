@@ -8,6 +8,7 @@ import com.management.cmdb.core.models.exceptions.InvalidObjectException;
 import com.management.cmdb.core.models.exceptions.NotFoundException;
 import com.management.cmdb.core.ports.inputs.TechnologyInputPort;
 import com.management.cmdb.core.ports.outputs.ComponentOutputPort;
+import com.management.cmdb.core.ports.outputs.NotificationOutputPort;
 import com.management.cmdb.core.ports.outputs.TechnologyOutputPort;
 
 import java.util.List;
@@ -18,10 +19,12 @@ public class TechnologyService implements TechnologyInputPort {
 
     private final TechnologyOutputPort technologyOutputPort;
     private final ComponentOutputPort componentOutputPort;
+    private final NotificationOutputPort notificationOutputPort;
 
-    public TechnologyService(TechnologyOutputPort technologyOutputPort, ComponentOutputPort componentOutputPort) {
+    public TechnologyService(TechnologyOutputPort technologyOutputPort, ComponentOutputPort componentOutputPort, NotificationOutputPort notificationOutputPort) {
         this.technologyOutputPort = technologyOutputPort;
         this.componentOutputPort = componentOutputPort;
+        this.notificationOutputPort = notificationOutputPort;
     }
 
     @Override

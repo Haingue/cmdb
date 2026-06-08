@@ -4,6 +4,7 @@ import com.management.cmdb.core.models.business.component.Component;
 import com.management.cmdb.core.models.business.constant.EnvironmentStatus;
 import com.management.cmdb.core.models.business.constant.EnvironmentType;
 import com.management.cmdb.core.models.exceptions.InvalidObjectException;
+import com.management.cmdb.core.models.technical.Checkable;
 import com.management.cmdb.core.models.technical.VersionedSavedEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,7 +22,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class Environment extends VersionedSavedEntity {
+public class Environment extends VersionedSavedEntity implements Checkable {
 
     private String name;
     private String description;
@@ -43,7 +44,8 @@ public class Environment extends VersionedSavedEntity {
                 .filter(Component::needsUpdate).collect(Collectors.toUnmodifiableSet());
     }
 
-    public void checkIntegrity() {
+    @Override
+    public void checkIntegrity () throws InvalidObjectException {
         if (StringUtils.isBlank(location)) throw new InvalidObjectException("location cannot be blank", this);
         if (type == null) throw new InvalidObjectException("type cannot be null", this);
         if (status == null) throw new InvalidObjectException("status cannot be null", this);

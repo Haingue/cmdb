@@ -1,5 +1,7 @@
 package com.management.cmdb.core.service;
 
+import com.management.cmdb.core.models.business.Notification;
+import com.management.cmdb.core.models.business.NotificationType;
 import com.management.cmdb.core.models.business.component.Component;
 import com.management.cmdb.core.models.business.constant.EnvironmentStatus;
 import com.management.cmdb.core.models.business.constant.EnvironmentType;
@@ -10,11 +12,12 @@ import com.management.cmdb.core.models.business.request.ComponentCreationRequest
 import com.management.cmdb.core.models.exceptions.CoreException;
 import com.management.cmdb.core.models.exceptions.InvalidObjectException;
 import com.management.cmdb.core.models.exceptions.NotFoundException;
-import com.management.cmdb.core.models.exceptions.NotImplemented;
 import com.management.cmdb.core.ports.inputs.ComponentInputPort;
 import com.management.cmdb.core.ports.inputs.EnvironmentInputPort;
 import com.management.cmdb.core.ports.outputs.EnvironmentOutputPort;
+import com.management.cmdb.core.ports.outputs.NotificationOutputPort;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -22,10 +25,12 @@ public class EnvironmentService implements EnvironmentInputPort {
 
     private final EnvironmentOutputPort environmentOutputPort;
     private final ComponentInputPort componentService;
+    private final NotificationOutputPort notificationOutputPort;
 
-    public EnvironmentService(EnvironmentOutputPort environmentOutputPort, ComponentInputPort componentInputPort) {
+    public EnvironmentService(EnvironmentOutputPort environmentOutputPort, ComponentInputPort componentInputPort, NotificationOutputPort notificationOutputPort) {
         this.environmentOutputPort = environmentOutputPort;
         this.componentService = componentInputPort;
+        this.notificationOutputPort = notificationOutputPort;
     }
 
     @Override
@@ -66,8 +71,16 @@ public class EnvironmentService implements EnvironmentInputPort {
         }
 
         // TODO notify maintainer
-
-        return environmentOutputPort.save(newEntity);
+        newEntity = environmentOutputPort.save(newEntity);
+        notificationOutputPort.notify(Notification.builder()
+                .title(newEntity.getName())
+                .type(NotificationType.ITEM_CREATED)
+                .source(initiator.toString())
+                .timestamp(Instant.now())
+                .payload(newEntity)
+                .build()
+        );
+        return newEntity;
     }
 
     public Component handleAddComponentRequest (ComponentCreationRequest componentCreationRequest) {
@@ -99,7 +112,16 @@ public class EnvironmentService implements EnvironmentInputPort {
 
         // TODO notify maintainer
         existingEnvironment.update(GlobalStaticParameter.SYSTEM_NAME.name());
-        return environmentOutputPort.save(existingEnvironment);
+        existingEnvironment = environmentOutputPort.save(existingEnvironment);
+        notificationOutputPort.notify(Notification.builder()
+                .title(existingEnvironment.getName())
+                .type(NotificationType.ITEM_UPDATED)
+                .source(initiator.toString())
+                .timestamp(Instant.now())
+                .payload(existingEnvironment)
+                .build()
+        );
+        return existingEnvironment;
     }
 
     @Override
@@ -109,7 +131,14 @@ public class EnvironmentService implements EnvironmentInputPort {
         Environment existingEnvironment = environmentOutputPort.findOne(uuid)
                 .orElseThrow(() -> new NotFoundException(uuid));
         existingEnvironment.setArchiveDatetime(LocalDateTime.now());
-        this.environmentOutputPort.save(existingEnvironment);
+        existingEnvironment = this.environmentOutputPort.save(existingEnvironment);
+        notificationOutputPort.notify(Notification.builder()
+                .title(existingEnvironment.getName())
+                .type(NotificationType.ITEM_ARCHIVED)
+                .source(initiator.toString())
+                .timestamp(Instant.now())
+                .payload(existingEnvironment)
+                .build());
     }
 
     @Override
@@ -118,6 +147,15 @@ public class EnvironmentService implements EnvironmentInputPort {
                 .orElseThrow(() -> new NotFoundException(uuid.toString()));
         environmentOutputPort.delete(existingEnvironment);
         environmentOutputPort.save(existingEnvironment);
+
+        notificationOutputPort.notify(Notification.builder()
+                .title(existingEnvironment.getName())
+                .type(NotificationType.ITEM_DELETED)
+                .source(initiator.toString())
+                .timestamp(Instant.now())
+                .payload(existingEnvironment)
+                .build()
+        );
     }
 
 }

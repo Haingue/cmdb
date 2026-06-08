@@ -1,6 +1,7 @@
 package com.management.cmdb.core.models.technical;
 
 import com.management.cmdb.core.models.business.identity.User;
+import com.management.cmdb.core.models.exceptions.InvalidObjectException;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,7 +18,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class VersionedSavedEntity extends UniqueEntity implements Serializable {
+public class VersionedSavedEntity extends UniqueEntity implements Serializable, Checkable {
 
     protected long revision;
     @Builder.Default
@@ -57,6 +58,12 @@ public class VersionedSavedEntity extends UniqueEntity implements Serializable {
     public void archive(String initiator, LocalDateTime archiveDatetime) {
         this.archiveDatetime = archiveDatetime;
         this.update(new Event(EventType.ARCHIVE, null, initiator));
+    }
+
+    @Override
+    public void checkIntegrity () {
+        if (creationDatetime == null) throw new InvalidObjectException("Creation datetime cannot be null");
+        if (revision < 0) throw new InvalidObjectException("Revision cannot be negative");
     }
 
     @Override
