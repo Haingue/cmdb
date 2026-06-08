@@ -4,7 +4,6 @@ import com.management.cmdb.core.models.business.constant.ComponentType;
 import com.management.cmdb.core.models.business.technology.Technology;
 import com.management.cmdb.core.models.business.technology.Version;
 
-import java.util.List;
 import java.util.Map;
 
 public record AbstractComponentDto(

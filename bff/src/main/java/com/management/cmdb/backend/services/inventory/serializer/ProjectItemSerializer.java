@@ -8,7 +8,6 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.ContextualSerializer;
 import com.management.cmdb.backend.services.inventory.deserializer.ProjectItemDeserializer;
 import com.management.cmdb.backend.services.inventory.dto.*;
-import com.management.cmdb.core.models.business.project.BusinessService;
 import com.management.cmdb.core.models.business.project.Project;
 
 import java.io.IOException;

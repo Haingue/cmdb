@@ -42,7 +42,7 @@ public class IdentityService implements IdentityInputPort {
     @Override
     public UserGroup create(UserGroup userGroup, User initiator) {
         if (userGroup == null) throw new InvalidObjectException("UserGroup is null");
-        if (!userGroup.checkIntegrity()) throw new InvalidObjectException("UserGroup is not valid", userGroup);
+        userGroup.checkIntegrity();
 
         return identityOutputPort.save(userGroup);
     }
@@ -50,7 +50,7 @@ public class IdentityService implements IdentityInputPort {
     @Override
     public UserGroup update(UserGroup userGroup, User initiator) throws InvalidObjectException {
         if (userGroup == null) throw new InvalidObjectException("UserGroup is null");
-        if (!userGroup.checkIntegrity()) throw new InvalidObjectException("UserGroup is not valid", userGroup);
+        userGroup.checkIntegrity();
 
         UserGroup existingUserGroup = identityOutputPort.findOne(userGroup.name())
                 .orElseThrow(() -> new NotFoundException(userGroup.name()));

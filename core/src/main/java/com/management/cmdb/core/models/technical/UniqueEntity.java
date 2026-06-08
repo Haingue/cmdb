@@ -1,6 +1,5 @@
 package com.management.cmdb.core.models.technical;
 
-import com.management.cmdb.core.models.exceptions.InvalidObjectException;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

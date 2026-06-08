@@ -6,10 +6,8 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.ContextualSerializer;
-import com.management.cmdb.backend.services.inventory.deserializer.ProjectItemDeserializer;
 import com.management.cmdb.backend.services.inventory.dto.*;
 import com.management.cmdb.core.models.business.project.Environment;
-import com.management.cmdb.core.models.business.project.Project;
 
 import java.io.IOException;
 import java.util.HashSet;
