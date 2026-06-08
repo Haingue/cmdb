@@ -2,6 +2,7 @@ package com.management.cmdb.core.service;
 
 import com.management.cmdb.core.fake.FakeEnvironment;
 import com.management.cmdb.core.fake.FakeUser;
+import com.management.cmdb.core.models.business.Notification;
 import com.management.cmdb.core.models.business.component.Component;
 import com.management.cmdb.core.models.business.component.GenericComponent;
 import com.management.cmdb.core.models.business.constant.ComponentType;
@@ -14,6 +15,7 @@ import com.management.cmdb.core.models.exceptions.InvalidObjectException;
 import com.management.cmdb.core.models.exceptions.NotFoundException;
 import com.management.cmdb.core.ports.inputs.ComponentInputPort;
 import com.management.cmdb.core.ports.outputs.EnvironmentOutputPort;
+import com.management.cmdb.core.ports.outputs.NotificationOutputPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -23,25 +25,22 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.Instant;
 
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.*;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class EnvironmentServiceTest {
 
     @Mock
     private EnvironmentOutputPort environmentOutputPort;
-
     @Mock
     private ComponentInputPort componentInputPort;
-
+    @Mock
+    private NotificationOutputPort notificationOutputPort;
     @InjectMocks
     private EnvironmentService environmentService;
 
@@ -84,8 +83,9 @@ class EnvironmentServiceTest {
                 .status(EnvironmentStatus.REQUESTED)
                 .jiraTracker("NEW-JIRA")
                 .build();
-
         given(environmentOutputPort.save(any(Environment.class))).willAnswer(invocation -> invocation.getArgument(0));
+        given(notificationOutputPort.notify(any(Notification.class)))
+                .willReturn(true);
 
         // When
         Environment result = environmentService.create(newEnv, initiator);
@@ -172,6 +172,9 @@ class EnvironmentServiceTest {
                 .jiraTracker(jiraTracker)
                 .build();
 
+        given(notificationOutputPort.notify(any(Notification.class)))
+                .willReturn(true);
+
         // Note: componentInputPort stub not needed - component creation is commented in EnvironmentService
         given(environmentOutputPort.save(any(Environment.class))).willAnswer(inv -> {
             Environment env = inv.getArgument(0);
@@ -222,6 +225,9 @@ class EnvironmentServiceTest {
                 .jiraTracker("NEW-JIRA")
                 .build();
 
+        given(notificationOutputPort.notify(any(Notification.class)))
+                .willReturn(true);
+
         given(environmentOutputPort.findOne(envUuid)).willReturn(Optional.of(existingEnv));
         // Note: componentInputPort stub not needed - component update is commented in EnvironmentService
         given(environmentOutputPort.save(any(Environment.class))).willAnswer(inv -> inv.getArgument(0));
@@ -271,6 +277,8 @@ class EnvironmentServiceTest {
         UUID envUuid = devEnv.getUuid();
         given(environmentOutputPort.findOne(envUuid)).willReturn(Optional.of(devEnv));
         given(environmentOutputPort.save(any(Environment.class))).willAnswer(inv -> inv.getArgument(0));
+        given(notificationOutputPort.notify(any(Notification.class)))
+                .willReturn(true);
 
         // When
         environmentService.archive(envUuid, initiator);
@@ -297,6 +305,8 @@ class EnvironmentServiceTest {
         // Given
         UUID envUuid = devEnv.getUuid();
         given(environmentOutputPort.findOne(envUuid)).willReturn(Optional.of(devEnv));
+        given(notificationOutputPort.notify(any(Notification.class)))
+                .willReturn(true);
 
         // When
         environmentService.delete(envUuid, initiator);
@@ -346,6 +356,8 @@ class EnvironmentServiceTest {
         given(environmentOutputPort.findOne(envUuid)).willReturn(Optional.of(devEnv));
         given(componentInputPort.create(any(Component.class), any(User.class))).willReturn(newComponent);
         given(environmentOutputPort.save(any(Environment.class))).willAnswer(inv -> inv.getArgument(0));
+        given(notificationOutputPort.notify(any(Notification.class)))
+                .willReturn(true);
 
         // When
         Component result = environmentService.handleAddComponentRequest(request);

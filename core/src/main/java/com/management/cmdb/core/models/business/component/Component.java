@@ -4,6 +4,7 @@ import com.management.cmdb.core.models.business.constant.ComponentType;
 import com.management.cmdb.core.models.business.technology.Technology;
 import com.management.cmdb.core.models.business.technology.Version;
 import com.management.cmdb.core.models.exceptions.InvalidObjectException;
+import com.management.cmdb.core.models.technical.Checkable;
 import com.management.cmdb.core.models.technical.ComponentVisitor;
 import com.management.cmdb.core.models.technical.VersionedSavedEntity;
 import lombok.AllArgsConstructor;
@@ -19,7 +20,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public abstract class Component extends VersionedSavedEntity implements Serializable {
+public abstract class Component extends VersionedSavedEntity implements Serializable, Checkable {
 
     private String name;
     private String description;
@@ -35,7 +36,9 @@ public abstract class Component extends VersionedSavedEntity implements Serializ
         return technology.needsUpdate(version);
     }
 
-    public void checkIntegrity () {
+    @Override
+    public void checkIntegrity () throws InvalidObjectException {
+        super.checkIntegrity();
         if(StringUtils.isBlank(name)) throw new InvalidObjectException("name cannot be blank", this);
         if(type == null) throw new InvalidObjectException("type cannot be null", this);
         if(version == null) throw new InvalidObjectException("version cannot be null", this);

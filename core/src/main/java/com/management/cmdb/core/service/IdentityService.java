@@ -13,6 +13,7 @@ import com.management.cmdb.core.models.exceptions.NotImplemented;
 import com.management.cmdb.core.ports.inputs.IdentityInputPort;
 import com.management.cmdb.core.ports.outputs.EnvironmentOutputPort;
 import com.management.cmdb.core.ports.outputs.IdentityOutputPort;
+import com.management.cmdb.core.ports.outputs.NotificationOutputPort;
 import com.management.cmdb.core.ports.outputs.ProjectOutputPort;
 
 import java.util.List;
@@ -23,11 +24,13 @@ public class IdentityService implements IdentityInputPort {
     private final IdentityOutputPort identityOutputPort;
     private final ProjectOutputPort projectOutputPort;
     private final EnvironmentOutputPort environmentOutputPort;
+    private final NotificationOutputPort notificationOutputPort;
 
-    public IdentityService(IdentityOutputPort identityOutputPort, ProjectOutputPort projectOutputPort, EnvironmentOutputPort environmentOutputPort) {
+    public IdentityService(IdentityOutputPort identityOutputPort, ProjectOutputPort projectOutputPort, EnvironmentOutputPort environmentOutputPort, NotificationOutputPort notificationOutputPort) {
         this.identityOutputPort = identityOutputPort;
         this.projectOutputPort = projectOutputPort;
         this.environmentOutputPort = environmentOutputPort;
+        this.notificationOutputPort = notificationOutputPort;
     }
 
     @Override

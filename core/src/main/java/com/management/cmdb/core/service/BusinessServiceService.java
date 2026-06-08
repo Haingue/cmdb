@@ -1,5 +1,7 @@
 package com.management.cmdb.core.service;
 
+import com.management.cmdb.core.models.business.Notification;
+import com.management.cmdb.core.models.business.NotificationType;
 import com.management.cmdb.core.models.business.identity.User;
 import com.management.cmdb.core.models.business.project.BusinessService;
 import com.management.cmdb.core.models.exceptions.CoreException;
@@ -8,13 +10,18 @@ import com.management.cmdb.core.models.exceptions.NotFoundException;
 import com.management.cmdb.core.models.exceptions.NotImplemented;
 import com.management.cmdb.core.ports.inputs.BusinessServiceInputPort;
 import com.management.cmdb.core.ports.outputs.BusinessServiceOutputPort;
+import com.management.cmdb.core.ports.outputs.NotificationOutputPort;
+
+import java.time.Instant;
 
 public class BusinessServiceService implements BusinessServiceInputPort {
 
     private final BusinessServiceOutputPort businessServiceOutputPort;
+    private final NotificationOutputPort notificationOutputPort;
 
-    public BusinessServiceService(BusinessServiceOutputPort businessServiceOutputPort) {
+    public BusinessServiceService(BusinessServiceOutputPort businessServiceOutputPort, NotificationOutputPort notificationOutputPort) {
         this.businessServiceOutputPort = businessServiceOutputPort;
+        this.notificationOutputPort = notificationOutputPort;
     }
 
     private void isUniqueAbbreviation(String abbreviation) {
@@ -39,7 +46,16 @@ public class BusinessServiceService implements BusinessServiceInputPort {
 
         isUniqueAbbreviation(businessService.getAbbreviation());
 
-        return businessServiceOutputPort.save(businessService);
+        BusinessService savedBusinessService = businessServiceOutputPort.save(businessService);
+        notificationOutputPort.notify(
+                Notification.builder()
+                        .title(savedBusinessService.getName())
+                        .type(NotificationType.ITEM_CREATED)
+                        .payload(savedBusinessService)
+                        .source(initiator.toString())
+                        .timestamp(Instant.now())
+                        .build());
+        return savedBusinessService;
     }
 
     @Override
@@ -54,7 +70,16 @@ public class BusinessServiceService implements BusinessServiceInputPort {
         // previousValue.setName(businessService.getName());
         previousValue.setAbbreviation(businessService.getAbbreviation());
 
-        return businessServiceOutputPort.save(previousValue);
+        BusinessService savedBusinessService = businessServiceOutputPort.save(previousValue);
+        notificationOutputPort.notify(
+                Notification.builder()
+                        .title(savedBusinessService.getName())
+                        .type(NotificationType.ITEM_UPDATED)
+                        .payload(savedBusinessService)
+                        .source(initiator.toString())
+                        .timestamp(Instant.now())
+                        .build());
+        return savedBusinessService;
     }
 
     @Override
@@ -67,8 +92,17 @@ public class BusinessServiceService implements BusinessServiceInputPort {
     public void delete(String name, User initiator) {
         // TODO check initiator permissions
         if (name == null) throw new CoreException("BusinessService name cannot be null");
-        businessServiceOutputPort.findOne(name)
+        BusinessService existingBusinessService = businessServiceOutputPort.findOne(name)
                 .orElseThrow(() -> new NotFoundException(name));
-        businessServiceOutputPort.delete(name);
+        businessServiceOutputPort.delete(existingBusinessService.getName());
+
+        notificationOutputPort.notify(
+                Notification.builder()
+                        .title(existingBusinessService.getName())
+                        .type(NotificationType.ITEM_DELETED)
+                        .payload(existingBusinessService)
+                        .source(initiator.toString())
+                        .timestamp(Instant.now())
+                        .build());
     }
 }
