@@ -1,10 +1,8 @@
 package com.management.cmdb.backend.services.inventory.dto;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public record ItemDto(
         UUID uuid,
@@ -24,6 +22,15 @@ public record ItemDto(
                 if (attributes == null) attributes = new HashSet<>();
                 if (outgoingLinks == null) outgoingLinks = new HashSet<>();
                 if (incomingLinks == null) incomingLinks = new HashSet<>();
+        }
+
+        public Map<String, String> getMapAttributes() {
+                return attributes().stream()
+                        .filter(attributeDto -> attributeDto.getValue() != null)
+                        .collect(Collectors.toMap(
+                                AttributeDto::getLabel,
+                                AttributeDto::getValue
+                        ));
         }
 
         @Override

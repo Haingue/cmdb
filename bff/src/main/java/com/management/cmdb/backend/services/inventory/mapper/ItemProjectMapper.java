@@ -17,19 +17,14 @@ public class ItemProjectMapper {
     private static final String LINK_TYPE_BUSINESS_SERVICE = "Implements";
     private static final String LINK_TYPE_ENVIRONMENT = "Deployed in";
 
-    Project mapItemDtoToCoreModel(ItemDto itemDto) {
-        Map<String, String> attributes = itemDto.attributes().stream()
-            .filter(attributeDto -> attributeDto.getValue() != null)
-            .collect(Collectors.toMap(
-                    AttributeDto::getLabel,
-                    AttributeDto::getValue
-            ));
+    public Project mapItemDtoToCoreModel(ItemDto itemDto) {
+        Map<String, String> attributes = itemDto.getMapAttributes();
 
         // Project attributes
         UUID uuid = itemDto.uuid();
-        String fullName = attributes.get("FullName");
+        String fullName = itemDto.name();
         String shortName = attributes.get("ShortName");
-        String description = attributes.get("Description");
+        String description = itemDto.description();
 //        UserGroup maintainers = attributes.get("maintainers");
 //        UserGroup owners = attributes.get("owners");
 
@@ -65,9 +60,8 @@ public class ItemProjectMapper {
         return projectBuilder.build();
     }
 
-    public ItemDto mapCoreModelToDto(Project project) {
-        ItemTypeDto projectItemType = new ItemTypeDto(null, PROJECT_TYPE_LABEL,
-                null, null, null, null, null, null);
+    public ItemDto mapCoreModelToItemDto(Project project) {
+        ItemTypeDto projectItemType = new ItemTypeDto(PROJECT_TYPE_LABEL);
 //        String ownerUserGroups = null;
 //        if (project.getOwners() != null) {
 //            ownerUserGroups = project.getOwners().name();
@@ -78,8 +72,12 @@ public class ItemProjectMapper {
 //        }
         Set<LinkDto> outgoingLinks = new HashSet<>();
         project.getEnvironments().stream()
-                .map(environment -> new LinkDto(new LinkTypeDto(ProjectItemDeserializer.EnvironmentLinkType),
-                        project.getUuid(), environment.getUuid(), null))
+                .map(environment ->
+                        new LinkDto(
+                                new LinkTypeDto(ProjectItemDeserializer.EnvironmentLinkType),
+                                project.getUuid(),
+                                environment.getUuid(),
+                                null))
                 .forEach(outgoingLinks::add);
 
         return new ItemDto(
@@ -88,14 +86,12 @@ public class ItemProjectMapper {
                 project.getDescription(),
                 projectItemType,
                 Set.of(
-                        new AttributeDto(null, "FullName", null, project.getFullName(), null, null, null, null),
-                        new AttributeDto(null, "ShortName", null, project.getShortName(), null, null, null, null),
-                        new AttributeDto(null, "BusinessService", null, project.getBusinessService().getName(), null, null, null, null)
+                        new AttributeDto(null, "ShortName", null, project.getShortName(), null, null, null, null)
 //                        new AttributeDto(null, "Owners", null, ownerUserGroups, null, null, null, null),
 //                        new AttributeDto(null, "Maintainers", null, maintainerUserGroups, null, null, null, null)
                 ),
-                Set.of(),
                 outgoingLinks,
+                Set.of(),
                 project.getCreationDatetime(),
                 null,
                 null,

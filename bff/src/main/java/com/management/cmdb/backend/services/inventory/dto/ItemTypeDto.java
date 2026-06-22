@@ -16,6 +16,10 @@ public record ItemTypeDto(
         UUID lastModifiedBy,
         LocalDateTime lastModifiedDate
 ) {
+    public ItemTypeDto(String label) {
+        this(null, label, "", Set.of(), null, null, null, null);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof ItemTypeDto dto)) return false;

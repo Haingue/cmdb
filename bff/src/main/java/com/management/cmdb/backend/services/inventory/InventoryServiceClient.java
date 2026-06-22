@@ -18,30 +18,41 @@ import java.util.UUID;
 //@CircuitBreaker(name = "microservice", fallbackMethod = "fallback")
 public interface InventoryServiceClient {
 
+    @Deprecated
     @GetMapping("/item")
     PaginatedResponseDto<BusinessService> searchBusinessServiceByName(@RequestParam String itemName, @RequestParam() String itemType);
+    @Deprecated
     @GetMapping("/item/any/{attributeLabel}/{attributeValue}")
     PaginatedResponseDto<BusinessService> searchBusinessServiceByAttributeValue(@PathVariable String attributeLabel, @PathVariable String attributeValue, @RequestParam() String itemType);
+    @Deprecated
     @GetMapping("/item/{uuid}")
     Optional<Project> getOneProjectItem(@PathVariable UUID uuid);
+    @Deprecated
     @GetMapping("/item/{uuid}")
     Optional<Environment> getOneEnvironmentItem(@PathVariable UUID uuid);
+    @Deprecated
     @GetMapping("/item/{uuid}")
     Host getOneHostItem(@PathVariable UUID uuid);
     @GetMapping("/item")
     PaginatedResponseDto<ItemDto> searchItems(@RequestParam String label, @RequestParam String itemType, @RequestParam int pageNumber, @RequestParam int pageSize);
 
+    @Deprecated
     @PostMapping("/item")
     Optional<BusinessService> createItem(@RequestBody BusinessService businessService);
+    @Deprecated
     @PostMapping("/item")
     Optional<Project> createItem(@RequestBody Project project);
+    @Deprecated
     @PostMapping("/item")
     Optional<Environment> createItem(@RequestBody Environment environment);
 
+    @Deprecated
     @PutMapping("/item")
     Optional<BusinessService> updateItem(@RequestBody BusinessService businessService);
+    @Deprecated
     @PutMapping("/item")
     Optional<Project> updateItem(@RequestBody Project project);
+    @Deprecated
     @PutMapping("/item")
     Optional<Environment> updateItem(@RequestBody Environment environment);
 
