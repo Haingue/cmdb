@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 public class ItemSoftwareMapper implements ItemComponentMapper<Software> {
 
     public static final ItemSoftwareMapper INSTANCE = new ItemSoftwareMapper();
-    public static final String HOST_LINK = "Hosted on";
+    public static final String HOST_LINK = "Hosted by";
 
     private ItemSoftwareMapper() {
     }

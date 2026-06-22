@@ -14,9 +14,9 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class ItemProjectMapper {
-    private static final String PROJECT_TYPE_LABEL = "Project";
-    private static final String LINK_TYPE_BUSINESS_SERVICE = "Implements";
-    private static final String LINK_TYPE_ENVIRONMENT = "Deployed in";
+    public static final String PROJECT_TYPE_LABEL = "Project";
+    public static final String LINK_TYPE_BUSINESS_SERVICE = "Implements";
+    public static final String LINK_TYPE_ENVIRONMENT = "Deployed in";
 
     public Project mapItemDtoToCoreModel(ItemDto itemDto) {
         Map<String, String> attributes = itemDto.getMapAttributes();
@@ -72,6 +72,7 @@ public class ItemProjectMapper {
 //            maintainerUserGroups = project.getMaintainers().name();
 //        }
         Set<LinkDto> outgoingLinks = new HashSet<>();
+        // Environments
         project.getEnvironments().stream()
                 .map(environment ->
                         new LinkDto(
@@ -80,6 +81,12 @@ public class ItemProjectMapper {
                                 environment.getUuid(),
                                 null))
                 .forEach(outgoingLinks::add);
+        // Businnes service
+        outgoingLinks.add(new LinkDto(
+                                new LinkTypeDto(ProjectItemDeserializer.EnvironmentLinkType),
+                                project.getUuid(),
+                                UUID.randomUUID(), // TODO Convert BusinessService as Asset
+                                project.getBusinessService().getAbbreviation()));
 
         return new ItemDto(
                 null,

@@ -103,9 +103,9 @@ class ItemProjectMapperTest {
         assertTrue(result.attributes().stream()
                 .anyMatch(attr -> attr.getLabel().equals("ShortName") && attr.getValue().equals("PPR")));
         assertNotNull(result.outgoingLinks());
-        assertEquals(project.getEnvironments().size(), result.outgoingLinks().size());
+        assertEquals(2, result.outgoingLinks().size());
         assertTrue(result.outgoingLinks().stream()
-                .anyMatch(link -> link.linkType().label().equals(ProjectItemDeserializer.EnvironmentLinkType) &&
+                .anyMatch(link -> link.linkType().label().equals(ItemProjectMapper.LINK_TYPE_ENVIRONMENT) &&
                         link.sourceItemId().equals(projectUuid) &&
                         link.targetItemId().equals(environmentUuid)));
         assertEquals(now, result.createdDate());
