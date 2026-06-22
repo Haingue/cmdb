@@ -1,7 +1,7 @@
 package com.management.cmdb.backend.endpoint.component;
 
 import com.management.cmdb.backend.services.adapters.ComponentAdapter;
-import com.management.cmdb.backend.services.adapters.ComponentPersistentAdapter;
+import com.management.cmdb.backend.services.inventory.mapper.component.ComponentMapperFactory;
 import com.management.cmdb.backend.services.inventory.InventoryServiceClient;
 import com.management.cmdb.core.models.business.component.Component;
 import com.management.cmdb.core.models.business.component.Host;
@@ -18,12 +18,10 @@ public class ComponentController {
 
     private final InventoryServiceClient inventoryServiceClient;
     private final ComponentAdapter componentAdapter;
-    private final ComponentPersistentAdapter componentPersistentAdapter;
 
-    public ComponentController(InventoryServiceClient inventoryServiceClient, ComponentAdapter componentAdapter, ComponentPersistentAdapter componentPersistentAdapter) {
+    public ComponentController(InventoryServiceClient inventoryServiceClient, ComponentAdapter componentAdapter) {
         this.inventoryServiceClient = inventoryServiceClient;
         this.componentAdapter = componentAdapter;
-        this.componentPersistentAdapter = componentPersistentAdapter;
     }
 
     @GetMapping("/{uuid}")

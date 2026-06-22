@@ -1,11 +1,10 @@
-package com.management.cmdb.backend.services.inventory.mapper;
+package com.management.cmdb.backend.services.inventory.mapper.component;
 
 import com.management.cmdb.backend.services.inventory.dto.AttributeDto;
 import com.management.cmdb.backend.services.inventory.dto.ItemDto;
 import com.management.cmdb.backend.services.inventory.dto.ItemTypeDto;
 import com.management.cmdb.core.models.business.component.GenericComponent;
 import com.management.cmdb.core.models.business.constant.ComponentType;
-import com.management.cmdb.core.models.business.constant.TechnologyType;
 import com.management.cmdb.core.models.business.identity.User;
 import com.management.cmdb.core.models.business.technology.Technology;
 import com.management.cmdb.core.models.business.technology.Version;
@@ -16,9 +15,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-public class ItemGenericComponentMapper {
+public class ItemGenericComponentMapper implements ItemComponentMapper<GenericComponent> {
 
-    public static GenericComponent mapItemDtoToGenericComponent(ItemDto itemDto) {
+    public static final ItemGenericComponentMapper INSTANCE = new ItemGenericComponentMapper();
+
+    private ItemGenericComponentMapper() {
+    }
+
+    public GenericComponent mapToCoreModel(ItemDto itemDto) {
         // Component attributes
         GenericComponent.GenericComponentBuilder<?, ?> genericComponentBuilder = GenericComponent.builder()
                 .uuid(itemDto.uuid())
@@ -48,7 +52,7 @@ public class ItemGenericComponentMapper {
         return genericComponentBuilder.build();
     }
 
-    public static ItemDto mapGenericComponentToItemDto(GenericComponent component) {
+    public ItemDto mapToItemDto(GenericComponent component) {
         UUID uuid = component.getUuid();
         String name = component.getName();
         String description = component.getDescription();

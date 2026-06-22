@@ -21,15 +21,13 @@ public class BeanConfiguration {
     private final EnvironmentOutputPort environmentAdapter;
     private final ComponentOutputPort componentAdapter;
     private final EventOutputPort eventAdapter;
-    private final ComponentVisitor<Component> componentVisitor;
 
-    public BeanConfiguration(BusinessServiceOutputPort businessServiceAdapter, ProjectOutputPort projectAdapter, EnvironmentOutputPort environmentAdapter, ComponentOutputPort componentAdapter, EventOutputPort eventAdapter, ComponentVisitor<Component> componentVisitor) {
+    public BeanConfiguration(BusinessServiceOutputPort businessServiceAdapter, ProjectOutputPort projectAdapter, EnvironmentOutputPort environmentAdapter, ComponentOutputPort componentAdapter, EventOutputPort eventAdapter) {
         this.businessServiceAdapter = businessServiceAdapter;
         this.projectAdapter = projectAdapter;
         this.environmentAdapter = environmentAdapter;
         this.componentAdapter = componentAdapter;
         this.eventAdapter = eventAdapter;
-        this.componentVisitor = componentVisitor;
     }
 
     @Bean

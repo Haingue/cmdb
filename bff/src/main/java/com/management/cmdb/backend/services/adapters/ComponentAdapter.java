@@ -1,9 +1,12 @@
 package com.management.cmdb.backend.services.adapters;
 
+import com.management.cmdb.backend.exceptions.AdapterException;
 import com.management.cmdb.backend.services.inventory.InventoryServiceClient;
 import com.management.cmdb.backend.services.inventory.dto.AttributeDto;
 import com.management.cmdb.backend.services.inventory.dto.ItemDto;
 import com.management.cmdb.backend.services.inventory.dto.LinkDto;
+import com.management.cmdb.backend.services.inventory.mapper.component.ComponentMapperFactory;
+import com.management.cmdb.backend.services.inventory.mapper.component.ItemComponentVisitor;
 import com.management.cmdb.core.models.business.component.*;
 import com.management.cmdb.core.models.business.component.network.Vlan;
 import com.management.cmdb.core.models.business.constant.ActiveDirectoryDomainName;
@@ -30,11 +33,11 @@ public class ComponentAdapter implements ComponentOutputPort {
     private static final Logger LOGGER = LoggerFactory.getLogger(ComponentAdapter.class);
 
     private final InventoryServiceClient inventoryServiceClient;
-    private final ComponentPersistentAdapter componentPersistentAdapter;
+    private final ItemComponentVisitor mapper;
 
-    public ComponentAdapter(InventoryServiceClient inventoryServiceClient, ComponentPersistentAdapter componentPersistentAdapter) {
+    public ComponentAdapter(InventoryServiceClient inventoryServiceClient, ItemComponentVisitor mapper) {
         this.inventoryServiceClient = inventoryServiceClient;
-        this.componentPersistentAdapter = componentPersistentAdapter;
+        this.mapper = mapper;
     }
 
     @Override
@@ -204,7 +207,11 @@ public class ComponentAdapter implements ComponentOutputPort {
 
     @Override
     public Component save(Component component) {
-        return componentPersistentAdapter.accept(component);
+        ItemDto itemDto = mapper.accept(component);
+        itemDto = inventoryServiceClient.createItem(itemDto)
+                .orElseThrow(AdapterException::new);
+        component.setUuid(itemDto.uuid());
+        return ComponentMapperFactory.getMapperFor(component.getType()).mapToCoreModel(itemDto);
     }
 
     @Override

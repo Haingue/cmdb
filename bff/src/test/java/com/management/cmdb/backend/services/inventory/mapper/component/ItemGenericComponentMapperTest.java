@@ -1,4 +1,4 @@
-package com.management.cmdb.backend.services.inventory.mapper;
+package com.management.cmdb.backend.services.inventory.mapper.component;
 
 import com.management.cmdb.backend.services.inventory.dto.*;
 import com.management.cmdb.core.models.business.component.GenericComponent;
@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ItemGenericComponentMapperTest {
 
-    private final ItemGenericComponentMapper mapper = new ItemGenericComponentMapper();
+    private final ItemGenericComponentMapper mapper = ItemGenericComponentMapper.INSTANCE;
 
     @Test
     void shouldConvertItemDtoToCoreGenericComponent() {
@@ -59,7 +59,7 @@ class ItemGenericComponentMapperTest {
         );
 
         // Act
-        GenericComponent result = mapper.mapItemDtoToGenericComponent(itemDto);
+        GenericComponent result = mapper.mapToCoreModel(itemDto);
 
         // Assert
         assertNotNull(result);
@@ -101,7 +101,7 @@ class ItemGenericComponentMapperTest {
         );
 
         // Act
-        GenericComponent result = mapper.mapItemDtoToGenericComponent(itemDto);
+        GenericComponent result = mapper.mapToCoreModel(itemDto);
 
         // Assert
         assertNotNull(result);
@@ -142,7 +142,7 @@ class ItemGenericComponentMapperTest {
                 .build();
 
         // Act
-        ItemDto result = mapper.mapGenericComponentToItemDto(component);
+        ItemDto result = mapper.mapToItemDto(component);
 
         // Assert
         assertNotNull(result);
@@ -206,8 +206,8 @@ class ItemGenericComponentMapperTest {
         );
 
         // Act - Convert to GenericComponent and back to ItemDto
-        GenericComponent genericComponent = mapper.mapItemDtoToGenericComponent(originalItemDto);
-        ItemDto resultItemDto = mapper.mapGenericComponentToItemDto(genericComponent);
+        GenericComponent genericComponent = mapper.mapToCoreModel(originalItemDto);
+        ItemDto resultItemDto = mapper.mapToItemDto(genericComponent);
 
         // Assert
         assertNotNull(resultItemDto);
@@ -263,7 +263,7 @@ class ItemGenericComponentMapperTest {
         );
 
         // Act
-        GenericComponent result = mapper.mapItemDtoToGenericComponent(itemDto);
+        GenericComponent result = mapper.mapToCoreModel(itemDto);
 
         // Assert
         assertNotNull(result);
@@ -306,7 +306,7 @@ class ItemGenericComponentMapperTest {
         );
 
         // Act
-        GenericComponent result = mapper.mapItemDtoToGenericComponent(itemDto);
+        GenericComponent result = mapper.mapToCoreModel(itemDto);
 
         // Assert
         assertNotNull(result);
@@ -344,7 +344,7 @@ class ItemGenericComponentMapperTest {
                 .build();
 
         // Act
-        ItemDto result = mapper.mapGenericComponentToItemDto(component);
+        ItemDto result = mapper.mapToItemDto(component);
 
         // Assert
         assertNotNull(result);
@@ -399,7 +399,7 @@ class ItemGenericComponentMapperTest {
         );
 
         // Act
-        GenericComponent result = mapper.mapItemDtoToGenericComponent(itemDto);
+        GenericComponent result = mapper.mapToCoreModel(itemDto);
 
         // Assert
         assertNotNull(result);
@@ -450,7 +450,7 @@ class ItemGenericComponentMapperTest {
         );
 
         // Act
-        GenericComponent result = mapper.mapItemDtoToGenericComponent(itemDto);
+        GenericComponent result = mapper.mapToCoreModel(itemDto);
 
         // Assert
         assertNotNull(result);
@@ -478,7 +478,7 @@ class ItemGenericComponentMapperTest {
                 .build();
 
         // Act
-        ItemDto result = mapper.mapGenericComponentToItemDto(component);
+        ItemDto result = mapper.mapToItemDto(component);
 
         // Assert
         assertNotNull(result);
