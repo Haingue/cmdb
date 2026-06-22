@@ -38,8 +38,8 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public ComponentInputPort componentService (ComponentOutputPort componentAdapter, ComponentVisitor<Component> componentVisitor) {
-        return new ComponentService(componentAdapter, componentVisitor, eventAdapter);
+    public ComponentInputPort componentService (ComponentOutputPort componentAdapter) {
+        return new ComponentService(componentAdapter, eventAdapter);
     }
 
     @Bean

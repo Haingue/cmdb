@@ -2,6 +2,7 @@ package com.management.cmdb.backend.services.inventory.mapper;
 
 import com.management.cmdb.backend.services.inventory.deserializer.ProjectItemDeserializer;
 import com.management.cmdb.backend.services.inventory.dto.*;
+import com.management.cmdb.core.models.business.identity.User;
 import com.management.cmdb.core.models.business.project.BusinessService;
 import com.management.cmdb.core.models.business.project.Environment;
 import com.management.cmdb.core.models.business.project.Project;
@@ -93,8 +94,8 @@ public class ItemProjectMapper {
                 outgoingLinks,
                 Set.of(),
                 project.getCreationDatetime(),
-                null,
-                null,
+                User.UNKNONW.uuid(),
+                User.UNKNONW.uuid(),
                 null
         );
     }

@@ -5,6 +5,7 @@ import com.management.cmdb.core.models.business.component.Component;
 import com.management.cmdb.core.models.business.component.GenericComponent;
 import com.management.cmdb.core.models.business.constant.EnvironmentStatus;
 import com.management.cmdb.core.models.business.constant.EnvironmentType;
+import com.management.cmdb.core.models.business.identity.User;
 import com.management.cmdb.core.models.business.project.Environment;
 
 import java.util.HashSet;
@@ -82,8 +83,8 @@ public class ItemEnvironmentMapper {
                 outgoingLinks,
                 Set.of(),
                 environment.getCreationDatetime(),
-                null,
-                null,
+                User.UNKNONW.uuid(),
+                User.UNKNONW.uuid(),
                 null
         );
     }

@@ -30,9 +30,11 @@ public class ComponentAdapter implements ComponentOutputPort {
     private static final Logger LOGGER = LoggerFactory.getLogger(ComponentAdapter.class);
 
     private final InventoryServiceClient inventoryServiceClient;
+    private final ComponentPersistentAdapter componentPersistentAdapter;
 
-    public ComponentAdapter(InventoryServiceClient inventoryServiceClient) {
+    public ComponentAdapter(InventoryServiceClient inventoryServiceClient, ComponentPersistentAdapter componentPersistentAdapter) {
         this.inventoryServiceClient = inventoryServiceClient;
+        this.componentPersistentAdapter = componentPersistentAdapter;
     }
 
     @Override
@@ -198,6 +200,11 @@ public class ComponentAdapter implements ComponentOutputPort {
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .toList();
+    }
+
+    @Override
+    public Component save(Component component) {
+        return componentPersistentAdapter.accept(component);
     }
 
     @Override

@@ -11,5 +11,8 @@ public interface ComponentOutputPort {
     Optional<Component> findOne (UUID uuid);
     Optional<Component> findOneByName (String name);
     List<Component> findAllByTechnology(String technologyName);
+
+    Component save (Component component);
+
     void delete (Component component);
 }
